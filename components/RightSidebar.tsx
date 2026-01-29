@@ -34,7 +34,14 @@ const MSLogo = () => (
 
 const NextMatch = () => {
   return (
-    <div className="bg-white dark:bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 flex flex-col mb-4">
+    <div 
+      className="overflow-hidden shadow-xl flex flex-col mb-4"
+      style={{ 
+        borderRadius: 'var(--radius-module)',
+        backgroundColor: 'var(--card-background)',
+        border: '1px solid var(--module-border)',
+      }}
+    >
       {/* Header - Date/Time */}
       <div 
         className="py-3 px-4 text-center"
@@ -385,8 +392,13 @@ const RightSidebar: React.FC = () => {
       {/* Next Match Module with Heading */}
       <div>
         <h4 
-          className="font-black uppercase text-[10px] tracking-widest ml-1 mb-2"
-          style={{ color: 'var(--color-primary)' }}
+          className="uppercase tracking-widest ml-1 mb-2"
+          style={{ 
+            color: 'var(--module-heading-color)',
+            fontSize: 'var(--module-heading-size)',
+            fontWeight: 'var(--module-heading-weight)',
+            fontFamily: 'var(--module-heading-font)',
+          }}
         >
           Neste kamp
         </h4>
@@ -396,16 +408,22 @@ const RightSidebar: React.FC = () => {
       {/* Action Hub */}
       <div className="flex flex-col gap-4">
         <h4 
-          className="font-black uppercase text-[10px] tracking-widest ml-1 mb-2"
-          style={{ color: 'var(--color-primary)' }}
+          className="uppercase tracking-widest ml-1 mb-2"
+          style={{ 
+            color: 'var(--module-heading-color)',
+            fontSize: 'var(--module-heading-size)',
+            fontWeight: 'var(--module-heading-weight)',
+            fontFamily: 'var(--module-heading-font)',
+          }}
         >
           Snarveier
         </h4>
         <button 
-          className="w-full p-5 rounded-2xl font-bold text-left transition-all flex justify-between items-center group shadow-lg"
+          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg"
           style={{ 
             backgroundColor: 'var(--color-primary)',
             color: 'var(--color-text-on-primary)',
+            borderRadius: 'var(--radius-module)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-accent)';
@@ -423,8 +441,13 @@ const RightSidebar: React.FC = () => {
           <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
         </button>
         <button 
-          className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl font-bold text-left transition-all flex justify-between items-center group"
-          style={{ color: 'var(--color-primary)' }}
+          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group"
+          style={{ 
+            color: 'var(--color-primary)',
+            borderRadius: 'var(--radius-module)',
+            backgroundColor: 'var(--module-background)',
+            border: '1px solid var(--module-border)',
+          }}
         >
           <div className="flex items-center gap-4">
             <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 5%, transparent)' }}>🏆</span>
@@ -435,8 +458,25 @@ const RightSidebar: React.FC = () => {
       </div>
 
       {/* Social Pulse */}
-      <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col items-center">
-        <h3 className="text-gray-400 font-black uppercase text-[9px] tracking-[0.2em] mb-8">Følg oss digitalt</h3>
+      <div 
+        className="p-8 flex flex-col items-center"
+        style={{ 
+          backgroundColor: 'var(--module-background)',
+          borderRadius: 'var(--radius-module)',
+          border: '1px solid var(--module-border)',
+        }}
+      >
+        <h3 
+          className="uppercase tracking-[0.2em] mb-8"
+          style={{ 
+            color: 'var(--module-heading-color)',
+            fontSize: 'var(--module-heading-size)',
+            fontWeight: 'var(--module-heading-weight)',
+            fontFamily: 'var(--module-heading-font)',
+          }}
+        >
+          Følg oss digitalt
+        </h3>
         <div className="grid grid-cols-2 gap-4 w-full">
            <div className="aspect-square bg-[#000000] rounded-2xl flex items-center justify-center cursor-pointer hover:scale-105 transition-all group shadow-xl">
               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
@@ -449,9 +489,27 @@ const RightSidebar: React.FC = () => {
 
       {/* Main Sponsors */}
       <div className="flex flex-col gap-4">
-        <h4 className="text-gray-400 font-black uppercase text-[9px] tracking-[0.2em] ml-1">Hovedsponsorer</h4>
+        <h4 
+          className="uppercase tracking-[0.2em] ml-1"
+          style={{ 
+            color: 'var(--module-heading-color)',
+            fontSize: 'var(--module-heading-size)',
+            fontWeight: 'var(--module-heading-weight)',
+            fontFamily: 'var(--module-heading-font)',
+          }}
+        >
+          Hovedsponsorer
+        </h4>
         {sponsors.map((s: any, idx) => (
-          <div key={idx} className="bg-white p-8 rounded-[2rem] border border-gray-100 flex items-center justify-center h-44 group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden">
+          <div 
+            key={idx} 
+            className="p-8 flex items-center justify-center h-44 group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden"
+            style={{ 
+              backgroundColor: 'var(--card-background)',
+              borderRadius: 'var(--radius-module)',
+              border: '1px solid var(--module-border)',
+            }}
+          >
              <div className="max-w-[85%] group-hover:scale-110 transition-transform">
                <s.Component />
              </div>

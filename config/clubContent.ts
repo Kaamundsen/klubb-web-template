@@ -125,6 +125,13 @@ export const MASTER_CONTENT: ClubContent = {
       image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800',
       category: 'Support',
     },
+    {
+      id: 'master-7',
+      title: 'Statistikk og innsikt',
+      excerpt: 'Få oversikt over medlemstall, aktivitet og engasjement med våre analyseverktøy.',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800',
+      category: 'Funksjonalitet',
+    },
   ],
 };
 

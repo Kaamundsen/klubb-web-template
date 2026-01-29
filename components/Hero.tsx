@@ -103,18 +103,18 @@ const Hero: React.FC = () => {
           <div 
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
             style={{
-              backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)',
+              backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
               borderWidth: '1px',
-              borderColor: 'color-mix(in srgb, var(--color-primary) 20%, transparent)'
+              borderColor: 'color-mix(in srgb, var(--color-accent) 20%, transparent)'
             }}
           >
             <span 
               className="w-2 h-2 rounded-full animate-pulse"
-              style={{ backgroundColor: 'var(--color-primary)' }}
+              style={{ backgroundColor: 'var(--color-accent)' }}
             />
             <p 
               className="font-bold uppercase tracking-[0.2em] text-[10px]"
-              style={{ color: 'var(--color-primary)' }}
+              style={{ color: 'var(--color-accent)' }}
             >
               Støtt din lokale idrett i dag
             </p>
@@ -140,7 +140,7 @@ const Hero: React.FC = () => {
             ) : (
               <>
                 DIN KLUBB,<br/>
-                <span className="text-glow" style={{ color: 'var(--color-primary)' }}>DIN STOLTHET</span>
+                <span className="text-glow" style={{ color: 'var(--color-accent)' }}>DIN STOLTHET</span>
               </>
             )}
           </h1>
@@ -151,16 +151,20 @@ const Hero: React.FC = () => {
 
           <div className="flex flex-wrap gap-6">
             <button 
-              className="px-14 py-6 rounded-2xl text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
+              className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
                 background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 boxShadow: `0 25px 50px -12px var(--color-accent)`,
                 color: 'var(--color-text-on-accent)',
+                borderRadius: 'var(--radius-button)',
               }}
             >
               Bli medlem
             </button>
-            <button className="bg-white/10 backdrop-blur-xl border border-white/20 px-14 py-6 rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-white/20 transition-all text-white">
+            <button 
+              className="bg-white/10 backdrop-blur-xl border border-white/20 px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:bg-white/20 transition-all text-white"
+              style={{ borderRadius: 'var(--radius-button)' }}
+            >
               Bli Sponsor
             </button>
           </div>

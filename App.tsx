@@ -57,7 +57,14 @@ const App: React.FC = () => {
         <Hero />
         
         {/* Main Content Area */}
-        <div className="bg-white dark:bg-brand-dark rounded-t-[4rem] -mt-16 relative z-20 overflow-hidden">
+        <div 
+          className="-mt-16 relative z-20 overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--section-background)',
+            borderTopLeftRadius: 'var(--section-top-radius, 0)',
+            borderTopRightRadius: 'var(--section-top-radius, 0)',
+          }}
+        >
           <div className="container mx-auto px-6 py-16 lg:py-24">
             <div className="grid lg:grid-cols-12 gap-16">
               {/* News Section */}
