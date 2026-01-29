@@ -1,0 +1,379 @@
+/* Designmal V2 - CSS Variables og Base Styles */
+
+/* ============================================
+   CSS Custom Properties (Tema-variabler)
+   ============================================
+   Disse verdiene injiseres dynamisk av ThemeProvider
+   basert på valgt klubb. Master-mal som fallback.
+*/
+:root {
+  /* Klubbfarger - overskrides av ThemeProvider */
+  --color-primary: #092c5c;
+  --color-accent: #e5003c;
+  --color-accent-light: #ff1a57;
+  --color-dark: #0b0e14;
+  --color-navy: #0f2e58;
+  
+  /* Nøytrale farger */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* ============================================
+   Utility Classes for Theme Colors
+   ============================================ */
+
+/* Bakgrunnsfarger */
+.bg-theme-primary { background-color: var(--color-primary); }
+.bg-theme-accent { background-color: var(--color-accent); }
+.bg-theme-accent-light { background-color: var(--color-accent-light); }
+.bg-theme-dark { background-color: var(--color-dark); }
+.bg-theme-navy { background-color: var(--color-navy); }
+
+/* Tekstfarger */
+.text-theme-primary { color: var(--color-primary); }
+.text-theme-accent { color: var(--color-accent); }
+.text-theme-accent-light { color: var(--color-accent-light); }
+
+/* Border-farger */
+.border-theme-primary { border-color: var(--color-primary); }
+.border-theme-accent { border-color: var(--color-accent); }
+
+/* Gradient med temafarger */
+.gradient-theme {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+}
+
+.gradient-theme-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-navy) 100%);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* ============================================
+   Navigation Styles
+   ============================================ */
+
+.nav-glass {
+  background: rgba(11, 14, 20, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-glass-light {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Submenu animasjoner */
+.submenu-enter {
+  opacity: 0;
+  transform: translate(-50%, 10px);
+  pointer-events: none;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.group:hover .submenu-enter {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+/* ============================================
+   Image Containers (Robust Bildehåndtering)
+   ============================================ */
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-container-contain img {
+  object-fit: contain;
+}
+
+/* Aspect ratios */
+.aspect-hero { aspect-ratio: 16 / 9; }
+.aspect-news { aspect-ratio: 16 / 10; }
+.aspect-card { aspect-ratio: 4 / 3; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+/* ============================================
+   Text Effects
+   ============================================ */
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(var(--color-accent), 0.3);
+}
+
+.text-glow-primary {
+  text-shadow: 0 0 20px rgba(var(--color-primary), 0.3);
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+
+.btn-theme-accent {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  color: white;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-theme-accent:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 40px -10px var(--color-accent);
+}
+
+.btn-theme-primary {
+  background-color: var(--color-primary);
+  color: white;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-theme-primary:hover {
+  background-color: var(--color-accent);
+}
+
+/* ============================================
+   Dev Toolbar Styles
+   ============================================ */
+
+.dev-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-bottom: 2px solid var(--color-accent);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+}
+
+.dev-toolbar select,
+.dev-toolbar input,
+.dev-toolbar button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 11px;
+  transition: all var(--transition-fast);
+}
+
+.dev-toolbar select:hover,
+.dev-toolbar input:hover,
+.dev-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-accent);
+}
+
+.dev-toolbar button {
+  cursor: pointer;
+}
+
+.dev-toolbar button:active {
+  transform: scale(0.95);
+}
+
+.dev-toolbar-label {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 9px;
+}
+
+/* Dev toolbar tar ikke opp plass - den er fixed og overlayes */
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--color-accent); }
+  50% { box-shadow: 0 0 40px var(--color-accent); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Mobile Menu Styles
+   ============================================ */
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--color-dark);
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color var(--transition-fast);
+}
+
+.mobile-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-normal);
+}
+
+.mobile-submenu.open {
+  max-height: 500px;
+}
+
+/* ============================================
+   News Grid Modes
+   ============================================ */
+
+/* Mosaic Mode */
+.news-grid-mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.news-grid-mosaic .news-item:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* Clean Grid Mode */
+.news-grid-clean {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .news-grid-clean {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* List Mode */
+.news-grid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.news-grid-list .news-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.news-grid-list .news-item-image {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 768px) {
+  .news-grid-mosaic {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  
+  .news-grid-mosaic .news-item:first-child {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
