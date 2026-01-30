@@ -45,8 +45,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       navy: '#002266',
     },
     logos: {
-      horizontal: 'https://dfi.no/media/logo/dfi-logo.png',
-      vertical: 'https://dfi.no/media/logo/dfi-logo.png',
+      horizontal: '/clubs/dfi/DFI_Logo.png',
+      vertical: '/clubs/dfi/DFI_Logo.png',
     },
   },
 
@@ -64,8 +64,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       navy: '#004d26',
     },
     logos: {
-      horizontal: 'https://kolbotnil.no/media/logo/kolbotn-logo.png',
-      vertical: 'https://kolbotnil.no/media/logo/kolbotn-logo.png',
+      horizontal: '/clubs/kolbotn/Kolbotn-Logo.png',
+      vertical: '/clubs/kolbotn/Kolbotn-Logo.png',
     },
   },
 
@@ -83,8 +83,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       navy: '#990000',
     },
     logos: {
-      horizontal: 'https://honefossbk.no/media/logo/hbk-logo.png',
-      vertical: 'https://honefossbk.no/media/logo/hbk-logo.png',
+      horizontal: '/clubs/honefoss/logo-2.png',
+      vertical: '/clubs/honefoss/logo-2.png',
     },
   },
 
@@ -102,8 +102,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       navy: '#000066',
     },
     logos: {
-      horizontal: 'https://ulkisa.no/media/logo/ulkisa-logo.png',
-      vertical: 'https://ulkisa.no/media/logo/ulkisa-logo.png',
+      horizontal: '/clubs/ulkisa/Ullkisa-Logo.png',
+      vertical: '/clubs/ulkisa/Ullkisa-Logo.png',
     },
   },
 ];

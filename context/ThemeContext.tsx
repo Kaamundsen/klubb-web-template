@@ -152,16 +152,47 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [clubContent, setClubContent] = useState<ClubContent>(() => getClubContent(getInitialClub().id));
   const [template, setTemplateState] = useState<TemplateVersion>('v2');
   const [newsViewMode, setNewsViewMode] = useState<NewsViewMode>('mosaic');
-  const [newsLayout, setNewsLayout] = useState<NewsLayout>('mosaic');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // Last newsLayout fra localStorage ved oppstart
+  const [newsLayout, setNewsLayout] = useState<NewsLayout>(() => {
+    const initialClub = getInitialClub();
+    const savedKey = `klubb-settings-${initialClub.id}`;
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.newsLayout) return data.newsLayout;
+      } catch (e) { /* ignorer */ }
+    }
+    return 'mosaic';
+  });
+  
+  // Last isDarkMode fra localStorage ved oppstart
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const initialClub = getInitialClub();
+    const savedKey = `klubb-settings-${initialClub.id}`;
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (typeof data.isDarkMode === 'boolean') return data.isDarkMode;
+      } catch (e) { /* ignorer */ }
+    }
+    return true; // Standard: dark mode
+  });
   const [isColorsSwapped, setIsColorsSwapped] = useState(false);
   const [scrapedContent, setScrapedContent] = useState<ScrapedContent | null>(null);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   
-  // Stil-innstillinger med standardverdier
+  // Stil-innstillinger med standardverdier (laster fra localStorage om tilgjengelig)
   const [styleSettings, setStyleSettings] = useState<StyleSettings>(() => {
     const initialClub = getInitialClub();
-    return {
+    
+    // Sjekk om det finnes lagrede innstillinger for denne klubben
+    const savedKey = `klubb-settings-${initialClub.id}`;
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
+    
+    const defaultSettings: StyleSettings = {
       cardRadius: 16,
       buttonRadius: 12,
       moduleRadius: 24,
@@ -204,6 +235,20 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       bodyFont: 'inter',
       bodyWeight: 400,
     };
+    
+    // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.styleSettings) {
+          return { ...defaultSettings, ...data.styleSettings };
+        }
+      } catch (e) {
+        console.error('Kunne ikke laste lagrede innstillinger:', e);
+      }
+    }
+    
+    return defaultSettings;
   });
   
   const updateStyleSettings = useCallback((newSettings: Partial<StyleSettings>) => {
@@ -360,17 +405,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     injectThemeVariables(club, isColorsSwapped, styleSettings, isDarkMode);
   }, [club, isColorsSwapped, styleSettings, isDarkMode, injectThemeVariables]);
   
-  // Oppdater stil-innstillinger når klubb endres
-  useEffect(() => {
-    setStyleSettings(prev => ({
-      ...prev,
-      primary1: club.colors.primary,
-      primary2: club.colors.dark || '#1a1a1a',
-      accent1: club.colors.accent,
-      accent2: club.colors.accentLight || club.colors.accent,
-      moduleHeadingColor: club.colors.primary,
-    }));
-  }, [club]);
+  // Merk: Stil-innstillinger oppdateres nå i setClub-funksjonen
+  // for å unngå at lagrede innstillinger overskrives
   
   // Funksjon for å bytte farger
   const swapColors = useCallback(() => {
@@ -401,11 +437,47 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [club.id]);
 
   const setClub = useCallback((clubId: string) => {
+    // Lagre innstillinger for gjeldende klubb FØR vi bytter
+    const currentKey = `klubb-settings-${club.id}`;
+    const currentData = {
+      styleSettings,
+      newsLayout,
+      isDarkMode,
+    };
+    localStorage.setItem(currentKey, JSON.stringify(currentData));
+    
+    // Bytt til ny klubb
     const newClub = getClubById(clubId);
     setClubState(newClub);
     setClubContent(getClubContent(clubId));
     setTemplateState(newClub.template);
-  }, []);
+    
+    // Last innstillinger for den nye klubben
+    const newKey = `klubb-settings-${clubId}`;
+    const saved = localStorage.getItem(newKey);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.styleSettings) {
+          setStyleSettings(prev => ({ ...prev, ...data.styleSettings }));
+        }
+        if (data.newsLayout) setNewsLayout(data.newsLayout);
+        if (typeof data.isDarkMode === 'boolean') setIsDarkMode(data.isDarkMode);
+      } catch (e) {
+        console.error('Kunne ikke laste innstillinger:', e);
+      }
+    } else {
+      // Ingen lagrede innstillinger - bruk klubbens standard farger
+      setStyleSettings(prev => ({
+        ...prev,
+        primary1: newClub.colors.primary,
+        primary2: newClub.colors.dark || '#1a1a1a',
+        accent1: newClub.colors.accent,
+        accent2: newClub.colors.accentLight || newClub.colors.accent,
+        moduleHeadingColor: newClub.colors.primary,
+      }));
+    }
+  }, [club.id, styleSettings, newsLayout, isDarkMode]);
 
   const setTemplate = useCallback((newTemplate: TemplateVersion) => {
     setTemplateState(newTemplate);
