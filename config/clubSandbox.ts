@@ -26,8 +26,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       textOnAccent: '#007935', // Grønn tekst på gul bakgrunn
     },
     logos: {
-      horizontal: '/assets/msfotball-logo.svg',
-      vertical: '/assets/msfotball-logo.svg',
+      horizontal: '/clubs/msfotball/logo.svg',
+      vertical: '/clubs/msfotball/logo.svg',
     },
   },
 

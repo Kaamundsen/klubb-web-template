@@ -42,8 +42,8 @@ export const MASTER_CONFIG: ClubConfig = {
   template: 'v2',
   colors: MASTER_COLORS,
   logos: {
-    horizontal: '/logos/klubbnettside-horizontal.svg',
-    vertical: '/logos/klubbnettside-vertical.svg',
+    horizontal: '/clubs/master/logo-white.svg',
+    vertical: '/clubs/master/logo-white.svg',
   },
 };
 

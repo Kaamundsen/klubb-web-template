@@ -5,13 +5,16 @@ import { useTheme } from '../hooks/useTheme';
 
 // Klubb-spesifikk logo komponent
 const ClubLogo: React.FC<{ club: any; dark?: boolean }> = ({ club, dark }) => {
-  // Hvis klubben har definert logo, bruk den
-  if (club.logos?.horizontal && club.id !== 'master') {
+  const [logoError, setLogoError] = React.useState(false);
+  
+  // Hvis klubben har definert logo og den ikke har feilet, bruk den
+  if (club.logos?.horizontal && !logoError) {
     return (
       <img 
         src={club.logos.horizontal} 
         alt={club.name}
         className="h-12 w-auto"
+        onError={() => setLogoError(true)}
       />
     );
   }
