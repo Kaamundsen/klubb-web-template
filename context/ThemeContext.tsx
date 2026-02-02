@@ -8,7 +8,10 @@ export type NewsViewMode = 'mosaic' | 'grid' | 'list';
 export type NewsLayout = 'mosaic' | 'featured' | 'twoCol' | 'threeCol' | 'list';
 export type FontFamily = 'inter' | 'roboto' | 'poppins' | 'montserrat' | 'opensans' | 'lato' | 'nunito' | 'raleway';
 export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
-export type HeroHeadingStyle = 'white-accent' | 'primary-accent';
+
+// Hero innstillinger
+export type HeroColorOption = 'white' | 'primary' | 'accent';
+export type HeroOverlayColor = 'primary' | 'accent' | 'none';
 
 // Stil-innstillinger
 export type SectionTopStyle = 'flat' | 'rounded' | 'wave' | 'angle';
@@ -66,8 +69,11 @@ export interface StyleSettings {
   bodyFont: FontFamily;
   bodyWeight: FontWeight;
   
-  // Hero-overskrift stil
-  heroHeadingStyle: HeroHeadingStyle;
+  // Hero innstillinger
+  heroLine1Color: HeroColorOption;  // Farge på første linje (DIN KLUBB,)
+  heroLine2Color: HeroColorOption;  // Farge på andre linje (DIN STOLTHET)
+  heroOverlayColor: HeroOverlayColor;  // Farget overlay på bildet
+  heroOverlayOpacity: number;  // 0-100
 }
 
 interface ThemeContextType {
@@ -238,8 +244,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       headingWeight: 900,
       bodyFont: 'inter',
       bodyWeight: 400,
-      // Hero-overskrift stil
-      heroHeadingStyle: 'white-accent',
+      // Hero innstillinger
+      heroLine1Color: 'white',
+      heroLine2Color: 'accent',
+      heroOverlayColor: 'primary',
+      heroOverlayOpacity: 90,
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier

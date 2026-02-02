@@ -92,13 +92,15 @@ const Hero: React.FC = () => {
             e.currentTarget.src = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
           }}
         />
-        {/* Brand-tinted overlay - bruker CSS-variabler */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to top right, color-mix(in srgb, var(--color-primary) 90%, transparent), color-mix(in srgb, var(--color-dark) 70%, transparent), transparent)`
-          }}
-        />
+        {/* Brand-tinted overlay - bruker innstillinger */}
+        {styleSettings.heroOverlayColor !== 'none' && (
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to top right, color-mix(in srgb, var(--color-${styleSettings.heroOverlayColor === 'primary' ? 'primary' : 'accent'}) ${styleSettings.heroOverlayOpacity}%, transparent), color-mix(in srgb, var(--color-dark) 70%, transparent), transparent)`
+            }}
+          />
+        )}
         <div 
           className="absolute inset-0"
           style={{
@@ -141,17 +143,30 @@ const Hero: React.FC = () => {
               fontVariationSettings: 'normal',
             }}
           >
-            {styleSettings.heroHeadingStyle === 'primary-accent' ? (
-              <>
-                <span style={{ color: 'var(--color-primary)' }}>DIN KLUBB,</span><br/>
-                <span className="text-glow" style={{ color: 'var(--color-accent)' }}>DIN STOLTHET</span>
-              </>
-            ) : (
-              <>
-                <span className="text-white">DIN KLUBB,</span><br/>
-                <span className="text-glow" style={{ color: 'var(--color-accent)' }}>DIN STOLTHET</span>
-              </>
-            )}
+            <span 
+              style={{ 
+                color: styleSettings.heroLine1Color === 'white' 
+                  ? '#ffffff' 
+                  : styleSettings.heroLine1Color === 'primary' 
+                    ? 'var(--color-primary)' 
+                    : 'var(--color-accent)' 
+              }}
+            >
+              DIN KLUBB,
+            </span>
+            <br/>
+            <span 
+              className="text-glow" 
+              style={{ 
+                color: styleSettings.heroLine2Color === 'white' 
+                  ? '#ffffff' 
+                  : styleSettings.heroLine2Color === 'primary' 
+                    ? 'var(--color-primary)' 
+                    : 'var(--color-accent)' 
+              }}
+            >
+              DIN STOLTHET
+            </span>
           </h1>
           
           <p className="text-xl text-gray-200 mb-12 max-w-xl leading-relaxed font-medium">

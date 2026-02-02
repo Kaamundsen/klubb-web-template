@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
-import { NewsLayout, FontFamily, FontWeight, HeroHeadingStyle } from '../context/ThemeContext';
+import { NewsLayout, FontFamily, FontWeight, HeroColorOption, HeroOverlayColor } from '../context/ThemeContext';
 
 // SVG Icons
 const Icons = {
@@ -326,35 +326,70 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Hero overskrift stil */}
+            {/* Hero innstillinger */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-[9px] uppercase">Hero:</span>
+              <span className="text-gray-400 text-[9px] uppercase">Linje 1:</span>
               <select
-                value={styleSettings.heroHeadingStyle || 'white-accent'}
-                onChange={(e) => updateStyleSettings({ heroHeadingStyle: e.target.value as HeroHeadingStyle })}
+                value={styleSettings.heroLine1Color || 'white'}
+                onChange={(e) => updateStyleSettings({ heroLine1Color: e.target.value as HeroColorOption })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
-                <option value="white-accent" className="bg-gray-900">Hvit + Accent</option>
-                <option value="primary-accent" className="bg-gray-900">Primary + Accent</option>
+                <option value="white" className="bg-gray-900">Hvit</option>
+                <option value="primary" className="bg-gray-900">Hovedfarge</option>
+                <option value="accent" className="bg-gray-900">Støttefarge</option>
               </select>
             </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Linje 2:</span>
+              <select
+                value={styleSettings.heroLine2Color || 'accent'}
+                onChange={(e) => updateStyleSettings({ heroLine2Color: e.target.value as HeroColorOption })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="white" className="bg-gray-900">Hvit</option>
+                <option value="primary" className="bg-gray-900">Hovedfarge</option>
+                <option value="accent" className="bg-gray-900">Støttefarge</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Filter:</span>
+              <select
+                value={styleSettings.heroOverlayColor || 'primary'}
+                onChange={(e) => updateStyleSettings({ heroOverlayColor: e.target.value as HeroOverlayColor })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="primary" className="bg-gray-900">Hovedfarge</option>
+                <option value="accent" className="bg-gray-900">Støttefarge</option>
+                <option value="none" className="bg-gray-900">Ingen</option>
+              </select>
+            </div>
+            
+            <Slider 
+              label="Filter %" 
+              value={styleSettings.heroOverlayOpacity || 90} 
+              min={0} 
+              max={100} 
+              onChange={(v) => updateStyleSettings({ heroOverlayOpacity: v })} 
+            />
           </div>
         )}
 
         {/* FARGER */}
         {activeTab === 'farger' && (
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Hovedfarger */}
+            {/* Klubbfarger */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Hoved:</span>
-              <ColorPicker label="1" color={styleSettings.primary1} onChange={(c) => updateStyleSettings({ primary1: c })} presets={colorPresets} />
-              <ColorPicker label="2" color={styleSettings.primary2} onChange={(c) => updateStyleSettings({ primary2: c })} presets={colorPresets} />
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Klubb:</span>
+              <ColorPicker label="Primær" color={styleSettings.primary1} onChange={(c) => updateStyleSettings({ primary1: c })} presets={colorPresets} />
+              <ColorPicker label="Sekundær" color={styleSettings.accent1} onChange={(c) => updateStyleSettings({ accent1: c })} presets={colorPresets} />
             </div>
             
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Støtte:</span>
-              <ColorPicker label="1" color={styleSettings.accent1} onChange={(c) => updateStyleSettings({ accent1: c })} presets={colorPresets} />
-              <ColorPicker label="2" color={styleSettings.accent2} onChange={(c) => updateStyleSettings({ accent2: c })} presets={colorPresets} />
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Bakgrunn:</span>
+              <ColorPicker label="Mørk" color={styleSettings.primary2} onChange={(c) => updateStyleSettings({ primary2: c })} presets={colorPresets} />
+              <ColorPicker label="Lys" color={styleSettings.accent2} onChange={(c) => updateStyleSettings({ accent2: c })} presets={colorPresets} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
