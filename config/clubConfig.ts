@@ -42,8 +42,8 @@ export const MASTER_CONFIG: ClubConfig = {
   template: 'v2',
   colors: MASTER_COLORS,
   logos: {
-    horizontal: '/clubs/master/logo-white.svg',
-    vertical: '/clubs/master/logo-white.svg',
+    horizontal: '/clubs/master/logo-horizontal-white.svg',
+    vertical: '/clubs/master/logo-vertical-white.svg',
   },
 };
 

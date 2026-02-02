@@ -4,28 +4,33 @@ import { NAV_ITEMS } from '../constants';
 import { useTheme } from '../hooks/useTheme';
 
 // Klubb-spesifikk logo komponent
-const ClubLogo: React.FC<{ club: any; dark?: boolean }> = ({ club, dark }) => {
+const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean }> = ({ club, dark, isScrolled }) => {
   const [logoError, setLogoError] = React.useState(false);
   
-  // Hvis klubben har definert logo og den ikke har feilet, bruk den
+  // For master bruker vi alltid den innebygde SVG-logoen
+  if (club.id === 'master') {
+    return <Logo dark={dark} isScrolled={isScrolled} />;
+  }
+  
+  // For andre klubber, bruk deres logo-fil
   if (club.logos?.horizontal && !logoError) {
     return (
       <img 
         src={club.logos.horizontal} 
         alt={club.name}
-        className="h-12 w-auto"
+        className={`w-auto transition-all duration-300 ${isScrolled ? 'h-10' : 'h-14'}`}
         onError={() => setLogoError(true)}
       />
     );
   }
   
   // Fallback til standard Klubbnettside-logo
-  return <Logo dark={dark} />;
+  return <Logo dark={dark} isScrolled={isScrolled} />;
 };
 
 // Standard Klubbnettside logo
-const Logo = ({ dark }: { dark?: boolean }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="349" height="94" viewBox="0 0 349 94" className="h-[54px] w-auto">
+const Logo = ({ dark, isScrolled }: { dark?: boolean; isScrolled?: boolean }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="349" height="94" viewBox="0 0 349 94" className={`w-auto transition-all duration-300 ${isScrolled ? 'h-[42px]' : 'h-[64px]'}`}>
     <g id="Klubbnettside-Logo_Hvit_v2" transform="translate(-697 -269)">
       <g id="Group_55" data-name="Group 55" transform="translate(-3652.274 -5213.86)">
         <g id="Group_1" data-name="Group 1" transform="translate(4438.274 5509.86)">
@@ -169,7 +174,7 @@ const TopNav: React.FC = () => {
           {/* Logo (Left) - Klubb-spesifikk */}
           <div className="flex-shrink-0">
             <div className="cursor-pointer inline-block">
-              <ClubLogo club={club} dark={isDarkMode || !isScrolled} />
+              <ClubLogo club={club} dark={isDarkMode || !isScrolled} isScrolled={isScrolled} />
             </div>
           </div>
 

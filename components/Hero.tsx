@@ -6,7 +6,10 @@ const VerticalLogo = () => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 260 182" 
-    className="w-full h-auto max-w-[400px] drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+    width="520" 
+    height="364"
+    style={{ minWidth: '520px', minHeight: '364px' }}
+    className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
   >
     <g id="Klubbnettside-Logo_Hvit_v1" transform="translate(-1380 -33)">
       <g id="Group_67" data-name="Group 67" transform="translate(-3058.274 -5334.416)">
@@ -46,16 +49,22 @@ const VerticalLogo = () => (
 
 // Klubb-spesifikk flytende logo
 const FloatingLogo: React.FC<{ club: any }> = ({ club }) => {
-  // Hvis klubben har definert logo, bruk den
+  // For master bruker vi alltid den store inline SVG-logoen
+  if (club.id === 'master') {
+    return <VerticalLogo />;
+  }
+  
+  // For andre klubber, bruk deres logo-fil
   if (club.logos?.vertical) {
     return (
       <img 
         src={club.logos.vertical} 
         alt={club.name}
-        className="w-full max-w-[350px] h-auto drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
-        onError={(e) => {
-          // Hvis bilde ikke laster, skjul det (fallback håndteres av inline SVG i parent)
-          e.currentTarget.style.display = 'none';
+        className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+        style={{ 
+          width: '400px',
+          height: 'auto',
+          maxWidth: '100%',
         }}
       />
     );
@@ -171,8 +180,8 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Vertical Logo (Right Side) - Klubb-spesifikk flytende logo */}
-        <div className="hidden lg:flex lg:col-span-3 justify-center items-center overflow-hidden">
-           <div className="relative animate-float w-full max-w-[400px]">
+        <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
+           <div className="relative animate-float w-full flex justify-center">
               <div className="flex items-center justify-center">
                 <FloatingLogo club={club} />
               </div>
