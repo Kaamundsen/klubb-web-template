@@ -45,8 +45,8 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
       navy: '#002266',
     },
     logos: {
-      horizontal: '/clubs/dfi/DFI_Logo.png',
-      vertical: '/clubs/dfi/DFI_Logo.png',
+      horizontal: '/clubs/dfi/DFI_Logo-horisontal.png',
+      vertical: '/clubs/dfi/DFI_Logo-vertikal.png',
     },
   },
 
