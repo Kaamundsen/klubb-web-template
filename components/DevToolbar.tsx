@@ -367,11 +367,12 @@ const DevToolbar: React.FC = () => {
             </div>
             
             <Slider 
-              label="Filter %" 
+              label="Filter" 
               value={styleSettings.heroOverlayOpacity || 90} 
               min={0} 
               max={100} 
-              onChange={(v) => updateStyleSettings({ heroOverlayOpacity: v })} 
+              onChange={(v) => updateStyleSettings({ heroOverlayOpacity: v })}
+              suffix="%"
             />
           </div>
         )}
