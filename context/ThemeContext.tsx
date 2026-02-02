@@ -8,6 +8,7 @@ export type NewsViewMode = 'mosaic' | 'grid' | 'list';
 export type NewsLayout = 'mosaic' | 'featured' | 'twoCol' | 'threeCol' | 'list';
 export type FontFamily = 'inter' | 'roboto' | 'poppins' | 'montserrat' | 'opensans' | 'lato' | 'nunito' | 'raleway';
 export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
+export type HeroHeadingStyle = 'white-accent' | 'primary-accent';
 
 // Stil-innstillinger
 export type SectionTopStyle = 'flat' | 'rounded' | 'wave' | 'angle';
@@ -64,6 +65,9 @@ export interface StyleSettings {
   headingWeight: FontWeight;
   bodyFont: FontFamily;
   bodyWeight: FontWeight;
+  
+  // Hero-overskrift stil
+  heroHeadingStyle: HeroHeadingStyle;
 }
 
 interface ThemeContextType {
@@ -234,6 +238,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       headingWeight: 900,
       bodyFont: 'inter',
       bodyWeight: 400,
+      // Hero-overskrift stil
+      heroHeadingStyle: 'white-accent',
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier

@@ -75,7 +75,7 @@ const FloatingLogo: React.FC<{ club: any }> = ({ club }) => {
 };
 
 const Hero: React.FC = () => {
-  const { club } = useTheme();
+  const { club, styleSettings } = useTheme();
   
   // Hero-seksjonen bruker alltid mal-designet med standard bakgrunnsbilde
   const heroImage = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
@@ -130,10 +130,10 @@ const Hero: React.FC = () => {
           </div>
           
           <h1 
-            className="uppercase mb-10 text-white hero-heading"
+            className="uppercase mb-10 hero-heading"
             style={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: club.id === 'msfotball' ? 'clamp(40px, 7vw, 80px)' : 'clamp(56px, 10vw, 112px)',
+              fontSize: 'clamp(56px, 10vw, 112px)',
               fontWeight: 900,
               letterSpacing: '-0.05em',
               lineHeight: '1',
@@ -141,14 +141,14 @@ const Hero: React.FC = () => {
               fontVariationSettings: 'normal',
             }}
           >
-            {club.id === 'msfotball' ? (
+            {styleSettings.heroHeadingStyle === 'primary-accent' ? (
               <>
-                <span style={{ color: 'var(--color-primary)' }}>SAMHOLD, GLEDE,</span><br/>
-                <span className="text-glow" style={{ color: 'var(--color-accent)' }}>UTVIKLING OG STOLTHET</span>
+                <span style={{ color: 'var(--color-primary)' }}>DIN KLUBB,</span><br/>
+                <span className="text-glow" style={{ color: 'var(--color-accent)' }}>DIN STOLTHET</span>
               </>
             ) : (
               <>
-                DIN KLUBB,<br/>
+                <span className="text-white">DIN KLUBB,</span><br/>
                 <span className="text-glow" style={{ color: 'var(--color-accent)' }}>DIN STOLTHET</span>
               </>
             )}

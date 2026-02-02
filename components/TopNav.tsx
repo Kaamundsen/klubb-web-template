@@ -197,13 +197,32 @@ const TopNav: React.FC = () => {
                 </div>
                 
                 {item.hasSubmenu && (
-                  <div className="absolute top-[80%] left-1/2 -translate-x-1/2 w-64 bg-white dark:bg-brand-blue shadow-2xl rounded-2xl overflow-visible submenu-enter transition-all duration-300 border border-gray-100 dark:border-white/10">
+                  <div 
+                    className="absolute top-[80%] left-1/2 -translate-x-1/2 w-64 shadow-2xl overflow-visible submenu-enter transition-all duration-300"
+                    style={{
+                      backgroundColor: 'var(--card-background)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: 'var(--radius-card)',
+                    }}
+                  >
                     <div className="p-1.5">
                       {item.submenu.map((sub: any, sIdx: number) => (
                         <div key={sIdx} className="relative group/nested">
                           <a 
                             href={sub.href} 
-                            className="flex items-center justify-between px-5 py-3 text-[11px] font-black uppercase tracking-widest text-brand-blue dark:text-white hover:bg-brand-red hover:text-white transition-colors rounded-xl mb-0.5 last:mb-0"
+                            className="flex items-center justify-between px-5 py-3 text-[11px] font-black uppercase tracking-widest transition-colors mb-0.5 last:mb-0"
+                            style={{ 
+                              color: 'var(--color-text)',
+                              borderRadius: 'var(--radius-card)',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                              e.currentTarget.style.color = 'var(--color-text-on-accent)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = 'var(--color-text)';
+                            }}
                           >
                             {sub.label}
                             {sub.hasNested && (
@@ -212,13 +231,32 @@ const TopNav: React.FC = () => {
                           </a>
                           
                           {sub.hasNested && (
-                            <div className="absolute left-[95%] top-0 ml-1 w-56 bg-white dark:bg-brand-blue shadow-2xl rounded-2xl overflow-hidden opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300 border border-gray-100 dark:border-white/10">
+                            <div 
+                              className="absolute left-[95%] top-0 ml-1 w-56 shadow-2xl overflow-hidden opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300"
+                              style={{
+                                backgroundColor: 'var(--card-background)',
+                                border: '1px solid var(--card-border)',
+                                borderRadius: 'var(--radius-card)',
+                              }}
+                            >
                                <div className="p-1.5">
                                  {sub.items.map((nested: any, nIdx: number) => (
                                    <a 
                                       key={nIdx}
                                       href={nested.href}
-                                      className="block px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-brand-blue dark:text-white hover:bg-brand-red hover:text-white transition-colors rounded-xl mb-0.5 last:mb-0"
+                                      className="block px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors mb-0.5 last:mb-0"
+                                      style={{ 
+                                        color: 'var(--color-text)',
+                                        borderRadius: 'var(--radius-card)',
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                                        e.currentTarget.style.color = 'var(--color-text-on-accent)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'transparent';
+                                        e.currentTarget.style.color = 'var(--color-text)';
+                                      }}
                                    >
                                      {nested.label}
                                    </a>
@@ -250,11 +288,12 @@ const TopNav: React.FC = () => {
             </button>
 
             <button 
-              className="text-[12px] font-black uppercase px-10 py-4 rounded-2xl hover:scale-105 transition-all shadow-xl whitespace-nowrap"
+              className="text-[12px] font-black uppercase px-10 py-4 hover:scale-105 transition-all shadow-xl whitespace-nowrap"
               style={{ 
                 background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 boxShadow: `0 10px 40px -10px var(--color-accent)`,
                 color: 'var(--color-text-on-accent)',
+                borderRadius: 'var(--radius-button)',
               }}
             >
               Bli medlem
@@ -303,10 +342,11 @@ const TopNav: React.FC = () => {
           {/* Mobile CTA */}
           <div className="px-6 pt-8">
             <button 
-              className="w-full text-[12px] font-black uppercase py-4 rounded-2xl transition-all shadow-xl"
+              className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
               style={{ 
                 background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 color: 'var(--color-text-on-accent)',
+                borderRadius: 'var(--radius-button)',
               }}
             >
               Bli medlem

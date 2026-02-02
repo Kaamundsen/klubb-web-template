@@ -52,12 +52,13 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
           />
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-3 left-3">
             <span 
-              className="text-[6px] px-1.5 py-0.5 rounded uppercase font-bold"
+              className="text-[10px] px-3 rounded uppercase font-bold inline-flex items-center"
               style={{ 
                 backgroundColor: 'var(--color-accent)',
                 color: 'var(--color-text-on-accent)',
+                height: '24px',
               }}
             >
               {item.categories[0]}
@@ -102,14 +103,15 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
         />
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {item.categories.map((cat, idx) => (
             <span 
               key={idx} 
-              className="text-[6px] px-1.5 py-0.5 rounded uppercase font-black"
+              className="text-[10px] px-3 rounded uppercase font-black inline-flex items-center"
               style={{ 
                 backgroundColor: idx === 0 ? 'var(--color-accent)' : 'var(--color-primary)',
                 color: idx === 0 ? 'var(--color-text-on-accent)' : 'var(--color-text-on-primary)',
+                height: '24px',
               }}
             >
               {cat}

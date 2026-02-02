@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
-import { NewsLayout, FontFamily, FontWeight } from '../context/ThemeContext';
+import { NewsLayout, FontFamily, FontWeight, HeroHeadingStyle } from '../context/ThemeContext';
 
 // SVG Icons
 const Icons = {
@@ -321,6 +321,21 @@ const DevToolbar: React.FC = () => {
               >
                 <option value="flat" className="bg-gray-900">Rett</option>
                 <option value="rounded" className="bg-gray-900">Avrundet</option>
+              </select>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Hero overskrift stil */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Hero:</span>
+              <select
+                value={styleSettings.heroHeadingStyle || 'white-accent'}
+                onChange={(e) => updateStyleSettings({ heroHeadingStyle: e.target.value as HeroHeadingStyle })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="white-accent" className="bg-gray-900">Hvit + Accent</option>
+                <option value="primary-accent" className="bg-gray-900">Primary + Accent</option>
               </select>
             </div>
           </div>
