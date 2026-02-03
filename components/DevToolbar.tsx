@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
 import { NewsLayout, FontFamily, FontWeight, HeroColorOption, HeroOverlayColor } from '../context/ThemeContext';
+import { generateDarkBackground, generateGradientLight } from '../utils/colorUtils';
 import DocsModal from './DocsModal';
 
 // SVG Icons
@@ -16,6 +17,7 @@ const Icons = {
   close: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
   folder: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>,
   docs: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
+  auto: <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
 };
 
 // Layout ikoner
@@ -181,22 +183,32 @@ const DevToolbar: React.FC = () => {
 
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'stil' | 'farger' | 'tekst' | 'import'>('stil');
+  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'import'>('klubb');
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
   const [showDocs, setShowDocs] = useState(false);
 
   const colorPresets = [
-    { color: styleSettings.primary1, label: 'Hoved 1' },
-    { color: styleSettings.primary2, label: 'Hoved 2' },
-    { color: styleSettings.accent1, label: 'Støtte 1' },
-    { color: styleSettings.accent2, label: 'Støtte 2' },
+    { color: styleSettings.primary1, label: 'Primær' },
+    { color: styleSettings.accent1, label: 'Sekundær' },
+    { color: styleSettings.primary2, label: 'Mørk bakgrunn' },
+    { color: styleSettings.accent2, label: 'Gradient-lys' },
     { color: '#ffffff', label: 'Hvit' },
     { color: '#f9fafb', label: 'Lys grå' },
     { color: '#111827', label: 'Mørk' },
     { color: '#000000', label: 'Sort' },
   ];
+
+  // Auto-generer støttefarger basert på primær- og sekundærfarge
+  const handleAutoGenerateSupportColors = () => {
+    const darkBg = generateDarkBackground(styleSettings.primary1);
+    const gradientLight = generateGradientLight(styleSettings.accent1);
+    updateStyleSettings({
+      primary2: darkBg,
+      accent2: gradientLight,
+    });
+  };
 
   const handleScrape = async () => {
     if (!scrapeUrl) return;
@@ -248,7 +260,7 @@ const DevToolbar: React.FC = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
-            {(['stil', 'farger', 'tekst', 'import'] as const).map((tab) => (
+            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'import'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -293,12 +305,41 @@ const DevToolbar: React.FC = () => {
 
       {/* Content */}
       <div className="px-4 py-3">
-        {/* STIL */}
-        {activeTab === 'stil' && (
+        {/* KLUBB - Primær/Sekundær farger + Støttefarger */}
+        {activeTab === 'klubb' && (
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Klubbfarger */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Klubbfarger:</span>
+              <ColorPicker label="Primær" color={styleSettings.primary1} onChange={(c) => updateStyleSettings({ primary1: c })} presets={colorPresets} />
+              <ColorPicker label="Sekundær" color={styleSettings.accent1} onChange={(c) => updateStyleSettings({ accent1: c })} presets={colorPresets} />
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Støttefarger */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Støtte:</span>
+              <ColorPicker label="Mørk bg" color={styleSettings.primary2} onChange={(c) => updateStyleSettings({ primary2: c })} presets={colorPresets} />
+              <ColorPicker label="Gradient" color={styleSettings.accent2} onChange={(c) => updateStyleSettings({ accent2: c })} presets={colorPresets} />
+              <button
+                onClick={handleAutoGenerateSupportColors}
+                className="flex items-center gap-1 px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[9px] font-medium transition-all"
+                title="Auto-generer støttefarger basert på primær og sekundær"
+              >
+                {Icons.auto}
+                <span>Auto</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* LAYOUT - Nyhetsgrid og avrunding */}
+        {activeTab === 'layout' && (
           <div className="flex items-center gap-6 flex-wrap">
             {/* Layout */}
             <div className="flex items-center gap-1">
-              <span className="text-gray-400 text-[9px] uppercase mr-1">Layout:</span>
+              <span className="text-gray-400 text-[9px] uppercase mr-1">Nyhetsgrid:</span>
               {LAYOUT_OPTIONS.map((opt) => (
                 <button
                   key={opt.id}
@@ -312,15 +353,21 @@ const DevToolbar: React.FC = () => {
             <div className="w-px h-6 bg-white/20" />
             
             {/* Avrunding */}
-            <Slider label="Kort" value={styleSettings.cardRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ cardRadius: v })} />
-            <Slider label="Knapp" value={styleSettings.buttonRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ buttonRadius: v })} />
-            <Slider label="Modul" value={styleSettings.moduleRadius} min={0} max={48} onChange={(v) => updateStyleSettings({ moduleRadius: v })} />
-            
-            <div className="w-px h-6 bg-white/20" />
-            
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Avrunding:</span>
+              <Slider label="Kort" value={styleSettings.cardRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ cardRadius: v })} />
+              <Slider label="Knapp" value={styleSettings.buttonRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ buttonRadius: v })} />
+              <Slider label="Modul" value={styleSettings.moduleRadius} min={0} max={48} onChange={(v) => updateStyleSettings({ moduleRadius: v })} />
+            </div>
+          </div>
+        )}
+
+        {/* HERO - Hero innstillinger */}
+        {activeTab === 'hero' && (
+          <div className="flex items-center gap-6 flex-wrap">
             {/* Seksjon-topp stil */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-[9px] uppercase">Topp:</span>
+              <span className="text-gray-400 text-[9px] uppercase">Seksjon-topp:</span>
               <select
                 value={styleSettings.sectionTopStyle || 'flat'}
                 onChange={(e) => updateStyleSettings({ sectionTopStyle: e.target.value as any })}
@@ -333,7 +380,7 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Hero innstillinger */}
+            {/* Hero tekst-farger */}
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Linje 1:</span>
               <select
@@ -342,8 +389,8 @@ const DevToolbar: React.FC = () => {
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="white" className="bg-gray-900">Hvit</option>
-                <option value="primary" className="bg-gray-900">Hovedfarge</option>
-                <option value="accent" className="bg-gray-900">Støttefarge</option>
+                <option value="primary" className="bg-gray-900">Primærfarge</option>
+                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
               </select>
             </div>
             
@@ -355,11 +402,14 @@ const DevToolbar: React.FC = () => {
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="white" className="bg-gray-900">Hvit</option>
-                <option value="primary" className="bg-gray-900">Hovedfarge</option>
-                <option value="accent" className="bg-gray-900">Støttefarge</option>
+                <option value="primary" className="bg-gray-900">Primærfarge</option>
+                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
               </select>
             </div>
             
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Hero filter */}
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Filter:</span>
               <select
@@ -367,14 +417,14 @@ const DevToolbar: React.FC = () => {
                 onChange={(e) => updateStyleSettings({ heroOverlayColor: e.target.value as HeroOverlayColor })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
-                <option value="primary" className="bg-gray-900">Hovedfarge</option>
-                <option value="accent" className="bg-gray-900">Støttefarge</option>
+                <option value="primary" className="bg-gray-900">Primærfarge</option>
+                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
                 <option value="none" className="bg-gray-900">Ingen</option>
               </select>
             </div>
             
             <Slider 
-              label="Filter" 
+              label="Styrke" 
               value={styleSettings.heroOverlayOpacity || 90} 
               min={0} 
               max={100} 
@@ -384,35 +434,20 @@ const DevToolbar: React.FC = () => {
           </div>
         )}
 
-        {/* FARGER */}
-        {activeTab === 'farger' && (
+        {/* BAKGRUNN - Lys/mørk modus bakgrunner */}
+        {activeTab === 'bakgrunn' && (
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Klubbfarger */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Klubb:</span>
-              <ColorPicker label="Primær" color={styleSettings.primary1} onChange={(c) => updateStyleSettings({ primary1: c })} presets={colorPresets} />
-              <ColorPicker label="Sekundær" color={styleSettings.accent1} onChange={(c) => updateStyleSettings({ accent1: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Bakgrunn:</span>
-              <ColorPicker label="Mørk" color={styleSettings.primary2} onChange={(c) => updateStyleSettings({ primary2: c })} presets={colorPresets} />
-              <ColorPicker label="Lys" color={styleSettings.accent2} onChange={(c) => updateStyleSettings({ accent2: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
             {/* Tekstfarge */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Tekst:</span>
               <ColorPicker 
-                label="Lys" 
+                label="Lysmodus" 
                 color={styleSettings.lightTextColor || '#111827'} 
                 onChange={(c) => updateStyleSettings({ lightTextColor: c })} 
                 presets={colorPresets} 
               />
               <ColorPicker 
-                label="Mørk" 
+                label="Mørkmodus" 
                 color={styleSettings.darkTextColor || '#f9fafb'} 
                 onChange={(c) => updateStyleSettings({ darkTextColor: c })} 
                 presets={colorPresets} 
@@ -441,7 +476,7 @@ const DevToolbar: React.FC = () => {
             
             {/* Bakgrunner - viser basert på editMode */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">{editMode === 'light' ? 'Lys' : 'Mørk'}:</span>
+              <span className="text-gray-500 text-[9px] uppercase mr-1">{editMode === 'light' ? 'Lysmodus' : 'Mørkmodus'}:</span>
               <ColorPicker 
                 label="Seksjon" 
                 color={editMode === 'light' ? styleSettings.lightSectionBackground : styleSettings.darkSectionBackground} 
@@ -471,6 +506,8 @@ const DevToolbar: React.FC = () => {
                 presets={colorPresets}
               />
             </div>
+            
+            <div className="w-px h-6 bg-white/20" />
             
             <ColorPicker 
               label="Modul-tittel" 
