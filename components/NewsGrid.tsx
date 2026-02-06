@@ -150,7 +150,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
 };
 
 const NewsGrid: React.FC = () => {
-  const { scrapedContent, clubContent, newsLayout } = useTheme();
+  const { scrapedContent, clubContent, newsLayout, styleSettings } = useTheme();
   
   // Bruk scraped artikler hvis tilgjengelig, ellers klubb-spesifikt innhold
   // Alltid 6 nyheter som standard
@@ -260,7 +260,7 @@ const NewsGrid: React.FC = () => {
         <div className="flex items-center gap-4">
           <div 
             className="w-1.5 h-8 rounded-full"
-            style={{ backgroundColor: 'var(--color-accent)' }}
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor === 'primary' ? 'primary' : 'accent'})` }}
           />
           <h2 
             className="text-3xl font-black uppercase tracking-tight"

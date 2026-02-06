@@ -128,7 +128,7 @@ const TopNav: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileItems, setOpenMobileItems] = useState<string[]>([]);
-  const { isDarkMode, toggleDarkMode, club } = useTheme();
+  const { isDarkMode, toggleDarkMode, club, styleSettings } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -290,9 +290,15 @@ const TopNav: React.FC = () => {
             <button 
               className="text-[12px] font-black uppercase px-10 py-4 hover:scale-105 transition-all shadow-xl whitespace-nowrap"
               style={{ 
-                background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                boxShadow: `0 10px 40px -10px var(--color-accent)`,
-                color: 'var(--color-text-on-accent)',
+                background: styleSettings.ctaButtonColor === 'primary'
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
+                boxShadow: styleSettings.ctaButtonColor === 'primary'
+                  ? `0 10px 40px -10px var(--color-primary)`
+                  : `0 10px 40px -10px var(--color-accent)`,
+                color: styleSettings.ctaButtonColor === 'primary'
+                  ? 'var(--color-text-on-primary)'
+                  : 'var(--color-text-on-accent)',
                 borderRadius: 'var(--radius-button)',
               }}
             >
@@ -344,8 +350,12 @@ const TopNav: React.FC = () => {
             <button 
               className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
               style={{ 
-                background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                color: 'var(--color-text-on-accent)',
+                background: styleSettings.ctaButtonColor === 'primary'
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
+                color: styleSettings.ctaButtonColor === 'primary'
+                  ? 'var(--color-text-on-primary)'
+                  : 'var(--color-text-on-accent)',
                 borderRadius: 'var(--radius-button)',
               }}
             >

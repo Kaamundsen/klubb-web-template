@@ -353,9 +353,45 @@ const DevToolbar: React.FC = () => {
                 value={styleSettings.heroTaglineText || ''}
                 onChange={(e) => updateStyleSettings({ heroTaglineText: e.target.value })}
                 placeholder="Skriv inn motto/tagline..."
-                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px] w-48 placeholder:text-white/40"
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px] w-40 placeholder:text-white/40"
                 disabled={!styleSettings.heroTaglineVisible}
               />
+              <select
+                value={styleSettings.heroTaglineColor || 'secondary'}
+                onChange={(e) => updateStyleSettings({ heroTaglineColor: e.target.value as 'primary' | 'secondary' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+                disabled={!styleSettings.heroTaglineVisible}
+              >
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+              </select>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Aksentfarge-valg */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">CTA-knapp:</span>
+              <select
+                value={styleSettings.ctaButtonColor || 'secondary'}
+                onChange={(e) => updateStyleSettings({ ctaButtonColor: e.target.value as 'primary' | 'secondary' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Nyhetsstolpe:</span>
+              <select
+                value={styleSettings.newsBarColor || 'secondary'}
+                onChange={(e) => updateStyleSettings({ newsBarColor: e.target.value as 'primary' | 'secondary' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+              </select>
             </div>
           </div>
         )}

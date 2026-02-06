@@ -78,6 +78,11 @@ export interface StyleSettings {
   // Tagline/motto innstillinger
   heroTaglineText: string;  // Teksten som vises øverst i hero (f.eks. klubbmotto)
   heroTaglineVisible: boolean;  // Om tagline skal vises eller ikke
+  heroTaglineColor: 'primary' | 'secondary';  // Farge på tagline
+  
+  // Aksentfarge-valg for ulike elementer
+  ctaButtonColor: 'primary' | 'secondary';  // Farge på CTA-knapper (gradient)
+  newsBarColor: 'primary' | 'secondary';  // Farge på stolpen foran "Siste nytt"
 }
 
 interface ThemeContextType {
@@ -256,6 +261,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       // Tagline/motto
       heroTaglineText: 'Støtt din lokale idrett i dag',
       heroTaglineVisible: true,
+      heroTaglineColor: 'secondary',
+      // Aksentfarge-valg
+      ctaButtonColor: 'secondary',
+      newsBarColor: 'secondary',
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier

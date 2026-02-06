@@ -115,18 +115,18 @@ const Hero: React.FC = () => {
             <div 
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
               style={{
-                backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+                backgroundColor: `color-mix(in srgb, var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'}) 10%, transparent)`,
                 borderWidth: '1px',
-                borderColor: 'color-mix(in srgb, var(--color-accent) 20%, transparent)'
+                borderColor: `color-mix(in srgb, var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'}) 20%, transparent)`
               }}
             >
               <span 
                 className="w-2 h-2 rounded-full animate-pulse"
-                style={{ backgroundColor: 'var(--color-accent)' }}
+                style={{ backgroundColor: `var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'})` }}
               />
               <p 
                 className="font-bold uppercase tracking-[0.2em] text-[10px]"
-                style={{ color: 'var(--color-accent)' }}
+                style={{ color: `var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'})` }}
               >
                 {styleSettings.heroTaglineText}
               </p>
@@ -179,9 +179,15 @@ const Hero: React.FC = () => {
             <button 
               className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
-                background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                boxShadow: `0 25px 50px -12px var(--color-accent)`,
-                color: 'var(--color-text-on-accent)',
+                background: styleSettings.ctaButtonColor === 'primary' 
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
+                boxShadow: styleSettings.ctaButtonColor === 'primary'
+                  ? `0 25px 50px -12px var(--color-primary)`
+                  : `0 25px 50px -12px var(--color-accent)`,
+                color: styleSettings.ctaButtonColor === 'primary' 
+                  ? 'var(--color-text-on-primary)' 
+                  : 'var(--color-text-on-accent)',
                 borderRadius: 'var(--radius-button)',
               }}
             >
