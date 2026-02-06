@@ -374,14 +374,29 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Aksentfarge-valg */}
+            {/* CTA-knapp farger (hovedfarge → gradient) */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">CTA-knapp:</span>
               <select
                 value={styleSettings.ctaButtonColor || 'secondary'}
                 onChange={(e) => updateStyleSettings({ ctaButtonColor: e.target.value as ColorChoice })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+                title="Hovedfarge"
               >
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
+              </select>
+              <span className="text-gray-500 text-[9px]">→</span>
+              <select
+                value={styleSettings.ctaGradientColor || 'auto'}
+                onChange={(e) => updateStyleSettings({ ctaGradientColor: e.target.value as ColorChoice | 'auto' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+                title="Gradient-farge"
+              >
+                <option value="auto" className="bg-gray-900">Auto (lysere)</option>
                 <option value="primary" className="bg-gray-900">Primær</option>
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>

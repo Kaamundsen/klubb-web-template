@@ -105,6 +105,7 @@ export interface StyleSettings {
   
   // Hvilken farge skal brukes på ulike elementer
   ctaButtonColor: ColorChoice;
+  ctaGradientColor: ColorChoice | 'auto';  // Gradient-farge for CTA-knapper ('auto' = lysere variant av hovedfarge)
   newsBarColor: ColorChoice;
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
@@ -300,6 +301,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       
       // ===== ELEMENT-FARGER =====
       ctaButtonColor: 'secondary',
+      ctaGradientColor: 'auto',
       newsBarColor: 'secondary',
     };
     
