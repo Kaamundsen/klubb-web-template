@@ -99,13 +99,6 @@ const getColorVarName = (colorChoice: string): string => {
   }
 };
 
-// Hjelpefunksjon for å få gradient-farge (auto = lysere variant av hovedfarge)
-const getGradientColor = (gradientChoice: string, mainColor: string): string => {
-  if (gradientChoice === 'auto') {
-    return `var(${getColorVarName(mainColor)}-light)`;
-  }
-  return getColorVar(gradientChoice);
-};
 
 const Hero: React.FC = () => {
   const { club, styleSettings } = useTheme();
@@ -203,7 +196,7 @@ const Hero: React.FC = () => {
             <button 
               className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
-                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, ${getGradientColor(styleSettings.ctaGradientColor, styleSettings.ctaButtonColor)} 100%)`,
+                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, ${styleSettings.ctaGradientColor} 100%)`,
                 boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
                 color: '#ffffff',
                 borderRadius: 'var(--radius-button)',

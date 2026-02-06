@@ -105,7 +105,7 @@ export interface StyleSettings {
   
   // Hvilken farge skal brukes på ulike elementer
   ctaButtonColor: ColorChoice;
-  ctaGradientColor: ColorChoice | 'auto';  // Gradient-farge for CTA-knapper ('auto' = lysere variant av hovedfarge)
+  ctaGradientColor: string;  // Fri gradient-farge for CTA-knapper
   newsBarColor: ColorChoice;
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
@@ -301,7 +301,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       
       // ===== ELEMENT-FARGER =====
       ctaButtonColor: 'secondary',
-      ctaGradientColor: 'auto',
+      ctaGradientColor: initialClub.colors.accentLight || '#ff6b8a',
       newsBarColor: 'secondary',
     };
     
