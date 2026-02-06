@@ -336,14 +336,6 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Gradient-farge for knapper */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Gradient:</span>
-              <ColorPicker label="Knappgradient" color={styleSettings.gradientColor} onChange={(c) => updateStyleSettings({ gradientColor: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
             {/* Tagline/Motto */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Motto:</span>
