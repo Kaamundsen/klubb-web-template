@@ -193,7 +193,7 @@ const Hero: React.FC = () => {
             <button 
               className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
-                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, var(${getColorVarName(styleSettings.ctaButtonColor)}-light) 100%)`,
+                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, var(--color-gradient) 100%)`,
                 boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
                 color: '#ffffff',
                 borderRadius: 'var(--radius-button)',

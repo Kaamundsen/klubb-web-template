@@ -290,7 +290,7 @@ const TopNav: React.FC = () => {
             <button 
               className="text-[12px] font-black uppercase px-10 py-4 hover:scale-105 transition-all shadow-xl whitespace-nowrap"
               style={{ 
-                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-${styleSettings.ctaButtonColor}-light) 100%)`,
+                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-gradient) 100%)`,
                 boxShadow: `0 10px 40px -10px var(--color-${styleSettings.ctaButtonColor})`,
                 color: '#ffffff',
                 borderRadius: 'var(--radius-button)',
@@ -344,7 +344,7 @@ const TopNav: React.FC = () => {
             <button 
               className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
               style={{ 
-                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-${styleSettings.ctaButtonColor}-light) 100%)`,
+                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-gradient) 100%)`,
                 color: '#ffffff',
                 borderRadius: 'var(--radius-button)',
               }}

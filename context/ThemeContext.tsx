@@ -29,8 +29,8 @@ export interface StyleSettings {
   supportColor1: string;     // Første støttefarge
   supportColor2: string;     // Andre støttefarge
   
-  // Mørk modus bakgrunn (separat fra andre farger)
-  darkModeBackground: string;
+  // Gradient-farge for knapper (lysere variant)
+  gradientColor: string;
   
   // ===== LAYOUT =====
   
@@ -245,7 +245,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       secondaryColor: initialClub.colors.accent,
       supportColor1: initialClub.colors.accentLight || initialClub.colors.accent,
       supportColor2: initialClub.colors.dark || '#1a1a1a',
-      darkModeBackground: initialClub.colors.dark || '#0b0e14',
+      gradientColor: initialClub.colors.accentLight || '#ff6b8a',
       
       // ===== LAYOUT =====
       cardRadius: 16,
@@ -396,7 +396,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     root.style.setProperty('--color-support1', support1);
     root.style.setProperty('--color-support2', support2);
     
-    // Gradient-varianter (lysere versjoner for knapper etc.)
+    // Gradient-farge (kan velges separat for knapper)
+    root.style.setProperty('--color-gradient', styles.gradientColor);
+    
+    // Gradient-varianter (lysere versjoner - auto-generert)
     root.style.setProperty('--color-primary-light', `color-mix(in srgb, ${primary} 70%, white)`);
     root.style.setProperty('--color-secondary-light', `color-mix(in srgb, ${secondary} 70%, white)`);
     root.style.setProperty('--color-support1-light', `color-mix(in srgb, ${support1} 70%, white)`);
@@ -433,8 +436,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       root.style.setProperty('--card-background', styles.darkCardBackground);
       root.style.setProperty('--section-background', styles.darkSectionBackground);
       root.style.setProperty('--color-text', styles.darkTextColor);
-      // Mørk modus base-farge
-      root.style.setProperty('--dark-mode-bg', styles.darkModeBackground);
     } else {
       root.style.setProperty('--page-background', styles.lightPageBackground);
       root.style.setProperty('--news-background', styles.lightNewsBackground);

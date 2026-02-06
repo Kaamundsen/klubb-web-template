@@ -100,17 +100,17 @@ const NextMatch = () => {
         <button 
           className="py-4 text-[12px] font-black uppercase tracking-widest border-r transition-colors"
           style={{ 
-            backgroundColor: 'var(--color-accent)',
-            color: 'var(--color-text-on-accent)',
-            borderColor: 'color-mix(in srgb, var(--color-text-on-accent) 20%, transparent)',
+            backgroundColor: 'var(--color-secondary)',
+            color: '#ffffff',
+            borderColor: 'rgba(255,255,255,0.2)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = 'var(--color-text-on-primary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent)';
-            e.currentTarget.style.color = 'var(--color-text-on-accent)';
+            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
         >
           Alle kamper
@@ -118,16 +118,16 @@ const NextMatch = () => {
         <button 
           className="py-4 text-[12px] font-black uppercase tracking-widest transition-colors"
           style={{ 
-            backgroundColor: 'var(--color-accent)',
-            color: 'var(--color-text-on-accent)',
+            backgroundColor: 'var(--color-secondary)',
+            color: '#ffffff',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = 'var(--color-text-on-primary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent)';
-            e.currentTarget.style.color = 'var(--color-text-on-accent)';
+            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
         >
           Tabellen
@@ -380,7 +380,7 @@ const SponsorLogo2 = () => (
 );
 
 const RightSidebar: React.FC = () => {
-  const { club } = useTheme();
+  const { club, styleSettings } = useTheme();
   
   const sponsors = [
     { name: 'SpareBank 1 Sør-Norge', isSvg: true, Component: SpareBank1Logo },
@@ -391,47 +391,59 @@ const RightSidebar: React.FC = () => {
     <div className="flex flex-col gap-10 py-12">
       {/* Next Match Module with Heading */}
       <div>
-        <h4 
-          className="uppercase tracking-widest ml-1 mb-2"
-          style={{ 
-            color: 'var(--module-heading-color)',
-            fontSize: 'var(--module-heading-size)',
-            fontWeight: 'var(--module-heading-weight)',
-            fontFamily: 'var(--module-heading-font)',
-          }}
-        >
-          Neste kamp
-        </h4>
+        <div className="flex items-center gap-3 mb-3">
+          <div 
+            className="w-1 h-6 rounded-full"
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
+          />
+          <h4 
+            className="uppercase tracking-widest"
+            style={{ 
+              color: 'var(--module-heading-color)',
+              fontSize: 'var(--module-heading-size)',
+              fontWeight: 'var(--module-heading-weight)',
+              fontFamily: 'var(--module-heading-font)',
+            }}
+          >
+            Neste kamp
+          </h4>
+        </div>
         <NextMatch />
       </div>
 
       {/* Action Hub */}
       <div className="flex flex-col gap-4">
-        <h4 
-          className="uppercase tracking-widest ml-1 mb-2"
-          style={{ 
-            color: 'var(--module-heading-color)',
-            fontSize: 'var(--module-heading-size)',
-            fontWeight: 'var(--module-heading-weight)',
-            fontFamily: 'var(--module-heading-font)',
-          }}
-        >
-          Snarveier
-        </h4>
+        <div className="flex items-center gap-3 mb-1">
+          <div 
+            className="w-1 h-6 rounded-full"
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
+          />
+          <h4 
+            className="uppercase tracking-widest"
+            style={{ 
+              color: 'var(--module-heading-color)',
+              fontSize: 'var(--module-heading-size)',
+              fontWeight: 'var(--module-heading-weight)',
+              fontFamily: 'var(--module-heading-font)',
+            }}
+          >
+            Snarveier
+          </h4>
+        </div>
         <button 
           className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg"
           style={{ 
             backgroundColor: 'var(--color-primary)',
-            color: 'var(--color-text-on-primary)',
+            color: '#ffffff',
             borderRadius: 'var(--radius-module)',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent)';
-            e.currentTarget.style.color = 'var(--color-text-on-accent)';
+            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = 'var(--color-text-on-primary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
         >
           <div className="flex items-center gap-4">
@@ -466,17 +478,23 @@ const RightSidebar: React.FC = () => {
           border: '1px solid var(--module-border)',
         }}
       >
-        <h3 
-          className="uppercase tracking-[0.2em] mb-8"
-          style={{ 
-            color: 'var(--module-heading-color)',
-            fontSize: 'var(--module-heading-size)',
-            fontWeight: 'var(--module-heading-weight)',
-            fontFamily: 'var(--module-heading-font)',
-          }}
-        >
-          Følg oss digitalt
-        </h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div 
+            className="w-1 h-6 rounded-full"
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
+          />
+          <h3 
+            className="uppercase tracking-[0.2em]"
+            style={{ 
+              color: 'var(--module-heading-color)',
+              fontSize: 'var(--module-heading-size)',
+              fontWeight: 'var(--module-heading-weight)',
+              fontFamily: 'var(--module-heading-font)',
+            }}
+          >
+            Følg oss digitalt
+          </h3>
+        </div>
         <div className="grid grid-cols-2 gap-4 w-full">
            <div className="aspect-square bg-[#000000] rounded-2xl flex items-center justify-center cursor-pointer hover:scale-105 transition-all group shadow-xl">
               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
@@ -489,17 +507,23 @@ const RightSidebar: React.FC = () => {
 
       {/* Main Sponsors */}
       <div className="flex flex-col gap-4">
-        <h4 
-          className="uppercase tracking-[0.2em] ml-1"
-          style={{ 
-            color: 'var(--module-heading-color)',
-            fontSize: 'var(--module-heading-size)',
-            fontWeight: 'var(--module-heading-weight)',
-            fontFamily: 'var(--module-heading-font)',
-          }}
-        >
-          Hovedsponsorer
-        </h4>
+        <div className="flex items-center gap-3 mb-1">
+          <div 
+            className="w-1 h-6 rounded-full"
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
+          />
+          <h4 
+            className="uppercase tracking-[0.2em]"
+            style={{ 
+              color: 'var(--module-heading-color)',
+              fontSize: 'var(--module-heading-size)',
+              fontWeight: 'var(--module-heading-weight)',
+              fontFamily: 'var(--module-heading-font)',
+            }}
+          >
+            Hovedsponsorer
+          </h4>
+        </div>
         {sponsors.map((s: any, idx) => (
           <div 
             key={idx} 

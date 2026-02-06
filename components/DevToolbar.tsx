@@ -334,10 +334,10 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Mørk modus bakgrunn */}
+            {/* Gradient-farge for knapper */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Mørk modus:</span>
-              <ColorPicker label="Bakgrunn" color={styleSettings.darkModeBackground} onChange={(c) => updateStyleSettings({ darkModeBackground: c })} presets={colorPresets} />
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Gradient:</span>
+              <ColorPicker label="Knappgradient" color={styleSettings.gradientColor} onChange={(c) => updateStyleSettings({ gradientColor: c })} presets={colorPresets} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
@@ -395,7 +395,7 @@ const DevToolbar: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Nyhetsstolpe:</span>
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Overskriftsstolpe:</span>
               <select
                 value={styleSettings.newsBarColor || 'secondary'}
                 onChange={(e) => updateStyleSettings({ newsBarColor: e.target.value as ColorChoice })}
