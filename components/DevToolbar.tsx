@@ -194,6 +194,7 @@ const DevToolbar: React.FC = () => {
     { color: styleSettings.secondaryColor, label: 'Sekundær' },
     { color: styleSettings.supportColor1, label: 'Støtte 1' },
     { color: styleSettings.supportColor2, label: 'Støtte 2' },
+    { color: styleSettings.supportColor3, label: 'Støtte 3' },
     { color: '#ffffff', label: 'Hvit' },
     { color: '#f9fafb', label: 'Lys grå' },
     { color: '#111827', label: 'Mørk' },
@@ -322,6 +323,7 @@ const DevToolbar: React.FC = () => {
               <span className="text-gray-500 text-[9px] uppercase mr-1">Støttefarger:</span>
               <ColorPicker label="Støtte 1" color={styleSettings.supportColor1} onChange={(c) => updateStyleSettings({ supportColor1: c })} presets={colorPresets} />
               <ColorPicker label="Støtte 2" color={styleSettings.supportColor2} onChange={(c) => updateStyleSettings({ supportColor2: c })} presets={colorPresets} />
+              <ColorPicker label="Støtte 3" color={styleSettings.supportColor3} onChange={(c) => updateStyleSettings({ supportColor3: c })} presets={colorPresets} />
               <button
                 onClick={handleAutoGenerateSupportColors}
                 className="flex items-center gap-1 px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[9px] font-medium transition-all"
@@ -374,6 +376,7 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
             </div>
             
@@ -391,6 +394,7 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
             </div>
             
@@ -405,6 +409,7 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
             </div>
           </div>
@@ -469,6 +474,7 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
             </div>
             
@@ -484,12 +490,13 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
             </div>
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Hero filter/overlay - kan velge alle 4 farger eller ingen */}
+            {/* Hero filter/overlay - kan velge alle 5 farger eller ingen */}
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Bildefilter:</span>
               <select
@@ -501,6 +508,7 @@ const DevToolbar: React.FC = () => {
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
                 <option value="none" className="bg-gray-900">Ingen</option>
               </select>
             </div>
