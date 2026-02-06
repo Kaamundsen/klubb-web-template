@@ -111,25 +111,27 @@ const Hero: React.FC = () => {
 
       <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
         <div className="lg:col-span-9">
-          <div 
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
-            style={{
-              backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
-              borderWidth: '1px',
-              borderColor: 'color-mix(in srgb, var(--color-accent) 20%, transparent)'
-            }}
-          >
-            <span 
-              className="w-2 h-2 rounded-full animate-pulse"
-              style={{ backgroundColor: 'var(--color-accent)' }}
-            />
-            <p 
-              className="font-bold uppercase tracking-[0.2em] text-[10px]"
-              style={{ color: 'var(--color-accent)' }}
+          {styleSettings.heroTaglineVisible && styleSettings.heroTaglineText && (
+            <div 
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+                borderWidth: '1px',
+                borderColor: 'color-mix(in srgb, var(--color-accent) 20%, transparent)'
+              }}
             >
-              Støtt din lokale idrett i dag
-            </p>
-          </div>
+              <span 
+                className="w-2 h-2 rounded-full animate-pulse"
+                style={{ backgroundColor: 'var(--color-accent)' }}
+              />
+              <p 
+                className="font-bold uppercase tracking-[0.2em] text-[10px]"
+                style={{ color: 'var(--color-accent)' }}
+              >
+                {styleSettings.heroTaglineText}
+              </p>
+            </div>
+          )}
           
           <h1 
             className="uppercase mb-10 hero-heading"

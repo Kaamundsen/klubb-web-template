@@ -74,6 +74,10 @@ export interface StyleSettings {
   heroLine2Color: HeroColorOption;  // Farge på andre linje (DIN STOLTHET)
   heroOverlayColor: HeroOverlayColor;  // Farget overlay på bildet
   heroOverlayOpacity: number;  // 0-100
+  
+  // Tagline/motto innstillinger
+  heroTaglineText: string;  // Teksten som vises øverst i hero (f.eks. klubbmotto)
+  heroTaglineVisible: boolean;  // Om tagline skal vises eller ikke
 }
 
 interface ThemeContextType {
@@ -249,6 +253,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       heroLine2Color: 'accent',
       heroOverlayColor: 'primary',
       heroOverlayOpacity: 90,
+      // Tagline/motto
+      heroTaglineText: 'Støtt din lokale idrett i dag',
+      heroTaglineVisible: true,
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
