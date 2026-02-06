@@ -180,7 +180,7 @@ const Hero: React.FC = () => {
               className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
                 background: styleSettings.ctaButtonColor === 'primary' 
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
                   : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 boxShadow: styleSettings.ctaButtonColor === 'primary'
                   ? `0 25px 50px -12px var(--color-primary)`

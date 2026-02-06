@@ -291,7 +291,7 @@ const TopNav: React.FC = () => {
               className="text-[12px] font-black uppercase px-10 py-4 hover:scale-105 transition-all shadow-xl whitespace-nowrap"
               style={{ 
                 background: styleSettings.ctaButtonColor === 'primary'
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
                   : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 boxShadow: styleSettings.ctaButtonColor === 'primary'
                   ? `0 10px 40px -10px var(--color-primary)`
@@ -351,7 +351,7 @@ const TopNav: React.FC = () => {
               className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
               style={{ 
                 background: styleSettings.ctaButtonColor === 'primary'
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-1) 100%)`
+                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
                   : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
                 color: styleSettings.ctaButtonColor === 'primary'
                   ? 'var(--color-text-on-primary)'
