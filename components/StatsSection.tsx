@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { useTheme } from '../hooks/useTheme';
 
 const StatsSection: React.FC = () => {
+  const { styleSettings } = useTheme();
   return (
     <section className="py-32 bg-brand-dark">
       <div className="container mx-auto px-6">
@@ -23,7 +25,10 @@ const StatsSection: React.FC = () => {
           </div>
 
           <div>
-            <div className="w-12 h-1.5 bg-brand-red rounded-full mb-8"></div>
+            <div 
+              className="w-12 h-1.5 rounded-full mb-8"
+              style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
+            />
             <h2 className="text-5xl lg:text-6xl font-black mb-10 leading-[1.1] tracking-tighter">KLUBBENS<br/>BESTE MEDSPILLER</h2>
             <p className="text-gray-400 text-lg leading-relaxed mb-8">
               Vi i <span className="text-white font-bold">Klubbnettside.no</span> brenner for idretten. Vår misjon er å forenkle hverdagen for ildsjeler, trenere og utøvere gjennom smarte digitale løsninger.

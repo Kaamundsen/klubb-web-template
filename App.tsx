@@ -49,6 +49,8 @@ const VerticalLogo = () => (
 );
 
 const App: React.FC = () => {
+  const { styleSettings } = useTheme();
+  
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-brand-dark transition-colors duration-300">
       <TopNav />
@@ -86,7 +88,7 @@ const App: React.FC = () => {
             <div>
               <div 
                 className="w-12 h-1.5 rounded-full mb-8"
-                style={{ backgroundColor: 'var(--color-accent)' }}
+                style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
               />
               <h2 className="text-6xl font-black mb-10 leading-none tracking-tighter dark:text-white uppercase">
                 <span style={{ color: 'var(--color-primary)' }} className="dark:text-white">FREMTIDENS</span>
