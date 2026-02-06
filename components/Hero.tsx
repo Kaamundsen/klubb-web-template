@@ -81,6 +81,7 @@ const getColorVar = (colorChoice: string): string => {
     case 'secondary': return 'var(--color-secondary)';
     case 'support1': return 'var(--color-support1)';
     case 'support2': return 'var(--color-support2)';
+    case 'support3': return 'var(--color-support3)';
     case 'white': return '#ffffff';
     default: return 'var(--color-secondary)';
   }
@@ -93,6 +94,7 @@ const getColorVarName = (colorChoice: string): string => {
     case 'secondary': return '--color-secondary';
     case 'support1': return '--color-support1';
     case 'support2': return '--color-support2';
+    case 'support3': return '--color-support3';
     default: return '--color-secondary';
   }
 };
