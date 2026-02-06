@@ -539,10 +539,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       // Ingen lagrede innstillinger - bruk klubbens standard farger
       setStyleSettings(prev => ({
         ...prev,
-        primary1: newClub.colors.primary,
-        primary2: newClub.colors.dark || '#1a1a1a',
-        accent1: newClub.colors.accent,
-        accent2: newClub.colors.accentLight || newClub.colors.accent,
+        primaryColor: newClub.colors.primary,
+        secondaryColor: newClub.colors.accent,
+        supportColor1: newClub.colors.accentLight || newClub.colors.accent,
+        supportColor2: newClub.colors.dark || '#1a1a1a',
+        gradientColor: newClub.colors.accentLight || '#ff6b8a',
         moduleHeadingColor: newClub.colors.primary,
       }));
     }
