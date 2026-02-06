@@ -9,14 +9,31 @@ export type NewsLayout = 'mosaic' | 'featured' | 'twoCol' | 'threeCol' | 'list';
 export type FontFamily = 'inter' | 'roboto' | 'poppins' | 'montserrat' | 'opensans' | 'lato' | 'nunito' | 'raleway';
 export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
-// Hero innstillinger
-export type HeroColorOption = 'white' | 'primary' | 'accent';
-export type HeroOverlayColor = 'primary' | 'accent' | 'none';
-
 // Stil-innstillinger
 export type SectionTopStyle = 'flat' | 'rounded' | 'wave' | 'angle';
 
+// Fargevalg for elementer - kan velge mellom de 4 hovedfargene
+export type ColorChoice = 'primary' | 'secondary' | 'support1' | 'support2';
+
+// Hero tekst-farger
+export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'support2';
+
 export interface StyleSettings {
+  // ===== FARGER =====
+  
+  // Klubbfarger (de to hovedfargene som definerer klubben)
+  primaryColor: string;      // Klubbens hovedfarge
+  secondaryColor: string;    // Klubbens andre farge
+  
+  // Støttefarger (ekstra farger for fleksibilitet)
+  supportColor1: string;     // Første støttefarge
+  supportColor2: string;     // Andre støttefarge
+  
+  // Mørk modus bakgrunn (separat fra andre farger)
+  darkModeBackground: string;
+  
+  // ===== LAYOUT =====
+  
   // Border radius (0-48px)
   cardRadius: number;
   buttonRadius: number;
@@ -25,64 +42,75 @@ export interface StyleSettings {
   // Seksjon-topp stil
   sectionTopStyle: SectionTopStyle;
   
-  // Hovedfarger (beholdes i begge modi)
-  primary1: string;
-  primary2: string;
-  accent1: string;
-  accent2: string;
+  // ===== BAKGRUNNER =====
   
   // Lysmodus bakgrunner
   lightPageBackground: string;
   lightNewsBackground: string;
   lightModuleBackground: string;
   lightCardBackground: string;
+  lightSectionBackground: string;
   
   // Mørkmodus bakgrunner
   darkPageBackground: string;
   darkNewsBackground: string;
   darkModuleBackground: string;
   darkCardBackground: string;
-  
-  // Seksjon-bakgrunn (området mellom hero og innhold)
-  lightSectionBackground: string;
   darkSectionBackground: string;
+  
+  // ===== TEKST =====
   
   // Tekstfarger
   lightTextColor: string;
   darkTextColor: string;
   
-  // Border-innstillinger
+  // ===== BORDER =====
+  
   borderColor: string;
-  borderOpacity: number; // 0-100
+  borderOpacity: number;
   cardBorderOpacity: number;
   moduleBorderOpacity: number;
   
-  // Modul-titler
+  // ===== MODUL-TITLER =====
+  
   moduleHeadingColor: string;
   moduleHeadingSize: 'xs' | 'sm' | 'md' | 'lg';
   moduleHeadingWeight: FontWeight;
   moduleHeadingFont: FontFamily;
   
-  // Fonter
+  // ===== FONTER =====
+  
   headingFont: FontFamily;
   headingWeight: FontWeight;
   bodyFont: FontFamily;
   bodyWeight: FontWeight;
   
-  // Hero innstillinger
-  heroLine1Color: HeroColorOption;  // Farge på første linje (DIN KLUBB,)
-  heroLine2Color: HeroColorOption;  // Farge på andre linje (DIN STOLTHET)
-  heroOverlayColor: HeroOverlayColor;  // Farget overlay på bildet
+  // ===== HERO INNSTILLINGER =====
+  
+  // Hero tekst
+  heroLine1Color: HeroTextColor;
+  heroLine2Color: HeroTextColor;
+  
+  // Hero overlay/filter på bildet
+  heroOverlayColor: ColorChoice | 'none';
   heroOverlayOpacity: number;  // 0-100
   
-  // Tagline/motto innstillinger
-  heroTaglineText: string;  // Teksten som vises øverst i hero (f.eks. klubbmotto)
-  heroTaglineVisible: boolean;  // Om tagline skal vises eller ikke
-  heroTaglineColor: 'primary' | 'secondary';  // Farge på tagline
+  // Tagline/motto
+  heroTaglineText: string;
+  heroTaglineVisible: boolean;
+  heroTaglineColor: ColorChoice;
   
-  // Aksentfarge-valg for ulike elementer
-  ctaButtonColor: 'primary' | 'secondary';  // Farge på CTA-knapper (gradient)
-  newsBarColor: 'primary' | 'secondary';  // Farge på stolpen foran "Siste nytt"
+  // ===== ELEMENT-FARGER =====
+  
+  // Hvilken farge skal brukes på ulike elementer
+  ctaButtonColor: ColorChoice;
+  newsBarColor: ColorChoice;
+  
+  // Legacy støtte (for bakoverkompatibilitet under migrering)
+  primary1?: string;
+  primary2?: string;
+  accent1?: string;
+  accent2?: string;
 }
 
 interface ThemeContextType {
@@ -212,57 +240,63 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
     
     const defaultSettings: StyleSettings = {
+      // ===== FARGER =====
+      primaryColor: initialClub.colors.primary,
+      secondaryColor: initialClub.colors.accent,
+      supportColor1: initialClub.colors.accentLight || initialClub.colors.accent,
+      supportColor2: initialClub.colors.dark || '#1a1a1a',
+      darkModeBackground: initialClub.colors.dark || '#0b0e14',
+      
+      // ===== LAYOUT =====
       cardRadius: 16,
       buttonRadius: 12,
       moduleRadius: 24,
-      // Seksjon-topp stil
       sectionTopStyle: 'flat' as SectionTopStyle,
-      // Hovedfarger
-      primary1: initialClub.colors.primary,
-      primary2: initialClub.colors.dark || '#1a1a1a',
-      accent1: initialClub.colors.accent,
-      accent2: initialClub.colors.accentLight || initialClub.colors.accent,
-      // Lysmodus bakgrunner
+      
+      // ===== BAKGRUNNER =====
       lightPageBackground: '#ffffff',
       lightNewsBackground: '#ffffff',
       lightModuleBackground: '#f9fafb',
       lightCardBackground: '#ffffff',
-      // Mørkmodus bakgrunner
+      lightSectionBackground: '#ffffff',
       darkPageBackground: '#0b0e14',
       darkNewsBackground: '#111827',
       darkModuleBackground: '#1f2937',
       darkCardBackground: '#1f2937',
-      // Seksjon-bakgrunn
-      lightSectionBackground: '#ffffff',
       darkSectionBackground: '#0b0e14',
-      // Tekstfarger
+      
+      // ===== TEKST =====
       lightTextColor: '#111827',
       darkTextColor: '#f9fafb',
-      // Border-innstillinger
+      
+      // ===== BORDER =====
       borderColor: '#e5e7eb',
       borderOpacity: 100,
       cardBorderOpacity: 40,
       moduleBorderOpacity: 40,
-      // Modul-titler
+      
+      // ===== MODUL-TITLER =====
       moduleHeadingColor: initialClub.colors.primary,
       moduleHeadingSize: 'xs',
       moduleHeadingWeight: 900,
       moduleHeadingFont: 'inter',
-      // Fonter
+      
+      // ===== FONTER =====
       headingFont: 'inter',
       headingWeight: 900,
       bodyFont: 'inter',
       bodyWeight: 400,
-      // Hero innstillinger
+      
+      // ===== HERO =====
       heroLine1Color: 'white',
-      heroLine2Color: 'accent',
+      heroLine2Color: 'secondary',
       heroOverlayColor: 'primary',
       heroOverlayOpacity: 90,
-      // Tagline/motto
       heroTaglineText: 'Støtt din lokale idrett i dag',
       heroTaglineVisible: true,
       heroTaglineColor: 'secondary',
-      // Aksentfarge-valg
+      
+      // ===== ELEMENT-FARGER =====
       ctaButtonColor: 'secondary',
       newsBarColor: 'secondary',
     };
@@ -349,86 +383,89 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const injectThemeVariables = useCallback((clubConfig: ClubConfig, swapped: boolean, styles: StyleSettings, darkMode: boolean) => {
     const root = document.documentElement;
     
-    // Bruk stil-innstillinger for hovedfarger
-    const primary = swapped ? styles.accent1 : styles.primary1;
-    const accent = swapped ? styles.primary1 : styles.accent1;
+    // ===== FARGER - NYE SYSTEM =====
+    // De 4 hovedfargene som kan velges for elementer
+    const primary = swapped ? styles.secondaryColor : styles.primaryColor;
+    const secondary = swapped ? styles.primaryColor : styles.secondaryColor;
+    const support1 = styles.supportColor1;
+    const support2 = styles.supportColor2;
     
-    // Lag fargevariabler basert på nye innstillinger
+    // Hovedfarger (nye, tydelige navn)
+    root.style.setProperty('--color-primary', primary);
+    root.style.setProperty('--color-secondary', secondary);
+    root.style.setProperty('--color-support1', support1);
+    root.style.setProperty('--color-support2', support2);
+    
+    // Gradient-varianter (lysere versjoner for knapper etc.)
+    root.style.setProperty('--color-primary-light', `color-mix(in srgb, ${primary} 70%, white)`);
+    root.style.setProperty('--color-secondary-light', `color-mix(in srgb, ${secondary} 70%, white)`);
+    root.style.setProperty('--color-support1-light', `color-mix(in srgb, ${support1} 70%, white)`);
+    root.style.setProperty('--color-support2-light', `color-mix(in srgb, ${support2} 70%, white)`);
+    
+    // Legacy-støtte for gamle komponenter (fases ut)
+    root.style.setProperty('--color-accent', secondary);
+    root.style.setProperty('--tw-color-primary', primary);
+    root.style.setProperty('--tw-color-accent', secondary);
+    
+    // Generer også klubb-farger for bakoverkompatibilitet
     const colors = {
       ...clubConfig.colors,
       primary: primary,
-      accent: accent,
-      accentLight: swapped ? styles.primary2 : styles.accent2,
-      dark: styles.primary2,
+      accent: secondary,
+      accentLight: support1,
+      dark: support2,
     };
-    
     const cssVars = generateCSSVariables(colors);
-    
     Object.entries(cssVars).forEach(([key, value]) => {
       root.style.setProperty(key, value);
     });
-
-    // Hovedfarger som egne variabler
-    root.style.setProperty('--color-primary-1', styles.primary1);
-    root.style.setProperty('--color-primary-2', styles.primary2);
-    root.style.setProperty('--color-accent-1', styles.accent1);
-    root.style.setProperty('--color-accent-2', styles.accent2);
     
-    // Oppdater også Tailwind-vennlige custom properties
-    root.style.setProperty('--tw-color-primary', primary);
-    root.style.setProperty('--tw-color-accent', accent);
-    
-    // Border radius variabler (px verdier)
+    // ===== LAYOUT =====
     root.style.setProperty('--radius-card', `${styles.cardRadius}px`);
     root.style.setProperty('--radius-button', `${styles.buttonRadius}px`);
     root.style.setProperty('--radius-module', `${styles.moduleRadius}px`);
     
-    // Bakgrunnsfarger basert på modus
+    // ===== BAKGRUNNER =====
     if (darkMode) {
       root.style.setProperty('--page-background', styles.darkPageBackground);
       root.style.setProperty('--news-background', styles.darkNewsBackground);
       root.style.setProperty('--module-background', styles.darkModuleBackground);
       root.style.setProperty('--card-background', styles.darkCardBackground);
+      root.style.setProperty('--section-background', styles.darkSectionBackground);
+      root.style.setProperty('--color-text', styles.darkTextColor);
+      // Mørk modus base-farge
+      root.style.setProperty('--dark-mode-bg', styles.darkModeBackground);
     } else {
       root.style.setProperty('--page-background', styles.lightPageBackground);
       root.style.setProperty('--news-background', styles.lightNewsBackground);
       root.style.setProperty('--module-background', styles.lightModuleBackground);
       root.style.setProperty('--card-background', styles.lightCardBackground);
+      root.style.setProperty('--section-background', styles.lightSectionBackground);
+      root.style.setProperty('--color-text', styles.lightTextColor);
     }
     
-    // Border-farger med opacity
-    const borderOpacity = styles.borderOpacity / 100;
-    const cardBorderOpacity = styles.cardBorderOpacity / 100;
-    const moduleBorderOpacity = styles.moduleBorderOpacity / 100;
-    
-    // Parse border color og legg til opacity
+    // ===== BORDER =====
     root.style.setProperty('--border-color', styles.borderColor);
-    root.style.setProperty('--border-opacity', String(borderOpacity));
+    root.style.setProperty('--border-opacity', String(styles.borderOpacity / 100));
     root.style.setProperty('--card-border', `color-mix(in srgb, ${styles.borderColor} ${styles.cardBorderOpacity}%, transparent)`);
     root.style.setProperty('--module-border', `color-mix(in srgb, ${styles.borderColor} ${styles.moduleBorderOpacity}%, transparent)`);
     
-    // Modul-styling
+    // ===== MODUL-STYLING =====
     root.style.setProperty('--module-heading-color', styles.moduleHeadingColor);
     root.style.setProperty('--module-heading-size', moduleHeadingSizeMap[styles.moduleHeadingSize]);
     root.style.setProperty('--module-heading-weight', String(styles.moduleHeadingWeight));
     root.style.setProperty('--module-heading-font', fontFamilyMap[styles.moduleHeadingFont]);
     
-    // Fonter
+    // ===== FONTER =====
     root.style.setProperty('--font-heading', fontFamilyMap[styles.headingFont]);
     root.style.setProperty('--font-heading-weight', String(styles.headingWeight));
     root.style.setProperty('--font-body', fontFamilyMap[styles.bodyFont]);
     root.style.setProperty('--font-body-weight', String(styles.bodyWeight));
     
-    // Seksjon-topp stil og radius
+    // ===== SEKSJON-STIL =====
     const sectionTopRadius = styles.sectionTopStyle === 'rounded' ? '4rem' : '0';
     root.style.setProperty('--section-top-style', styles.sectionTopStyle || 'flat');
     root.style.setProperty('--section-top-radius', sectionTopRadius);
-    
-    // Seksjon-bakgrunn
-    root.style.setProperty('--section-background', darkMode ? styles.darkSectionBackground : styles.lightSectionBackground);
-    
-    // Tekstfarge
-    root.style.setProperty('--color-text', darkMode ? styles.darkTextColor : styles.lightTextColor);
   }, []);
 
   // Effekt for å injisere tema ved oppstart og endring

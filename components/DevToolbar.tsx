@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
-import { NewsLayout, FontFamily, FontWeight, HeroColorOption, HeroOverlayColor } from '../context/ThemeContext';
+import { NewsLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor } from '../context/ThemeContext';
 import { generateDarkBackground, generateGradientLight } from '../utils/colorUtils';
 import DocsModal from './DocsModal';
 
@@ -190,10 +190,10 @@ const DevToolbar: React.FC = () => {
   const [showDocs, setShowDocs] = useState(false);
 
   const colorPresets = [
-    { color: styleSettings.primary1, label: 'Primær' },
-    { color: styleSettings.accent1, label: 'Sekundær' },
-    { color: styleSettings.primary2, label: 'Mørk bakgrunn' },
-    { color: styleSettings.accent2, label: 'Gradient-lys' },
+    { color: styleSettings.primaryColor, label: 'Primær' },
+    { color: styleSettings.secondaryColor, label: 'Sekundær' },
+    { color: styleSettings.supportColor1, label: 'Støtte 1' },
+    { color: styleSettings.supportColor2, label: 'Støtte 2' },
     { color: '#ffffff', label: 'Hvit' },
     { color: '#f9fafb', label: 'Lys grå' },
     { color: '#111827', label: 'Mørk' },
@@ -202,11 +202,11 @@ const DevToolbar: React.FC = () => {
 
   // Auto-generer støttefarger basert på primær- og sekundærfarge
   const handleAutoGenerateSupportColors = () => {
-    const darkBg = generateDarkBackground(styleSettings.primary1);
-    const gradientLight = generateGradientLight(styleSettings.accent1);
+    const support1 = generateGradientLight(styleSettings.secondaryColor);
+    const support2 = generateDarkBackground(styleSettings.primaryColor);
     updateStyleSettings({
-      primary2: darkBg,
-      accent2: gradientLight,
+      supportColor1: support1,
+      supportColor2: support2,
     });
   };
 
@@ -305,23 +305,23 @@ const DevToolbar: React.FC = () => {
 
       {/* Content */}
       <div className="px-4 py-3">
-        {/* KLUBB - Primær/Sekundær farger + Støttefarger */}
+        {/* KLUBB - Alle farger samlet */}
         {activeTab === 'klubb' && (
           <div className="flex items-center gap-3 flex-wrap">
             {/* Klubbfarger */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Klubbfarger:</span>
-              <ColorPicker label="Primær" color={styleSettings.primary1} onChange={(c) => updateStyleSettings({ primary1: c })} presets={colorPresets} />
-              <ColorPicker label="Sekundær" color={styleSettings.accent1} onChange={(c) => updateStyleSettings({ accent1: c })} presets={colorPresets} />
+              <ColorPicker label="Primær" color={styleSettings.primaryColor} onChange={(c) => updateStyleSettings({ primaryColor: c })} presets={colorPresets} />
+              <ColorPicker label="Sekundær" color={styleSettings.secondaryColor} onChange={(c) => updateStyleSettings({ secondaryColor: c })} presets={colorPresets} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
             
             {/* Støttefarger */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Støtte:</span>
-              <ColorPicker label="Mørk bg" color={styleSettings.primary2} onChange={(c) => updateStyleSettings({ primary2: c })} presets={colorPresets} />
-              <ColorPicker label="Gradient" color={styleSettings.accent2} onChange={(c) => updateStyleSettings({ accent2: c })} presets={colorPresets} />
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Støttefarger:</span>
+              <ColorPicker label="Støtte 1" color={styleSettings.supportColor1} onChange={(c) => updateStyleSettings({ supportColor1: c })} presets={colorPresets} />
+              <ColorPicker label="Støtte 2" color={styleSettings.supportColor2} onChange={(c) => updateStyleSettings({ supportColor2: c })} presets={colorPresets} />
               <button
                 onClick={handleAutoGenerateSupportColors}
                 className="flex items-center gap-1 px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[9px] font-medium transition-all"
@@ -330,6 +330,14 @@ const DevToolbar: React.FC = () => {
                 {Icons.auto}
                 <span>Auto</span>
               </button>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Mørk modus bakgrunn */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Mørk modus:</span>
+              <ColorPicker label="Bakgrunn" color={styleSettings.darkModeBackground} onChange={(c) => updateStyleSettings({ darkModeBackground: c })} presets={colorPresets} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
@@ -358,12 +366,14 @@ const DevToolbar: React.FC = () => {
               />
               <select
                 value={styleSettings.heroTaglineColor || 'secondary'}
-                onChange={(e) => updateStyleSettings({ heroTaglineColor: e.target.value as 'primary' | 'secondary' })}
+                onChange={(e) => updateStyleSettings({ heroTaglineColor: e.target.value as ColorChoice })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
                 disabled={!styleSettings.heroTaglineVisible}
               >
                 <option value="primary" className="bg-gray-900">Primær</option>
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
               </select>
             </div>
             
@@ -374,11 +384,13 @@ const DevToolbar: React.FC = () => {
               <span className="text-gray-500 text-[9px] uppercase mr-1">CTA-knapp:</span>
               <select
                 value={styleSettings.ctaButtonColor || 'secondary'}
-                onChange={(e) => updateStyleSettings({ ctaButtonColor: e.target.value as 'primary' | 'secondary' })}
+                onChange={(e) => updateStyleSettings({ ctaButtonColor: e.target.value as ColorChoice })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="primary" className="bg-gray-900">Primær</option>
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
               </select>
             </div>
             
@@ -386,11 +398,13 @@ const DevToolbar: React.FC = () => {
               <span className="text-gray-500 text-[9px] uppercase mr-1">Nyhetsstolpe:</span>
               <select
                 value={styleSettings.newsBarColor || 'secondary'}
-                onChange={(e) => updateStyleSettings({ newsBarColor: e.target.value as 'primary' | 'secondary' })}
+                onChange={(e) => updateStyleSettings({ newsBarColor: e.target.value as ColorChoice })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="primary" className="bg-gray-900">Primær</option>
                 <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
               </select>
             </div>
           </div>
@@ -424,7 +438,7 @@ const DevToolbar: React.FC = () => {
           </div>
         )}
 
-        {/* HERO - Hero innstillinger */}
+        {/* HERO - Hero innstillinger samlet */}
         {activeTab === 'hero' && (
           <div className="flex items-center gap-6 flex-wrap">
             {/* Seksjon-topp stil */}
@@ -447,40 +461,46 @@ const DevToolbar: React.FC = () => {
               <span className="text-gray-400 text-[9px] uppercase">Linje 1:</span>
               <select
                 value={styleSettings.heroLine1Color || 'white'}
-                onChange={(e) => updateStyleSettings({ heroLine1Color: e.target.value as HeroColorOption })}
+                onChange={(e) => updateStyleSettings({ heroLine1Color: e.target.value as HeroTextColor })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="white" className="bg-gray-900">Hvit</option>
-                <option value="primary" className="bg-gray-900">Primærfarge</option>
-                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
               </select>
             </div>
             
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Linje 2:</span>
               <select
-                value={styleSettings.heroLine2Color || 'accent'}
-                onChange={(e) => updateStyleSettings({ heroLine2Color: e.target.value as HeroColorOption })}
+                value={styleSettings.heroLine2Color || 'secondary'}
+                onChange={(e) => updateStyleSettings({ heroLine2Color: e.target.value as HeroTextColor })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
                 <option value="white" className="bg-gray-900">Hvit</option>
-                <option value="primary" className="bg-gray-900">Primærfarge</option>
-                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
               </select>
             </div>
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Hero filter */}
+            {/* Hero filter/overlay - kan velge alle 4 farger eller ingen */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-[9px] uppercase">Filter:</span>
+              <span className="text-gray-400 text-[9px] uppercase">Bildefilter:</span>
               <select
                 value={styleSettings.heroOverlayColor || 'primary'}
-                onChange={(e) => updateStyleSettings({ heroOverlayColor: e.target.value as HeroOverlayColor })}
+                onChange={(e) => updateStyleSettings({ heroOverlayColor: e.target.value as ColorChoice | 'none' })}
                 className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
               >
-                <option value="primary" className="bg-gray-900">Primærfarge</option>
-                <option value="accent" className="bg-gray-900">Sekundærfarge</option>
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="none" className="bg-gray-900">Ingen</option>
               </select>
             </div>

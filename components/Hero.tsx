@@ -74,11 +74,39 @@ const FloatingLogo: React.FC<{ club: any }> = ({ club }) => {
   return <VerticalLogo />;
 };
 
+// Hjelpefunksjon for å konvertere fargevalg til CSS-variabel
+const getColorVar = (colorChoice: string): string => {
+  switch (colorChoice) {
+    case 'primary': return 'var(--color-primary)';
+    case 'secondary': return 'var(--color-secondary)';
+    case 'support1': return 'var(--color-support1)';
+    case 'support2': return 'var(--color-support2)';
+    case 'white': return '#ffffff';
+    default: return 'var(--color-secondary)';
+  }
+};
+
+// Hjelpefunksjon for å få CSS-variabelnavn (uten var())
+const getColorVarName = (colorChoice: string): string => {
+  switch (colorChoice) {
+    case 'primary': return '--color-primary';
+    case 'secondary': return '--color-secondary';
+    case 'support1': return '--color-support1';
+    case 'support2': return '--color-support2';
+    default: return '--color-secondary';
+  }
+};
+
 const Hero: React.FC = () => {
   const { club, styleSettings } = useTheme();
   
   // Hero-seksjonen bruker alltid mal-designet med standard bakgrunnsbilde
   const heroImage = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
+  
+  // Få CSS-variabel for overlay-farge
+  const overlayColorVar = styleSettings.heroOverlayColor !== 'none' 
+    ? getColorVar(styleSettings.heroOverlayColor) 
+    : null;
   
   return (
     <section className="relative min-h-[95vh] flex items-center pt-24 overflow-hidden transition-colors duration-300">
@@ -92,19 +120,19 @@ const Hero: React.FC = () => {
             e.currentTarget.src = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
           }}
         />
-        {/* Brand-tinted overlay - bruker innstillinger */}
-        {styleSettings.heroOverlayColor !== 'none' && (
+        {/* Brand-tinted overlay - bruker valgt farge fra de 4 */}
+        {overlayColorVar && (
           <div 
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(to top right, color-mix(in srgb, var(--color-${styleSettings.heroOverlayColor === 'primary' ? 'primary' : 'accent'}) ${styleSettings.heroOverlayOpacity}%, transparent), color-mix(in srgb, var(--color-dark) 70%, transparent), transparent)`
+              background: `linear-gradient(to top right, color-mix(in srgb, ${overlayColorVar} ${styleSettings.heroOverlayOpacity}%, transparent), color-mix(in srgb, var(--color-support2) 70%, transparent), transparent)`
             }}
           />
         )}
         <div 
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-dark) 20%, transparent), var(--color-dark))`
+            background: `linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-support2) 20%, transparent), var(--color-support2))`
           }}
         />
       </div>
@@ -115,18 +143,18 @@ const Hero: React.FC = () => {
             <div 
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
               style={{
-                backgroundColor: `color-mix(in srgb, var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'}) 10%, transparent)`,
+                backgroundColor: `color-mix(in srgb, ${getColorVar(styleSettings.heroTaglineColor)} 10%, transparent)`,
                 borderWidth: '1px',
-                borderColor: `color-mix(in srgb, var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'}) 20%, transparent)`
+                borderColor: `color-mix(in srgb, ${getColorVar(styleSettings.heroTaglineColor)} 20%, transparent)`
               }}
             >
               <span 
                 className="w-2 h-2 rounded-full animate-pulse"
-                style={{ backgroundColor: `var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'})` }}
+                style={{ backgroundColor: getColorVar(styleSettings.heroTaglineColor) }}
               />
               <p 
                 className="font-bold uppercase tracking-[0.2em] text-[10px]"
-                style={{ color: `var(--color-${styleSettings.heroTaglineColor === 'primary' ? 'primary' : 'accent'})` }}
+                style={{ color: getColorVar(styleSettings.heroTaglineColor) }}
               >
                 {styleSettings.heroTaglineText}
               </p>
@@ -145,27 +173,13 @@ const Hero: React.FC = () => {
               fontVariationSettings: 'normal',
             }}
           >
-            <span 
-              style={{ 
-                color: styleSettings.heroLine1Color === 'white' 
-                  ? '#ffffff' 
-                  : styleSettings.heroLine1Color === 'primary' 
-                    ? 'var(--color-primary)' 
-                    : 'var(--color-accent)' 
-              }}
-            >
+            <span style={{ color: getColorVar(styleSettings.heroLine1Color) }}>
               DIN KLUBB,
             </span>
             <br/>
             <span 
               className="text-glow" 
-              style={{ 
-                color: styleSettings.heroLine2Color === 'white' 
-                  ? '#ffffff' 
-                  : styleSettings.heroLine2Color === 'primary' 
-                    ? 'var(--color-primary)' 
-                    : 'var(--color-accent)' 
-              }}
+              style={{ color: getColorVar(styleSettings.heroLine2Color) }}
             >
               DIN STOLTHET
             </span>
@@ -179,15 +193,9 @@ const Hero: React.FC = () => {
             <button 
               className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
               style={{
-                background: styleSettings.ctaButtonColor === 'primary' 
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
-                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                boxShadow: styleSettings.ctaButtonColor === 'primary'
-                  ? `0 25px 50px -12px var(--color-primary)`
-                  : `0 25px 50px -12px var(--color-accent)`,
-                color: styleSettings.ctaButtonColor === 'primary' 
-                  ? 'var(--color-text-on-primary)' 
-                  : 'var(--color-text-on-accent)',
+                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, var(${getColorVarName(styleSettings.ctaButtonColor)}-light) 100%)`,
+                boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
+                color: '#ffffff',
                 borderRadius: 'var(--radius-button)',
               }}
             >
@@ -211,7 +219,7 @@ const Hero: React.FC = () => {
               {/* Decorative glows focused on the logo */}
               <div 
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[120px] -z-10"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--color-accent) 15%, transparent)' }}
+                style={{ backgroundColor: 'color-mix(in srgb, var(--color-secondary) 15%, transparent)' }}
               />
               <div 
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-[100px] -z-10"

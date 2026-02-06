@@ -290,15 +290,9 @@ const TopNav: React.FC = () => {
             <button 
               className="text-[12px] font-black uppercase px-10 py-4 hover:scale-105 transition-all shadow-xl whitespace-nowrap"
               style={{ 
-                background: styleSettings.ctaButtonColor === 'primary'
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
-                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                boxShadow: styleSettings.ctaButtonColor === 'primary'
-                  ? `0 10px 40px -10px var(--color-primary)`
-                  : `0 10px 40px -10px var(--color-accent)`,
-                color: styleSettings.ctaButtonColor === 'primary'
-                  ? 'var(--color-text-on-primary)'
-                  : 'var(--color-text-on-accent)',
+                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-${styleSettings.ctaButtonColor}-light) 100%)`,
+                boxShadow: `0 10px 40px -10px var(--color-${styleSettings.ctaButtonColor})`,
+                color: '#ffffff',
                 borderRadius: 'var(--radius-button)',
               }}
             >
@@ -330,7 +324,7 @@ const TopNav: React.FC = () => {
         className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${
           isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
-        style={{ backgroundColor: 'var(--color-dark)' }}
+        style={{ backgroundColor: 'var(--color-support2)' }}
       >
         {/* Menu Content */}
         <div className="pt-24 pb-8 h-full overflow-y-auto">
@@ -350,12 +344,8 @@ const TopNav: React.FC = () => {
             <button 
               className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
               style={{ 
-                background: styleSettings.ctaButtonColor === 'primary'
-                  ? `linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)`
-                  : `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                color: styleSettings.ctaButtonColor === 'primary'
-                  ? 'var(--color-text-on-primary)'
-                  : 'var(--color-text-on-accent)',
+                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, var(--color-${styleSettings.ctaButtonColor}-light) 100%)`,
+                color: '#ffffff',
                 borderRadius: 'var(--radius-button)',
               }}
             >

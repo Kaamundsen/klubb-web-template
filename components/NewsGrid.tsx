@@ -56,8 +56,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
             <span 
               className="text-[10px] px-3 rounded uppercase font-bold inline-flex items-center"
               style={{ 
-                backgroundColor: 'var(--color-accent)',
-                color: 'var(--color-text-on-accent)',
+                backgroundColor: 'var(--color-secondary)',
+                color: '#ffffff',
                 height: '24px',
               }}
             >
@@ -109,8 +109,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
               key={idx} 
               className="text-[10px] px-3 rounded uppercase font-black inline-flex items-center"
               style={{ 
-                backgroundColor: idx === 0 ? 'var(--color-accent)' : 'var(--color-primary)',
-                color: idx === 0 ? 'var(--color-text-on-accent)' : 'var(--color-text-on-primary)',
+                backgroundColor: idx === 0 ? 'var(--color-secondary)' : 'var(--color-primary)',
+                color: '#ffffff',
                 height: '24px',
               }}
             >
@@ -123,8 +123,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
             <div 
               className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl scale-90 group-hover:scale-110 transition-transform"
               style={{ 
-                backgroundColor: 'var(--color-accent)',
-                color: 'var(--color-text-on-accent)',
+                backgroundColor: 'var(--color-secondary)',
+                color: '#ffffff',
               }}
             >
               <svg className="w-6 h-6 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -260,7 +260,7 @@ const NewsGrid: React.FC = () => {
         <div className="flex items-center gap-4">
           <div 
             className="w-1.5 h-8 rounded-full"
-            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor === 'primary' ? 'primary' : 'accent'})` }}
+            style={{ backgroundColor: `var(--color-${styleSettings.newsBarColor})` }}
           />
           <h2 
             className="text-3xl font-black uppercase tracking-tight"
@@ -287,17 +287,17 @@ const NewsGrid: React.FC = () => {
         <button 
           className="px-10 py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-xl"
           style={{ 
-            backgroundColor: 'var(--color-accent)',
-            color: 'var(--color-text-on-accent)',
+            backgroundColor: 'var(--color-secondary)',
+            color: '#ffffff',
             borderRadius: 'var(--radius-button)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = 'var(--color-text-on-primary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent)';
-            e.currentTarget.style.color = 'var(--color-text-on-accent)';
+            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+            e.currentTarget.style.color = '#ffffff';
           }}
         >
           Last inn flere
