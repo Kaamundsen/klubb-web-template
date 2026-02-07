@@ -14,6 +14,7 @@ interface DisplayArticle {
   excerpt?: string;
   image: string;
   categories: string[];
+  section?: string; // Meny-knapp (f.eks. "Klubben", "Fotball", etc.)
 }
 
 function toDisplayArticle(article: NewsArticle): DisplayArticle {
@@ -53,13 +54,27 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, st
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
           />
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 left-3 flex gap-1.5">
+            {/* Section/Menu button - følger CTA-stil */}
+            {item.section && (
+              <span 
+                className="text-[10px] px-2 rounded uppercase inline-flex items-center"
+                style={{ 
+                  backgroundColor: `var(--color-${styleSettings.ctaButtonColor})`,
+                  color: styleSettings.ctaTextColor || '#ffffff',
+                  height: '20px',
+                }}
+              >
+                {item.section}
+              </span>
+            )}
+            {/* Tag - følger tag-stil */}
             <span 
-              className="text-[10px] px-3 rounded uppercase font-bold inline-flex items-center"
+              className="text-[10px] px-2 rounded uppercase inline-flex items-center"
               style={{ 
                 backgroundColor: `var(--color-${styleSettings.tagColor || 'secondary'})`,
                 color: styleSettings.tagTextColor || '#ffffff',
-                height: '24px',
+                height: '20px',
               }}
             >
               {item.categories[0]}
@@ -104,15 +119,29 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, st
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
         />
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+          {/* Section/Menu button - følger CTA-stil */}
+          {item.section && (
+            <span 
+              className="text-[10px] px-2 rounded uppercase inline-flex items-center"
+              style={{ 
+                backgroundColor: `var(--color-${styleSettings.ctaButtonColor})`,
+                color: styleSettings.ctaTextColor || '#ffffff',
+                height: '20px',
+              }}
+            >
+              {item.section}
+            </span>
+          )}
+          {/* Tags - følger tag-stil */}
           {item.categories.map((cat, idx) => (
             <span 
               key={idx} 
-              className="text-[10px] px-3 rounded uppercase font-black inline-flex items-center"
+              className="text-[10px] px-2 rounded uppercase inline-flex items-center"
               style={{ 
                 backgroundColor: `var(--color-${styleSettings.tagColor || 'secondary'})`,
                 color: styleSettings.tagTextColor || '#ffffff',
-                height: '24px',
+                height: '20px',
               }}
             >
               {cat}
@@ -153,18 +182,23 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, st
 const NewsGrid: React.FC = () => {
   const { scrapedContent, clubContent, newsLayout, styleSettings } = useTheme();
   
+  // Seksjon-knapper for hver artikkel (meny-navigering)
+  const sectionLabels = ['Klubben', 'Nyhet', 'Fotball', 'Håndball', 'Basketball', 'Volleyball'];
+  
   // Bruk scraped artikler hvis tilgjengelig, ellers klubb-spesifikt innhold
   // Alltid 6 nyheter som standard
   const articles: DisplayArticle[] = scrapedContent?.articles?.length 
-    ? scrapedContent.articles.slice(0, 6).map(a => ({
+    ? scrapedContent.articles.slice(0, 6).map((a, idx) => ({
         id: a.id,
         title: a.title,
         image: a.image,
         categories: [a.category],
+        section: sectionLabels[idx],
       }))
-    : clubContent.articles.slice(0, 6).map(article => ({
+    : clubContent.articles.slice(0, 6).map((article, idx) => ({
         ...toDisplayArticle(article),
         excerpt: article.excerpt,
+        section: sectionLabels[idx],
       }));
 
   // Grid klasser basert på layout
