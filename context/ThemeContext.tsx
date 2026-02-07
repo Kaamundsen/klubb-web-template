@@ -139,7 +139,8 @@ export interface StyleSettings {
   // ===== MODUL-STILER =====
   
   // 6 generiske modulfarger som kan brukes på vilkårlige moduler
-  moduleStyles: ModuleStyle[];
+  moduleStyles: ModuleStyle[];      // Lysmodus
+  moduleStylesDark: ModuleStyle[];  // Mørkmodus
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
   primary1?: string;
@@ -361,6 +362,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         { backgroundColor: '', textColor: '' }, // Modul 4
         { backgroundColor: '', textColor: '' }, // Modul 5
         { backgroundColor: '', textColor: '' }, // Modul 6
+      ],
+      moduleStylesDark: [
+        { backgroundColor: '', textColor: '' }, // Modul 1 (dark)
+        { backgroundColor: '', textColor: '' }, // Modul 2 (dark)
+        { backgroundColor: '', textColor: '' }, // Modul 3 (dark)
+        { backgroundColor: '', textColor: '' }, // Modul 4 (dark)
+        { backgroundColor: '', textColor: '' }, // Modul 5 (dark)
+        { backgroundColor: '', textColor: '' }, // Modul 6 (dark)
       ],
     };
     

@@ -832,39 +832,77 @@ const DevToolbar: React.FC = () => {
 
         {/* MODUL */}
         {activeTab === 'modul' && (
-          <div className="flex items-center gap-4 flex-wrap">
-            {/* 6 generiske modulfarger */}
-            {[1, 2, 3, 4, 5, 6].map((num) => {
-              const index = num - 1;
-              const moduleStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
-              return (
-                <div key={index} className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-                  <span className="text-gray-400 text-[9px] uppercase w-12">
-                    Modul {num}
-                  </span>
-                  <ColorPicker 
-                    label="Bgr" 
-                    color={moduleStyle.backgroundColor || ''} 
-                    onChange={(c) => {
-                      const newModuleStyles = [...(styleSettings.moduleStyles || [])];
-                      newModuleStyles[index] = { ...newModuleStyles[index], backgroundColor: c };
-                      updateStyleSettings({ moduleStyles: newModuleStyles });
-                    }} 
-                    presets={colorPresets} 
-                  />
-                  <ColorPicker 
-                    label="Tekst" 
-                    color={moduleStyle.textColor || ''} 
-                    onChange={(c) => {
-                      const newModuleStyles = [...(styleSettings.moduleStyles || [])];
-                      newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
-                      updateStyleSettings({ moduleStyles: newModuleStyles });
-                    }} 
-                    presets={colorPresets} 
-                  />
-                </div>
-              );
-            })}
+          <div className="flex flex-col gap-3">
+            {/* Lysmodus */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <span className="text-gray-500 text-[9px] uppercase flex items-center gap-1">
+                {Icons.sun} Lys
+              </span>
+              {[1, 2, 3, 4, 5, 6].map((num) => {
+                const index = num - 1;
+                const moduleStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
+                return (
+                  <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+                    <span className="text-gray-400 text-[9px] w-4">{num}</span>
+                    <ColorPicker 
+                      label="Bgr" 
+                      color={moduleStyle.backgroundColor || ''} 
+                      onChange={(c) => {
+                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
+                        newModuleStyles[index] = { ...newModuleStyles[index], backgroundColor: c };
+                        updateStyleSettings({ moduleStyles: newModuleStyles });
+                      }} 
+                      presets={colorPresets} 
+                    />
+                    <ColorPicker 
+                      label="Txt" 
+                      color={moduleStyle.textColor || ''} 
+                      onChange={(c) => {
+                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
+                        newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
+                        updateStyleSettings({ moduleStyles: newModuleStyles });
+                      }} 
+                      presets={colorPresets} 
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            {/* Mørkmodus */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <span className="text-gray-500 text-[9px] uppercase flex items-center gap-1">
+                {Icons.moon} Mørk
+              </span>
+              {[1, 2, 3, 4, 5, 6].map((num) => {
+                const index = num - 1;
+                const moduleStyleDark = styleSettings.moduleStylesDark?.[index] || { backgroundColor: '', textColor: '' };
+                return (
+                  <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+                    <span className="text-gray-400 text-[9px] w-4">{num}</span>
+                    <ColorPicker 
+                      label="Bgr" 
+                      color={moduleStyleDark.backgroundColor || ''} 
+                      onChange={(c) => {
+                        const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
+                        newModuleStylesDark[index] = { ...newModuleStylesDark[index], backgroundColor: c };
+                        updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
+                      }} 
+                      presets={colorPresets} 
+                    />
+                    <ColorPicker 
+                      label="Txt" 
+                      color={moduleStyleDark.textColor || ''} 
+                      onChange={(c) => {
+                        const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
+                        newModuleStylesDark[index] = { ...newModuleStylesDark[index], textColor: c };
+                        updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
+                      }} 
+                      presets={colorPresets} 
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

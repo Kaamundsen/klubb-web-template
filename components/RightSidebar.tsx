@@ -33,8 +33,14 @@ const MSLogo = () => (
 );
 
 const NextMatch = () => {
-  const { styleSettings } = useTheme();
-  const moduleStyle = styleSettings.moduleStyles?.[0] || { backgroundColor: '', textColor: '' };
+  const { styleSettings, isDarkMode } = useTheme();
+  
+  // Hent modul 1 stil basert på lys/mørk modus
+  const lightStyle = styleSettings.moduleStyles?.[0] || { backgroundColor: '', textColor: '' };
+  const darkStyle = styleSettings.moduleStylesDark?.[0] || { backgroundColor: '', textColor: '' };
+  const moduleStyle = isDarkMode 
+    ? { backgroundColor: darkStyle.backgroundColor || lightStyle.backgroundColor, textColor: darkStyle.textColor || lightStyle.textColor }
+    : lightStyle;
   
   return (
     <div 
@@ -369,25 +375,30 @@ const SponsorLogo2 = () => (
   </svg>
 );
 
-// Grasrotandelen Logo
-const GrasrotandelenLogo = () => (
-  <svg viewBox="0 0 200 40" className="w-40 h-auto">
-    <circle cx="20" cy="20" r="18" fill="#00843D" stroke="#fff" strokeWidth="2"/>
-    <text x="20" y="26" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold">G</text>
-    <text x="115" y="28" textAnchor="middle" fill="#00843D" fontSize="18" fontWeight="600">Grasrotandelen</text>
-  </svg>
-);
-
 const RightSidebar: React.FC = () => {
-  const { styleSettings, club } = useTheme();
+  const { styleSettings, club, isDarkMode } = useTheme();
   
-  // Hent modulfarger
-  const module1 = styleSettings.moduleStyles?.[0] || { backgroundColor: '', textColor: '' };
-  const module2 = styleSettings.moduleStyles?.[1] || { backgroundColor: '', textColor: '' };
-  const module3 = styleSettings.moduleStyles?.[2] || { backgroundColor: '', textColor: '' };
-  const module4 = styleSettings.moduleStyles?.[3] || { backgroundColor: '', textColor: '' };
-  const module5 = styleSettings.moduleStyles?.[4] || { backgroundColor: '', textColor: '' };
-  const module6 = styleSettings.moduleStyles?.[5] || { backgroundColor: '', textColor: '' };
+  // Hent modulfarger basert på lys/mørk modus
+  const getModuleStyle = (index: number) => {
+    const lightStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
+    const darkStyle = styleSettings.moduleStylesDark?.[index] || { backgroundColor: '', textColor: '' };
+    
+    if (isDarkMode) {
+      // Bruk dark-stil hvis definert, ellers fall tilbake til light-stil
+      return {
+        backgroundColor: darkStyle.backgroundColor || lightStyle.backgroundColor,
+        textColor: darkStyle.textColor || lightStyle.textColor,
+      };
+    }
+    return lightStyle;
+  };
+  
+  const module1 = getModuleStyle(0);
+  const module2 = getModuleStyle(1);
+  const module3 = getModuleStyle(2);
+  const module4 = getModuleStyle(3);
+  const module5 = getModuleStyle(4);
+  const module6 = getModuleStyle(5);
   
   const sponsors = [
     { name: 'SpareBank 1 Sør-Norge', isSvg: true, Component: SpareBank1Logo },
@@ -413,7 +424,7 @@ const RightSidebar: React.FC = () => {
         <NextMatch />
       </div>
 
-      {/* ===== MODUL 2: Snarveier / Bli medlem ===== */}
+      {/* ===== MODUL 2 & 3: Snarveier (Bli medlem + Aktiviteter) ===== */}
       <div className="flex flex-col gap-4">
         <h4 
           className="uppercase tracking-widest mb-1"
@@ -426,6 +437,7 @@ const RightSidebar: React.FC = () => {
         >
           Snarveier
         </h4>
+        {/* Modul 2: Bli medlem */}
         <button 
           className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
           style={{ 
@@ -440,23 +452,9 @@ const RightSidebar: React.FC = () => {
           </div>
           <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
         </button>
-      </div>
-
-      {/* ===== MODUL 3: Aktiviteter / Påmelding iSonen ===== */}
-      <div className="flex flex-col gap-4">
-        <h4 
-          className="uppercase tracking-widest mb-1"
-          style={{ 
-            color: 'var(--module-heading-color)',
-            fontSize: 'var(--module-heading-size)',
-            fontWeight: 'var(--module-heading-weight)',
-            fontFamily: 'var(--module-heading-font)',
-          }}
-        >
-          Aktiviteter
-        </h4>
+        {/* Modul 3: Aktiviteter */}
         <button 
-          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group"
+          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
           style={{ 
             backgroundColor: module3.backgroundColor || 'var(--module-background)',
             color: module3.textColor || 'var(--color-primary)',
@@ -466,7 +464,7 @@ const RightSidebar: React.FC = () => {
         >
           <div className="flex items-center gap-4">
             <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}>🏆</span>
-            <span>Påmelding iSonen</span>
+            <span>Aktiviteter</span>
           </div>
           <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
         </button>
@@ -482,12 +480,11 @@ const RightSidebar: React.FC = () => {
         }}
       >
         {/* Grasrotandelen logo */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-full bg-[#00843D] flex items-center justify-center">
-            <span className="text-white font-bold text-lg">G</span>
-          </div>
-          <span className="text-[#00843D] font-semibold text-lg">Grasrotandelen</span>
-        </div>
+        <img 
+          src="/assets/grasrotandelen-logo.png" 
+          alt="Grasrotandelen" 
+          className="h-8 mb-4 object-contain"
+        />
         
         {/* Klubb-logo */}
         <div className="w-24 h-24 mb-4 flex items-center justify-center">
