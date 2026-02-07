@@ -401,8 +401,8 @@ const RightSidebar: React.FC = () => {
   const module6 = getModuleStyle(5);
   
   const sponsors = [
-    { name: 'SpareBank 1 Sør-Norge', isSvg: true, Component: SpareBank1Logo },
-    { name: 'Hovedsponsor 2', isSvg: true, Component: SponsorLogo2 },
+    { name: 'SpareBank 1 Oslo Akershus', logo: '/sponsors/sparebank1-oslo-akershus.svg' },
+    { name: 'Hovedsponsor 2', Component: SponsorLogo2 },
   ];
 
   return (
@@ -538,7 +538,11 @@ const RightSidebar: React.FC = () => {
             }}
           >
              <div className="max-w-[85%] group-hover:scale-110 transition-transform">
-               <s.Component />
+               {s.logo ? (
+                 <img src={s.logo} alt={s.name} className="w-full h-auto" />
+               ) : s.Component ? (
+                 <s.Component />
+               ) : null}
              </div>
           </div>
         ))}
