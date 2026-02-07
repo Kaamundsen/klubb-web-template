@@ -117,6 +117,7 @@ const ColorPicker: React.FC<{
 }> = ({ label, color, onChange, presets, borderOpacity, onBorderOpacityChange }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [hexInput, setHexInput] = useState(color);
+  const pickerRef = React.useRef<HTMLDivElement>(null);
 
   const handleHexChange = (hex: string) => {
     setHexInput(hex);
@@ -125,8 +126,34 @@ const ColorPicker: React.FC<{
     }
   };
 
+  // Lukk picker ved klikk utenfor
+  React.useEffect(() => {
+    if (!showPicker) return;
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+    
+    // Bruk timeout for å unngå at klikket som åpnet picker også lukker den
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 0);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPicker]);
+
+  // Oppdater hexInput når color endres utenfra
+  React.useEffect(() => {
+    setHexInput(color);
+  }, [color]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={pickerRef}>
       <button
         onClick={() => setShowPicker(!showPicker)}
         className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 rounded transition-all"
@@ -137,6 +164,26 @@ const ColorPicker: React.FC<{
       
       {showPicker && (
         <div className="absolute top-full left-0 mt-2 bg-gray-900 rounded-lg p-3 shadow-2xl border border-white/20 z-[10000] min-w-[200px]">
+          {/* Hex input først */}
+          <div className="flex items-center gap-2 mb-2">
+            <input
+              type="text"
+              value={hexInput}
+              onChange={(e) => handleHexChange(e.target.value)}
+              className="flex-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px] font-mono"
+              placeholder="#000000"
+            />
+          </div>
+          
+          {/* Color picker */}
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => { onChange(e.target.value); setHexInput(e.target.value); }}
+            className="w-full h-12 rounded cursor-pointer mb-2"
+          />
+          
+          {/* Presets */}
           <div className="flex gap-1 flex-wrap mb-2">
             {presets.map((preset, idx) => (
               <button
@@ -147,23 +194,6 @@ const ColorPicker: React.FC<{
                 title={preset.label}
               />
             ))}
-          </div>
-          
-          <input
-            type="color"
-            value={color}
-            onChange={(e) => { onChange(e.target.value); setHexInput(e.target.value); }}
-            className="w-full h-12 rounded cursor-pointer mb-2"
-          />
-          
-          <div className="flex items-center gap-2 mb-2">
-            <input
-              type="text"
-              value={hexInput}
-              onChange={(e) => handleHexChange(e.target.value)}
-              className="flex-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px] font-mono"
-              placeholder="#000000"
-            />
           </div>
           
           {onBorderOpacityChange !== undefined && (
@@ -182,10 +212,6 @@ const ColorPicker: React.FC<{
               </div>
             </div>
           )}
-          
-          <button onClick={() => setShowPicker(false)} className="mt-2 w-full bg-white/10 hover:bg-white/20 text-white text-[10px] py-1 rounded">
-            Lukk
-          </button>
         </div>
       )}
     </div>
