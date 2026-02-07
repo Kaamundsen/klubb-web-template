@@ -832,77 +832,72 @@ const DevToolbar: React.FC = () => {
 
         {/* MODUL */}
         {activeTab === 'modul' && (
-          <div className="flex flex-col gap-3">
-            {/* Lysmodus */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-gray-500 text-[9px] uppercase flex items-center gap-1">
-                {Icons.sun} Lys
-              </span>
-              {[1, 2, 3, 4, 5, 6].map((num) => {
-                const index = num - 1;
-                const moduleStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
-                return (
-                  <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-                    <span className="text-gray-400 text-[9px] w-4">{num}</span>
-                    <ColorPicker 
-                      label="Bgr" 
-                      color={moduleStyle.backgroundColor || ''} 
-                      onChange={(c) => {
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Modus-toggle - bytter også selve siden */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5">
+              <button 
+                onClick={() => { setEditMode('light'); if (isDarkMode) toggleDarkMode(); }}
+                className={`p-1 rounded transition-all ${!isDarkMode ? 'bg-white/20 text-white' : 'text-white/50'}`}
+                title="Lysmodus"
+              >
+                {Icons.sun}
+              </button>
+              <button 
+                onClick={() => { setEditMode('dark'); if (!isDarkMode) toggleDarkMode(); }}
+                className={`p-1 rounded transition-all ${isDarkMode ? 'bg-indigo-600 text-white' : 'text-white/50'}`}
+                title="Mørkmodus"
+              >
+                {Icons.moon}
+              </button>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Modulfarger basert på valgt modus */}
+            {[1, 2, 3, 4, 5, 6].map((num) => {
+              const index = num - 1;
+              const isLightMode = editMode === 'light';
+              const currentStyles = isLightMode ? styleSettings.moduleStyles : styleSettings.moduleStylesDark;
+              const moduleStyle = currentStyles?.[index] || { backgroundColor: '', textColor: '' };
+              
+              return (
+                <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+                  <span className="text-gray-400 text-[9px] w-4">{num}</span>
+                  <ColorPicker 
+                    label="Bgr" 
+                    color={moduleStyle.backgroundColor || ''} 
+                    onChange={(c) => {
+                      if (isLightMode) {
                         const newModuleStyles = [...(styleSettings.moduleStyles || [])];
                         newModuleStyles[index] = { ...newModuleStyles[index], backgroundColor: c };
                         updateStyleSettings({ moduleStyles: newModuleStyles });
-                      }} 
-                      presets={colorPresets} 
-                    />
-                    <ColorPicker 
-                      label="Txt" 
-                      color={moduleStyle.textColor || ''} 
-                      onChange={(c) => {
-                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
-                        newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
-                        updateStyleSettings({ moduleStyles: newModuleStyles });
-                      }} 
-                      presets={colorPresets} 
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            {/* Mørkmodus */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-gray-500 text-[9px] uppercase flex items-center gap-1">
-                {Icons.moon} Mørk
-              </span>
-              {[1, 2, 3, 4, 5, 6].map((num) => {
-                const index = num - 1;
-                const moduleStyleDark = styleSettings.moduleStylesDark?.[index] || { backgroundColor: '', textColor: '' };
-                return (
-                  <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-                    <span className="text-gray-400 text-[9px] w-4">{num}</span>
-                    <ColorPicker 
-                      label="Bgr" 
-                      color={moduleStyleDark.backgroundColor || ''} 
-                      onChange={(c) => {
+                      } else {
                         const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
                         newModuleStylesDark[index] = { ...newModuleStylesDark[index], backgroundColor: c };
                         updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
-                      }} 
-                      presets={colorPresets} 
-                    />
-                    <ColorPicker 
-                      label="Txt" 
-                      color={moduleStyleDark.textColor || ''} 
-                      onChange={(c) => {
+                      }
+                    }} 
+                    presets={colorPresets} 
+                  />
+                  <ColorPicker 
+                    label="Txt" 
+                    color={moduleStyle.textColor || ''} 
+                    onChange={(c) => {
+                      if (isLightMode) {
+                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
+                        newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
+                        updateStyleSettings({ moduleStyles: newModuleStyles });
+                      } else {
                         const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
                         newModuleStylesDark[index] = { ...newModuleStylesDark[index], textColor: c };
                         updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
-                      }} 
-                      presets={colorPresets} 
-                    />
-                  </div>
-                );
-              })}
-            </div>
+                      }
+                    }} 
+                    presets={colorPresets} 
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 
