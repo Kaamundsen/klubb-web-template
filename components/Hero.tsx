@@ -48,7 +48,7 @@ const VerticalLogo = () => (
 );
 
 // Klubb-spesifikk flytende logo
-const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, customLogo }) => {
+const FloatingLogo: React.FC<{ club: any; customLogo?: string; logoSize?: number }> = ({ club, customLogo, logoSize = 400 }) => {
   // Sjekk om customLogo er en opplastet fil (data URL)
   const isUploadedLogo = customLogo && customLogo.startsWith('data:');
   
@@ -60,7 +60,7 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '400px',
+          width: `${logoSize}px`,
           height: 'auto',
           maxWidth: '100%',
         }}
@@ -81,7 +81,7 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '400px',
+          width: `${logoSize}px`,
           height: 'auto',
           maxWidth: '100%',
         }}
@@ -239,7 +239,7 @@ const Hero: React.FC = () => {
           <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
              <div className="relative animate-float w-full flex justify-center">
                 <div className="flex items-center justify-center">
-                  <FloatingLogo club={club} customLogo={styleSettings.logoVertical} />
+                  <FloatingLogo club={club} customLogo={styleSettings.logoVertical} logoSize={styleSettings.logoVerticalSize} />
                 </div>
                 {/* Decorative glows focused on the logo */}
                 <div 

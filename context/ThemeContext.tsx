@@ -23,6 +23,7 @@ export interface StyleSettings {
   
   logoHorizontal: string;    // Horisontal logo til hovedmeny
   logoVertical: string;      // Vertikal logo til flytende hero-logo
+  logoVerticalSize: number;  // Størrelse på flytende logo (400-500px)
   logoFavicon: string;       // Favicon (symbol uten tekst)
   logoSocialMedia: string;   // Ikon for sosiale medier
   
@@ -256,6 +257,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       // ===== LOGOER (kun for opplastede logoer, tomme = bruk klubbens standard) =====
       logoHorizontal: '',
       logoVertical: '',
+      logoVerticalSize: 400,  // Standard størrelse for flytende logo
       logoFavicon: '',
       logoSocialMedia: '',
       
