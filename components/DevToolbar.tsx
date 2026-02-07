@@ -833,13 +833,14 @@ const DevToolbar: React.FC = () => {
         {/* MODUL */}
         {activeTab === 'modul' && (
           <div className="flex items-center gap-4 flex-wrap">
-            {/* Modul-navn for referanse */}
-            {['Neste kamp', 'Tabell', 'Fremtidens klubbdrift', 'Sponsor', 'Modul 5', 'Modul 6'].map((moduleName, index) => {
+            {/* 6 generiske modulfarger */}
+            {[1, 2, 3, 4, 5, 6].map((num) => {
+              const index = num - 1;
               const moduleStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
               return (
                 <div key={index} className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-                  <span className="text-gray-400 text-[9px] uppercase w-16 truncate" title={moduleName}>
-                    {index + 1}. {moduleName.split(' ')[0]}
+                  <span className="text-gray-400 text-[9px] uppercase w-12">
+                    Modul {num}
                   </span>
                   <ColorPicker 
                     label="Bgr" 

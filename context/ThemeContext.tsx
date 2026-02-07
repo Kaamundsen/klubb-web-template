@@ -138,7 +138,7 @@ export interface StyleSettings {
   
   // ===== MODUL-STILER =====
   
-  // Stil for moduler 1-6 (bakgrunn og tekstfarge)
+  // 6 generiske modulfarger som kan brukes på vilkårlige moduler
   moduleStyles: ModuleStyle[];
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
@@ -353,14 +353,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       tagColor: 'secondary',
       tagTextColor: '#ffffff',
       
-      // Modul-stiler (standardverdier: bruker primary/secondary med hvit tekst)
+      // Modul-stiler (6 generiske fargevalg som kan brukes på vilkårlige moduler)
       moduleStyles: [
-        { backgroundColor: '', textColor: '' }, // Modul 1 - Neste kamp
-        { backgroundColor: '', textColor: '' }, // Modul 2 - Tabell
-        { backgroundColor: '', textColor: '' }, // Modul 3 - Fremtidens klubbdrift
-        { backgroundColor: '', textColor: '' }, // Modul 4 - Sponsor
-        { backgroundColor: '', textColor: '' }, // Modul 5 - (Reserve)
-        { backgroundColor: '', textColor: '' }, // Modul 6 - (Reserve)
+        { backgroundColor: '', textColor: '' }, // Modul 1
+        { backgroundColor: '', textColor: '' }, // Modul 2
+        { backgroundColor: '', textColor: '' }, // Modul 3
+        { backgroundColor: '', textColor: '' }, // Modul 4
+        { backgroundColor: '', textColor: '' }, // Modul 5
+        { backgroundColor: '', textColor: '' }, // Modul 6
       ],
     };
     
