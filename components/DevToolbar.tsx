@@ -40,6 +40,72 @@ const FONT_OPTIONS: { id: FontFamily; label: string }[] = [
   { id: 'raleway', label: 'Raleway' },
 ];
 
+// Logo Uploader component
+const LogoUploader: React.FC<{
+  label: string;
+  value: string;
+  onChange: (dataUrl: string) => void;
+}> = ({ label, value, onChange }) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        onChange(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleClear = () => {
+    onChange('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
+  
+  return (
+    <div className="flex items-center gap-1">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        id={`logo-upload-${label}`}
+      />
+      <label
+        htmlFor={`logo-upload-${label}`}
+        className="flex items-center gap-1 px-2 py-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded cursor-pointer transition-all"
+        title={`Last opp ${label}`}
+      >
+        {value ? (
+          <img src={value} alt={label} className="w-5 h-5 object-contain" />
+        ) : (
+          <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        )}
+        <span className="text-[9px] text-white/70">{label}</span>
+      </label>
+      {value && (
+        <button
+          onClick={handleClear}
+          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-all"
+          title="Fjern logo"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+};
+
 // Color Picker component
 const ColorPicker: React.FC<{
   label: string;
@@ -312,40 +378,26 @@ const DevToolbar: React.FC = () => {
             {/* Logoer */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Logoer:</span>
-              <div className="flex items-center gap-1">
-                <input
-                  type="text"
-                  value={styleSettings.logoHorizontal || ''}
-                  onChange={(e) => updateStyleSettings({ logoHorizontal: e.target.value })}
-                  placeholder="Horisontal URL..."
-                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
-                  title="Horisontal logo (meny)"
-                />
-                <input
-                  type="text"
-                  value={styleSettings.logoVertical || ''}
-                  onChange={(e) => updateStyleSettings({ logoVertical: e.target.value })}
-                  placeholder="Vertikal URL..."
-                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
-                  title="Vertikal logo (flytende)"
-                />
-                <input
-                  type="text"
-                  value={styleSettings.logoFavicon || ''}
-                  onChange={(e) => updateStyleSettings({ logoFavicon: e.target.value })}
-                  placeholder="Favicon URL..."
-                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
-                  title="Favicon (symbol)"
-                />
-                <input
-                  type="text"
-                  value={styleSettings.logoSocialMedia || ''}
-                  onChange={(e) => updateStyleSettings({ logoSocialMedia: e.target.value })}
-                  placeholder="SoMe URL..."
-                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
-                  title="Sosiale medier ikon"
-                />
-              </div>
+              <LogoUploader 
+                label="Meny" 
+                value={styleSettings.logoHorizontal} 
+                onChange={(url) => updateStyleSettings({ logoHorizontal: url })} 
+              />
+              <LogoUploader 
+                label="Flytende" 
+                value={styleSettings.logoVertical} 
+                onChange={(url) => updateStyleSettings({ logoVertical: url })} 
+              />
+              <LogoUploader 
+                label="Favicon" 
+                value={styleSettings.logoFavicon} 
+                onChange={(url) => updateStyleSettings({ logoFavicon: url })} 
+              />
+              <LogoUploader 
+                label="SoMe" 
+                value={styleSettings.logoSocialMedia} 
+                onChange={(url) => updateStyleSettings({ logoSocialMedia: url })} 
+              />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
