@@ -6,7 +6,10 @@ const VerticalLogo = () => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 260 182" 
-    className="w-full max-w-[420px] h-auto drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+    width="468" 
+    height="328"
+    style={{ minWidth: '468px', minHeight: '328px' }}
+    className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
   >
     <g id="Klubbnettside-Logo_Hvit_v1" transform="translate(-1380 -33)">
       <g id="Group_67" data-name="Group 67" transform="translate(-3058.274 -5334.416)">
@@ -214,7 +217,7 @@ const Hero: React.FC = () => {
         {styleSettings.heroFloatingLogoVisible && (
           <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
              <div className="relative animate-float w-full flex justify-center">
-                <div className="flex items-center justify-center max-w-full px-4">
+                <div className="flex items-center justify-center">
                   <FloatingLogo club={club} />
                 </div>
                 {/* Decorative glows focused on the logo */}
