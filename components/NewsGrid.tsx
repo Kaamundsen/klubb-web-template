@@ -285,19 +285,12 @@ const NewsGrid: React.FC = () => {
       
       <div className="mt-16 flex justify-center">
         <button 
-          className="px-10 py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-xl"
+          className="px-10 py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-xl hover:scale-105"
           style={{ 
-            backgroundColor: 'var(--color-secondary)',
+            background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+            boxShadow: `0 10px 40px -10px var(--color-${styleSettings.ctaButtonColor})`,
             color: '#ffffff',
             borderRadius: 'var(--radius-button)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
-            e.currentTarget.style.color = '#ffffff';
           }}
         >
           Last inn flere

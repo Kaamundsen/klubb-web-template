@@ -380,7 +380,7 @@ const SponsorLogo2 = () => (
 );
 
 const RightSidebar: React.FC = () => {
-  const { club, styleSettings } = useTheme();
+  const { styleSettings } = useTheme();
   
   const sponsors = [
     { name: 'SpareBank 1 Sør-Norge', isSvg: true, Component: SpareBank1Logo },
@@ -419,19 +419,12 @@ const RightSidebar: React.FC = () => {
           Snarveier
         </h4>
         <button 
-          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg"
+          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
           style={{ 
-            backgroundColor: 'var(--color-primary)',
+            background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+            boxShadow: `0 10px 40px -10px var(--color-${styleSettings.ctaButtonColor})`,
             color: '#ffffff',
             borderRadius: 'var(--radius-module)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = '#ffffff';
           }}
         >
           <div className="flex items-center gap-4">

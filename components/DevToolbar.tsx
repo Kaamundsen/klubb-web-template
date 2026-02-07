@@ -386,6 +386,11 @@ const DevToolbar: React.FC = () => {
                 onChange={(url) => updateStyleSettings({ logoHorizontal: url })} 
               />
               <LogoUploader 
+                label="v1-lys" 
+                value={styleSettings.logoHorizontalLight || ''} 
+                onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
+              />
+              <LogoUploader 
                 label="v2" 
                 value={styleSettings.logoVertical} 
                 onChange={(url) => updateStyleSettings({ logoVertical: url })} 
@@ -428,6 +433,15 @@ const DevToolbar: React.FC = () => {
                 {Icons.auto}
                 <span>Auto</span>
               </button>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Meny-bakgrunn */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Meny bgr:</span>
+              <ColorPicker label="Lys" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
+              <ColorPicker label="Mørk" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />

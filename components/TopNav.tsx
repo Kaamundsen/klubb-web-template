@@ -4,17 +4,22 @@ import { NAV_ITEMS } from '../constants';
 import { useTheme } from '../hooks/useTheme';
 
 // Klubb-spesifikk logo komponent
-const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; customLogo?: string }> = ({ club, dark, isScrolled, customLogo }) => {
+const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; customLogo?: string; customLogoLight?: string }> = ({ club, dark, isScrolled, customLogo, customLogoLight }) => {
   const [logoError, setLogoError] = React.useState(false);
   
-  // Sjekk om customLogo er en opplastet fil (data URL)
-  const isUploadedLogo = customLogo && customLogo.startsWith('data:');
+  // Velg riktig logo basert på bakgrunn (dark = mørk bakgrunn = bruk lys logo)
+  // Når dark=true: bruk customLogo (standard/mørk bakgrunn)
+  // Når dark=false: bruk customLogoLight hvis tilgjengelig, ellers customLogo
+  const logoToUse = dark ? customLogo : (customLogoLight || customLogo);
+  
+  // Sjekk om valgt logo er en opplastet fil (data URL)
+  const isUploadedLogo = logoToUse && logoToUse.startsWith('data:');
   
   // Hvis det er en opplastet logo (data URL), bruk den
   if (isUploadedLogo && !logoError) {
     return (
       <img 
-        src={customLogo} 
+        src={logoToUse} 
         alt={club.name}
         className={`w-auto transition-all duration-300 ${isScrolled ? 'h-10' : 'h-14'}`}
         onError={() => setLogoError(true)}
@@ -182,20 +187,35 @@ const TopNav: React.FC = () => {
     );
   };
 
+  // Bestem om logoen skal være lys (for mørk bakgrunn) eller mørk (for lys bakgrunn)
+  const shouldUseDarkLogo = isScrolled && !isDarkMode; // Scrollet + lysmodus = mørk logo
+  
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? (isDarkMode ? 'nav-glass py-2' : 'nav-glass-light py-2') : 'bg-transparent py-5'}`}>
+      <nav 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-2 shadow-lg' : 'bg-transparent py-5'}`}
+        style={isScrolled ? {
+          backgroundColor: isDarkMode ? styleSettings.menuBackgroundDark : styleSettings.menuBackgroundLight,
+          backdropFilter: 'blur(12px)',
+        } : undefined}
+      >
         <div className="container mx-auto px-6 flex items-center justify-between">
           {/* Logo (Left) - Klubb-spesifikk */}
           <div className="flex-shrink-0">
             <div className="cursor-pointer inline-block">
-              <ClubLogo club={club} dark={isDarkMode || !isScrolled} isScrolled={isScrolled} customLogo={styleSettings.logoHorizontal} />
+              <ClubLogo 
+                club={club} 
+                dark={!shouldUseDarkLogo} 
+                isScrolled={isScrolled} 
+                customLogo={styleSettings.logoHorizontal}
+                customLogoLight={styleSettings.logoHorizontalLight}
+              />
             </div>
           </div>
 
           {/* Desktop Links (Centered) - Hidden on mobile */}
           <div className="hidden lg:flex flex-grow justify-center">
-            <div className={`flex items-center gap-6 ${isDarkMode || !isScrolled ? 'text-white' : 'text-brand-blue'}`}>
+            <div className={`flex items-center gap-6 ${!shouldUseDarkLogo ? 'text-white' : 'text-brand-blue'}`}>
             {NAV_ITEMS.map((item, idx) => (
               <div key={idx} className="relative group">
                 {/* The "Bridge": Padding bottom ensures the mouse remains over a valid element when moving to the menu */}
@@ -293,7 +313,7 @@ const TopNav: React.FC = () => {
           <div className="hidden lg:flex flex-shrink-0 items-center gap-5">
             <button 
               onClick={toggleDarkMode}
-              className={`p-2.5 rounded-xl transition-all ${isDarkMode || !isScrolled ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-brand-blue/5 text-brand-blue hover:bg-brand-blue/10'}`}
+              className={`p-2.5 rounded-xl transition-all ${!shouldUseDarkLogo ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-brand-blue/5 text-brand-blue hover:bg-brand-blue/10'}`}
             >
               {isDarkMode ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" /></svg>
@@ -318,7 +338,7 @@ const TopNav: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-lg transition-all ${isDarkMode || !isScrolled ? 'text-white' : 'text-brand-blue'}`}
+            className={`lg:hidden p-2 rounded-lg transition-all ${!shouldUseDarkLogo ? 'text-white' : 'text-brand-blue'}`}
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (

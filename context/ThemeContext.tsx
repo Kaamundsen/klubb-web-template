@@ -21,10 +21,16 @@ export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'su
 export interface StyleSettings {
   // ===== LOGOER =====
   
-  logoHorizontal: string;    // Horisontal logo til hovedmeny
+  logoHorizontal: string;    // Horisontal logo til hovedmeny (for mørk bakgrunn/dark mode)
+  logoHorizontalLight: string; // Horisontal logo for lys bakgrunn (hvis annen enn standard)
   logoVertical: string;      // Vertikal logo til flytende hero-logo
   logoFavicon: string;       // Favicon (symbol uten tekst)
   logoSocialMedia: string;   // Ikon for sosiale medier
+  
+  // ===== MENY-BAKGRUNN =====
+  
+  menuBackgroundLight: string;  // Bakgrunnsfarge for meny i lysmodus (når scrollet)
+  menuBackgroundDark: string;   // Bakgrunnsfarge for meny i mørkmodus (når scrollet)
   
   // ===== FARGER =====
   
@@ -255,9 +261,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const defaultSettings: StyleSettings = {
       // ===== LOGOER (kun for opplastede logoer, tomme = bruk klubbens standard) =====
       logoHorizontal: '',
+      logoHorizontalLight: '',
       logoVertical: '',
       logoFavicon: '',
       logoSocialMedia: '',
+      
+      // ===== MENY-BAKGRUNN =====
+      menuBackgroundLight: '#ffffff',
+      menuBackgroundDark: '#0b0e14',
       
       // ===== FARGER =====
       primaryColor: initialClub.colors.primary,
@@ -496,6 +507,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const sectionTopRadius = styles.sectionTopStyle === 'rounded' ? '4rem' : '0';
     root.style.setProperty('--section-top-style', styles.sectionTopStyle || 'flat');
     root.style.setProperty('--section-top-radius', sectionTopRadius);
+    
+    // ===== MENY-BAKGRUNN =====
+    root.style.setProperty('--menu-background-light', styles.menuBackgroundLight || '#ffffff');
+    root.style.setProperty('--menu-background-dark', styles.menuBackgroundDark || '#0b0e14');
   }, []);
 
   // Effekt for å injisere tema ved oppstart og endring
