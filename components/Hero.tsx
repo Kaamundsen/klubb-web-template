@@ -49,7 +49,7 @@ const VerticalLogo = () => (
 
 // Klubb-spesifikk flytende logo
 const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, customLogo }) => {
-  // Sjekk om customLogo er en opplastet fil (data URL) eller bare klubbens standard path
+  // Sjekk om customLogo er en opplastet fil (data URL)
   const isUploadedLogo = customLogo && customLogo.startsWith('data:');
   
   // Hvis det er en opplastet logo (data URL), bruk den
@@ -60,9 +60,9 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '468px',
+          width: '400px',
           height: 'auto',
-          minWidth: '468px',
+          maxWidth: '100%',
         }}
       />
     );
@@ -81,9 +81,9 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '468px',
+          width: '400px',
           height: 'auto',
-          minWidth: '468px',
+          maxWidth: '100%',
         }}
       />
     );
