@@ -155,6 +155,7 @@ interface ThemeContextType {
   saveSettings: () => void;
   loadSettings: () => void;
   exportSettings: () => string;
+  resetToClubDefaults: () => void;
   
   // Dark mode
   isDarkMode: boolean;
@@ -382,6 +383,37 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     return JSON.stringify(data, null, 2);
   }, [club.id, styleSettings, newsLayout]);
 
+  // Tilbakestill til klubbens standardinnstillinger
+  const resetToClubDefaults = useCallback(() => {
+    // Slett lagrede innstillinger for denne klubben
+    const key = `klubb-settings-${club.id}`;
+    localStorage.removeItem(key);
+    
+    // Sett standardfarger fra klubbens konfigurasjon
+    setStyleSettings(prev => ({
+      ...prev,
+      // Farger
+      primaryColor: club.colors.primary,
+      secondaryColor: club.colors.accent,
+      supportColor1: club.colors.accentLight || club.colors.accent,
+      supportColor2: club.colors.dark || '#1a1a1a',
+      supportColor3: club.colors.navy || '#092c5c',
+      supportColor4: '#ffffff',
+      gradientColor: club.colors.accentLight || '#ff6b8a',
+      moduleHeadingColor: club.colors.primary,
+      // Logoer - bruk klubbens logoer
+      logoHorizontal: club.logos?.horizontal || '',
+      logoVertical: club.logos?.vertical || '',
+      logoFavicon: '',
+      logoSocialMedia: '',
+    }));
+    
+    setNewsLayout('mosaic');
+    setIsDarkMode(true);
+    
+    console.log(`Tilbakestilt til standardinnstillinger for ${club.name}`);
+  }, [club]);
+
   // Font family mapping
   const fontFamilyMap: Record<FontFamily, string> = {
     inter: "'Inter', sans-serif",
@@ -565,7 +597,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         console.error('Kunne ikke laste innstillinger:', e);
       }
     } else {
-      // Ingen lagrede innstillinger - bruk klubbens standard farger
+      // Ingen lagrede innstillinger - bruk klubbens standard farger og logoer
       setStyleSettings(prev => ({
         ...prev,
         primaryColor: newClub.colors.primary,
@@ -576,6 +608,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         supportColor4: '#ffffff',
         gradientColor: newClub.colors.accentLight || '#ff6b8a',
         moduleHeadingColor: newClub.colors.primary,
+        // Logoer fra klubbens konfigurasjon
+        logoHorizontal: newClub.logos?.horizontal || '',
+        logoVertical: newClub.logos?.vertical || '',
+        logoFavicon: '',
+        logoSocialMedia: '',
       }));
     }
   }, [club.id, styleSettings, newsLayout, isDarkMode]);
@@ -606,6 +643,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     saveSettings,
     loadSettings,
     exportSettings,
+    resetToClubDefaults,
     isDarkMode,
     toggleDarkMode,
     swapColors,
