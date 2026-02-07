@@ -219,7 +219,7 @@ const Hero: React.FC = () => {
               style={{
                 background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, ${styleSettings.ctaGradientColor} 100%)`,
                 boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
-                color: '#ffffff',
+                color: styleSettings.ctaTextColor || '#ffffff',
                 borderRadius: 'var(--radius-button)',
               }}
             >

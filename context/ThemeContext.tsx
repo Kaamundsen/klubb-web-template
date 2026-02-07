@@ -123,6 +123,7 @@ export interface StyleSettings {
   // Hvilken farge skal brukes på ulike elementer
   ctaButtonColor: ColorChoice;
   ctaGradientColor: string;  // Fri gradient-farge for CTA-knapper
+  ctaTextColor: string;      // Tekstfarge for CTA-knapper
   newsBarColor: ColorChoice;
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
@@ -332,6 +333,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       // ===== ELEMENT-FARGER =====
       ctaButtonColor: 'secondary',
       ctaGradientColor: initialClub.colors.accentLight || '#ff6b8a',
+      ctaTextColor: '#ffffff',
       newsBarColor: 'secondary',
     };
     

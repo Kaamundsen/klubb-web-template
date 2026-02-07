@@ -500,7 +500,7 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* CTA-knapp farger (hovedfarge + gradient) */}
+            {/* CTA-knapp farger (hovedfarge + gradient + tekst) */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">CTA-knapp:</span>
               <select
@@ -515,8 +515,8 @@ const DevToolbar: React.FC = () => {
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
                 <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
-              <span className="text-gray-500 text-[9px]">Gradient:</span>
               <ColorPicker label="Gradient" color={styleSettings.ctaGradientColor} onChange={(c) => updateStyleSettings({ ctaGradientColor: c })} presets={colorPresets} />
+              <ColorPicker label="Tekst" color={styleSettings.ctaTextColor || '#ffffff'} onChange={(c) => updateStyleSettings({ ctaTextColor: c })} presets={colorPresets} />
             </div>
             
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
