@@ -19,6 +19,13 @@ export type ColorChoice = 'primary' | 'secondary' | 'support1' | 'support2' | 's
 export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'support2' | 'support3';
 
 export interface StyleSettings {
+  // ===== LOGOER =====
+  
+  logoHorizontal: string;    // Horisontal logo til hovedmeny
+  logoVertical: string;      // Vertikal logo til flytende hero-logo
+  logoFavicon: string;       // Favicon (symbol uten tekst)
+  logoSocialMedia: string;   // Ikon for sosiale medier
+  
   // ===== FARGER =====
   
   // Klubbfarger (de to hovedfargene som definerer klubben)
@@ -245,6 +252,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
     
     const defaultSettings: StyleSettings = {
+      // ===== LOGOER =====
+      logoHorizontal: initialClub.logos?.horizontal || '',
+      logoVertical: initialClub.logos?.vertical || '',
+      logoFavicon: '',
+      logoSocialMedia: '',
+      
       // ===== FARGER =====
       primaryColor: initialClub.colors.primary,
       secondaryColor: initialClub.colors.accent,

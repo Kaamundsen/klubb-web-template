@@ -306,9 +306,50 @@ const DevToolbar: React.FC = () => {
 
       {/* Content */}
       <div className="px-4 py-3">
-        {/* KLUBB - Alle farger samlet */}
+        {/* KLUBB - Logoer og farger */}
         {activeTab === 'klubb' && (
           <div className="flex items-center gap-3 flex-wrap">
+            {/* Logoer */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Logoer:</span>
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={styleSettings.logoHorizontal || ''}
+                  onChange={(e) => updateStyleSettings({ logoHorizontal: e.target.value })}
+                  placeholder="Horisontal URL..."
+                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
+                  title="Horisontal logo (meny)"
+                />
+                <input
+                  type="text"
+                  value={styleSettings.logoVertical || ''}
+                  onChange={(e) => updateStyleSettings({ logoVertical: e.target.value })}
+                  placeholder="Vertikal URL..."
+                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
+                  title="Vertikal logo (flytende)"
+                />
+                <input
+                  type="text"
+                  value={styleSettings.logoFavicon || ''}
+                  onChange={(e) => updateStyleSettings({ logoFavicon: e.target.value })}
+                  placeholder="Favicon URL..."
+                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
+                  title="Favicon (symbol)"
+                />
+                <input
+                  type="text"
+                  value={styleSettings.logoSocialMedia || ''}
+                  onChange={(e) => updateStyleSettings({ logoSocialMedia: e.target.value })}
+                  placeholder="SoMe URL..."
+                  className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[9px] w-24 placeholder:text-white/40"
+                  title="Sosiale medier ikon"
+                />
+              </div>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
             {/* Klubbfarger */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Klubbfarger:</span>
@@ -372,6 +413,35 @@ const DevToolbar: React.FC = () => {
               </select>
             </div>
             
+          </div>
+        )}
+
+        {/* LAYOUT - Nyhetsgrid og avrunding */}
+        {activeTab === 'layout' && (
+          <div className="flex items-center gap-6 flex-wrap">
+            {/* Layout */}
+            <div className="flex items-center gap-1">
+              <span className="text-gray-400 text-[9px] uppercase mr-1">Nyhetsgrid:</span>
+              {LAYOUT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setNewsLayout(opt.id)}
+                  className={`p-1.5 rounded transition-all ${newsLayout === opt.id ? 'bg-white/30 text-white' : 'bg-white/10 text-white/60 hover:bg-white/20'}`}
+                  title={opt.label}
+                >{opt.icon}</button>
+              ))}
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Avrunding */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Avrunding:</span>
+              <Slider label="Kort" value={styleSettings.cardRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ cardRadius: v })} />
+              <Slider label="Knapp" value={styleSettings.buttonRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ buttonRadius: v })} />
+              <Slider label="Modul" value={styleSettings.moduleRadius} min={0} max={48} onChange={(v) => updateStyleSettings({ moduleRadius: v })} />
+            </div>
+            
             <div className="w-px h-6 bg-white/20" />
             
             {/* CTA-knapp farger (hovedfarge + gradient) */}
@@ -405,34 +475,6 @@ const DevToolbar: React.FC = () => {
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
               </select>
-            </div>
-          </div>
-        )}
-
-        {/* LAYOUT - Nyhetsgrid og avrunding */}
-        {activeTab === 'layout' && (
-          <div className="flex items-center gap-6 flex-wrap">
-            {/* Layout */}
-            <div className="flex items-center gap-1">
-              <span className="text-gray-400 text-[9px] uppercase mr-1">Nyhetsgrid:</span>
-              {LAYOUT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => setNewsLayout(opt.id)}
-                  className={`p-1.5 rounded transition-all ${newsLayout === opt.id ? 'bg-white/30 text-white' : 'bg-white/10 text-white/60 hover:bg-white/20'}`}
-                  title={opt.label}
-                >{opt.icon}</button>
-              ))}
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
-            {/* Avrunding */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Avrunding:</span>
-              <Slider label="Kort" value={styleSettings.cardRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ cardRadius: v })} />
-              <Slider label="Knapp" value={styleSettings.buttonRadius} min={0} max={32} onChange={(v) => updateStyleSettings({ buttonRadius: v })} />
-              <Slider label="Modul" value={styleSettings.moduleRadius} min={0} max={48} onChange={(v) => updateStyleSettings({ moduleRadius: v })} />
             </div>
           </div>
         )}
