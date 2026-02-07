@@ -231,3 +231,35 @@ export function isLightColor(hex: string): boolean {
 export function getTextColorForBackground(bgHex: string): string {
   return isLightColor(bgHex) ? '#000000' : '#ffffff';
 }
+
+/**
+ * Genererer 4 balanserte støttefarger basert på primær og sekundær
+ * @param primary - Primærfarge (HEX)
+ * @param secondary - Sekundærfarge (HEX)
+ */
+export function generateBalancedSupportColors(primary: string, secondary: string) {
+  const primaryHsl = hexToHsl(primary);
+  const secondaryHsl = hexToHsl(secondary);
+  
+  return {
+    // Støtte 1: Lysere variant av sekundærfarge (for highlights, gradienter)
+    support1: lighten(saturate(secondary, 10), 15),
+    
+    // Støtte 2: Mørk variant av primærfarge (for mørke bakgrunner, overlays)
+    support2: hslToHex({
+      h: primaryHsl.h,
+      s: Math.min(primaryHsl.s, 35),
+      l: 10,
+    }),
+    
+    // Støtte 3: Mørkere blå/navy basert på primærfargens tone (for kontrast)
+    support3: hslToHex({
+      h: primaryHsl.h,
+      s: Math.min(primaryHsl.s + 20, 80),
+      l: 18,
+    }),
+    
+    // Støtte 4: Hvit eller veldig lys variant (for tekst, bakgrunner)
+    support4: '#ffffff',
+  };
+}

@@ -12,11 +12,11 @@ export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
 // Stil-innstillinger
 export type SectionTopStyle = 'flat' | 'rounded' | 'wave' | 'angle';
 
-// Fargevalg for elementer - kan velge mellom de 5 hovedfargene
-export type ColorChoice = 'primary' | 'secondary' | 'support1' | 'support2' | 'support3';
+// Fargevalg for elementer - kan velge mellom de 6 hovedfargene
+export type ColorChoice = 'primary' | 'secondary' | 'support1' | 'support2' | 'support3' | 'support4';
 
 // Hero tekst-farger
-export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'support2' | 'support3';
+export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'support2' | 'support3' | 'support4';
 
 export interface StyleSettings {
   // ===== LOGOER =====
@@ -36,6 +36,7 @@ export interface StyleSettings {
   supportColor1: string;     // Første støttefarge
   supportColor2: string;     // Andre støttefarge
   supportColor3: string;     // Tredje støttefarge
+  supportColor4: string;     // Fjerde støttefarge
   
   // Gradient-farge for knapper (lysere variant)
   gradientColor: string;
@@ -264,6 +265,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       supportColor1: initialClub.colors.accentLight || initialClub.colors.accent,
       supportColor2: initialClub.colors.dark || '#1a1a1a',
       supportColor3: initialClub.colors.navy || '#092c5c',
+      supportColor4: '#ffffff',
       gradientColor: initialClub.colors.accentLight || '#ff6b8a',
       
       // ===== LAYOUT =====
@@ -411,6 +413,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const support1 = styles.supportColor1;
     const support2 = styles.supportColor2;
     const support3 = styles.supportColor3;
+    const support4 = styles.supportColor4;
     
     // Hovedfarger (nye, tydelige navn)
     root.style.setProperty('--color-primary', primary);
@@ -418,6 +421,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     root.style.setProperty('--color-support1', support1);
     root.style.setProperty('--color-support2', support2);
     root.style.setProperty('--color-support3', support3);
+    root.style.setProperty('--color-support4', support4);
     
     // Gradient-farge (kan velges separat for knapper)
     root.style.setProperty('--color-gradient', styles.gradientColor);
@@ -428,6 +432,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     root.style.setProperty('--color-support1-light', `color-mix(in srgb, ${support1} 70%, white)`);
     root.style.setProperty('--color-support2-light', `color-mix(in srgb, ${support2} 70%, white)`);
     root.style.setProperty('--color-support3-light', `color-mix(in srgb, ${support3} 70%, white)`);
+    root.style.setProperty('--color-support4-light', `color-mix(in srgb, ${support4} 70%, white)`);
     
     // Legacy-støtte for gamle komponenter (fases ut)
     root.style.setProperty('--color-accent', secondary);
@@ -568,6 +573,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         supportColor1: newClub.colors.accentLight || newClub.colors.accent,
         supportColor2: newClub.colors.dark || '#1a1a1a',
         supportColor3: newClub.colors.navy || '#092c5c',
+        supportColor4: '#ffffff',
         gradientColor: newClub.colors.accentLight || '#ff6b8a',
         moduleHeadingColor: newClub.colors.primary,
       }));

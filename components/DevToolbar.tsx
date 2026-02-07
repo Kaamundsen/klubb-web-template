@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
 import { NewsLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor } from '../context/ThemeContext';
-import { generateDarkBackground, generateGradientLight } from '../utils/colorUtils';
+import { generateBalancedSupportColors } from '../utils/colorUtils';
 import DocsModal from './DocsModal';
 
 // SVG Icons
@@ -261,19 +261,21 @@ const DevToolbar: React.FC = () => {
     { color: styleSettings.supportColor1, label: 'Støtte 1' },
     { color: styleSettings.supportColor2, label: 'Støtte 2' },
     { color: styleSettings.supportColor3, label: 'Støtte 3' },
+    { color: styleSettings.supportColor4, label: 'Støtte 4' },
     { color: '#ffffff', label: 'Hvit' },
     { color: '#f9fafb', label: 'Lys grå' },
     { color: '#111827', label: 'Mørk' },
     { color: '#000000', label: 'Sort' },
   ];
 
-  // Auto-generer støttefarger basert på primær- og sekundærfarge
+  // Auto-generer 4 balanserte støttefarger basert på primær- og sekundærfarge
   const handleAutoGenerateSupportColors = () => {
-    const support1 = generateGradientLight(styleSettings.secondaryColor);
-    const support2 = generateDarkBackground(styleSettings.primaryColor);
+    const colors = generateBalancedSupportColors(styleSettings.primaryColor, styleSettings.secondaryColor);
     updateStyleSettings({
-      supportColor1: support1,
-      supportColor2: support2,
+      supportColor1: colors.support1,
+      supportColor2: colors.support2,
+      supportColor3: colors.support3,
+      supportColor4: colors.support4,
     });
   };
 
@@ -379,12 +381,12 @@ const DevToolbar: React.FC = () => {
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Logoer:</span>
               <LogoUploader 
-                label="Meny" 
+                label="v1" 
                 value={styleSettings.logoHorizontal} 
                 onChange={(url) => updateStyleSettings({ logoHorizontal: url })} 
               />
               <LogoUploader 
-                label="Flytende" 
+                label="v2" 
                 value={styleSettings.logoVertical} 
                 onChange={(url) => updateStyleSettings({ logoVertical: url })} 
               />
@@ -417,6 +419,7 @@ const DevToolbar: React.FC = () => {
               <ColorPicker label="Støtte 1" color={styleSettings.supportColor1} onChange={(c) => updateStyleSettings({ supportColor1: c })} presets={colorPresets} />
               <ColorPicker label="Støtte 2" color={styleSettings.supportColor2} onChange={(c) => updateStyleSettings({ supportColor2: c })} presets={colorPresets} />
               <ColorPicker label="Støtte 3" color={styleSettings.supportColor3} onChange={(c) => updateStyleSettings({ supportColor3: c })} presets={colorPresets} />
+              <ColorPicker label="Støtte 4" color={styleSettings.supportColor4} onChange={(c) => updateStyleSettings({ supportColor4: c })} presets={colorPresets} />
               <button
                 onClick={handleAutoGenerateSupportColors}
                 className="flex items-center gap-1 px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[9px] font-medium transition-all"
@@ -462,6 +465,7 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
             </div>
             
@@ -509,6 +513,7 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
               <span className="text-gray-500 text-[9px]">Gradient:</span>
               <ColorPicker label="Gradient" color={styleSettings.ctaGradientColor} onChange={(c) => updateStyleSettings({ ctaGradientColor: c })} presets={colorPresets} />
@@ -526,6 +531,7 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
             </div>
           </div>
@@ -581,6 +587,7 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
             </div>
             
@@ -597,12 +604,13 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
             </div>
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Hero filter/overlay - kan velge alle 5 farger eller ingen */}
+            {/* Hero filter/overlay - kan velge alle 6 farger eller ingen */}
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Bildefilter:</span>
               <select
@@ -615,6 +623,7 @@ const DevToolbar: React.FC = () => {
                 <option value="support1" className="bg-gray-900">Støtte 1</option>
                 <option value="support2" className="bg-gray-900">Støtte 2</option>
                 <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
                 <option value="none" className="bg-gray-900">Ingen</option>
               </select>
             </div>
