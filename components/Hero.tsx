@@ -8,7 +8,7 @@ const VerticalLogo = () => (
     width="468" 
     height="328" 
     viewBox="0 0 260 182"
-    style={{ minWidth: '468px', minHeight: '328px', marginRight: '84px' }}
+    style={{ minWidth: '468px', minHeight: '328px', marginRight: '108px' }}
     className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
   >
     <g id="Klubbnettside-Logo_Hvit_v1" transform="translate(-1380 -33)">
