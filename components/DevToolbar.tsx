@@ -45,10 +45,7 @@ const LogoUploader: React.FC<{
   label: string;
   value: string;
   onChange: (dataUrl: string) => void;
-  size?: number;
-  onSizeChange?: (size: number) => void;
-  showSizeControls?: boolean;
-}> = ({ label, value, onChange, size = 400, onSizeChange, showSizeControls = false }) => {
+}> = ({ label, value, onChange }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,15 +60,10 @@ const LogoUploader: React.FC<{
     }
   };
   
-  const handleSizeUp = () => {
-    if (onSizeChange && size < 500) {
-      onSizeChange(size + 25);
-    }
-  };
-  
-  const handleSizeDown = () => {
-    if (onSizeChange && size > 400) {
-      onSizeChange(size - 25);
+  const handleClear = () => {
+    onChange('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
     }
   };
   
@@ -99,29 +91,16 @@ const LogoUploader: React.FC<{
         )}
         <span className="text-[9px] text-white/70">{label}</span>
       </label>
-      {showSizeControls && (
-        <div className="flex items-center">
-          <button
-            onClick={handleSizeDown}
-            disabled={size <= 400}
-            className={`p-0.5 rounded transition-all ${size <= 400 ? 'text-white/20' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
-            title="Mindre"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={handleSizeUp}
-            disabled={size >= 500}
-            className={`p-0.5 rounded transition-all ${size >= 500 ? 'text-white/20' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
-            title="Større"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-          </button>
-        </div>
+      {value && (
+        <button
+          onClick={handleClear}
+          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-all"
+          title="Fjern logo"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       )}
     </div>
   );
@@ -409,10 +388,7 @@ const DevToolbar: React.FC = () => {
               <LogoUploader 
                 label="v2" 
                 value={styleSettings.logoVertical} 
-                onChange={(url) => updateStyleSettings({ logoVertical: url })}
-                size={styleSettings.logoVerticalSize}
-                onSizeChange={(size) => updateStyleSettings({ logoVerticalSize: size })}
-                showSizeControls={true}
+                onChange={(url) => updateStyleSettings({ logoVertical: url })} 
               />
               <LogoUploader 
                 label="Favicon" 
