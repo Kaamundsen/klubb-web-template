@@ -253,9 +253,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const saved = typeof window !== 'undefined' ? localStorage.getItem(savedKey) : null;
     
     const defaultSettings: StyleSettings = {
-      // ===== LOGOER =====
-      logoHorizontal: initialClub.logos?.horizontal || '',
-      logoVertical: initialClub.logos?.vertical || '',
+      // ===== LOGOER (kun for opplastede logoer, tomme = bruk klubbens standard) =====
+      logoHorizontal: '',
+      logoVertical: '',
       logoFavicon: '',
       logoSocialMedia: '',
       

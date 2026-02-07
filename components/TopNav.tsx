@@ -7,8 +7,11 @@ import { useTheme } from '../hooks/useTheme';
 const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; customLogo?: string }> = ({ club, dark, isScrolled, customLogo }) => {
   const [logoError, setLogoError] = React.useState(false);
   
-  // Prioriter opplastet logo fra admin
-  if (customLogo && !logoError) {
+  // Sjekk om customLogo er en opplastet fil (data URL)
+  const isUploadedLogo = customLogo && customLogo.startsWith('data:');
+  
+  // Hvis det er en opplastet logo (data URL), bruk den
+  if (isUploadedLogo && !logoError) {
     return (
       <img 
         src={customLogo} 
@@ -24,7 +27,7 @@ const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; cust
     return <Logo dark={dark} isScrolled={isScrolled} />;
   }
   
-  // For andre klubber, bruk deres logo-fil
+  // For andre klubber, bruk deres logo-fil fra clubSandbox.ts
   if (club.logos?.horizontal && !logoError) {
     return (
       <img 

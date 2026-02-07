@@ -49,17 +49,20 @@ const VerticalLogo = () => (
 
 // Klubb-spesifikk flytende logo
 const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, customLogo }) => {
-  // Prioriter opplastet logo fra admin
-  if (customLogo) {
+  // Sjekk om customLogo er en opplastet fil (data URL) eller bare klubbens standard path
+  const isUploadedLogo = customLogo && customLogo.startsWith('data:');
+  
+  // Hvis det er en opplastet logo (data URL), bruk den
+  if (isUploadedLogo) {
     return (
       <img 
         src={customLogo} 
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '400px',
+          width: '468px',
           height: 'auto',
-          maxWidth: '100%',
+          minWidth: '468px',
         }}
       />
     );
@@ -70,7 +73,7 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
     return <VerticalLogo />;
   }
   
-  // For andre klubber, bruk deres logo-fil
+  // For andre klubber, bruk deres logo-fil fra clubSandbox.ts
   if (club.logos?.vertical) {
     return (
       <img 
@@ -78,9 +81,9 @@ const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, cust
         alt={club.name}
         className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
         style={{ 
-          width: '400px',
+          width: '468px',
           height: 'auto',
-          maxWidth: '100%',
+          minWidth: '468px',
         }}
       />
     );

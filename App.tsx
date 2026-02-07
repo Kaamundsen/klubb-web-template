@@ -49,7 +49,13 @@ const VerticalLogo = () => (
 );
 
 const App: React.FC = () => {
-  const { styleSettings } = useTheme();
+  const { styleSettings, club } = useTheme();
+  
+  // Sjekk om det er opplastet logo (data URL) for footer
+  const isUploadedHorizontalLogo = styleSettings.logoHorizontal && styleSettings.logoHorizontal.startsWith('data:');
+  const footerLogo = isUploadedHorizontalLogo 
+    ? styleSettings.logoHorizontal 
+    : (club.id !== 'master' && club.logos?.horizontal ? club.logos.horizontal : null);
   
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-brand-dark transition-colors duration-300">
@@ -154,8 +160,8 @@ const App: React.FC = () => {
               <div className="mt-32 pt-16 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-12">
                  <div className="flex items-center gap-4 group cursor-pointer">
                    {/* Using v1 (horizontal) logo for footer */}
-                   {styleSettings.logoHorizontal ? (
-                     <img src={styleSettings.logoHorizontal} alt="Logo" className="h-10 w-auto" />
+                   {footerLogo ? (
+                     <img src={footerLogo} alt="Logo" className="h-10 w-auto" />
                    ) : (
                      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="50" viewBox="0 0 349 94" className="h-10 w-auto">
                        <g transform="translate(-697 -269)">
