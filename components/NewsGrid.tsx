@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { NewsArticle } from '../config/clubContent';
-import { NewsLayout } from '../context/ThemeContext';
+import { NewsLayout, StyleSettings } from '../context/ThemeContext';
 
 // Fallback bilde for når bilder ikke laster
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=800';
@@ -31,9 +31,10 @@ interface NewsCardProps {
   isLarge?: boolean;
   isMedium?: boolean;
   layout: NewsLayout;
+  styleSettings: StyleSettings;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, styleSettings }) => {
   // Liste-visning (bilde til venstre, tekst til høyre)
   if (layout === 'list') {
     return (
@@ -56,8 +57,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
             <span 
               className="text-[10px] px-3 rounded uppercase font-bold inline-flex items-center"
               style={{ 
-                backgroundColor: 'var(--color-secondary)',
-                color: '#ffffff',
+                backgroundColor: `var(--color-${styleSettings.tagColor || 'secondary'})`,
+                color: styleSettings.tagTextColor || '#ffffff',
                 height: '24px',
               }}
             >
@@ -109,8 +110,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
               key={idx} 
               className="text-[10px] px-3 rounded uppercase font-black inline-flex items-center"
               style={{ 
-                backgroundColor: idx === 0 ? 'var(--color-secondary)' : 'var(--color-primary)',
-                color: '#ffffff',
+                backgroundColor: `var(--color-${styleSettings.tagColor || 'secondary'})`,
+                color: styleSettings.tagTextColor || '#ffffff',
                 height: '24px',
               }}
             >
@@ -123,8 +124,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout }) 
             <div 
               className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl scale-90 group-hover:scale-110 transition-transform"
               style={{ 
-                backgroundColor: 'var(--color-secondary)',
-                color: '#ffffff',
+                backgroundColor: `var(--color-${styleSettings.tagColor || 'secondary'})`,
+                color: styleSettings.tagTextColor || '#ffffff',
               }}
             >
               <svg className="w-6 h-6 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -210,6 +211,7 @@ const NewsGrid: React.FC = () => {
                 isLarge={false}
                 isMedium={true}
                 layout={newsLayout}
+                styleSettings={styleSettings}
               />
             ))}
           </div>
@@ -222,6 +224,7 @@ const NewsGrid: React.FC = () => {
                 isLarge={false}
                 isMedium={false}
                 layout={newsLayout}
+                styleSettings={styleSettings}
               />
             ))}
           </div>
@@ -240,6 +243,7 @@ const NewsGrid: React.FC = () => {
               isLarge={isLarge}
               isMedium={isMedium}
               layout={newsLayout}
+              styleSettings={styleSettings}
             />
           );
         })}

@@ -560,6 +560,26 @@ const DevToolbar: React.FC = () => {
                 <option value="support4" className="bg-gray-900">Støtte 4</option>
               </select>
             </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Tags/Kategorier */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Tags:</span>
+              <select
+                value={styleSettings.tagColor || 'secondary'}
+                onChange={(e) => updateStyleSettings({ tagColor: e.target.value as ColorChoice })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="primary" className="bg-gray-900">Primær</option>
+                <option value="secondary" className="bg-gray-900">Sekundær</option>
+                <option value="support1" className="bg-gray-900">Støtte 1</option>
+                <option value="support2" className="bg-gray-900">Støtte 2</option>
+                <option value="support3" className="bg-gray-900">Støtte 3</option>
+                <option value="support4" className="bg-gray-900">Støtte 4</option>
+              </select>
+              <ColorPicker label="Tekst" color={styleSettings.tagTextColor || '#ffffff'} onChange={(c) => updateStyleSettings({ tagTextColor: c })} presets={colorPresets} />
+            </div>
           </div>
         )}
 

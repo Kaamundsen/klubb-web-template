@@ -1,7 +1,10 @@
 
 import React from 'react';
+import { useTheme } from '../hooks/useTheme';
 
 const CTASection: React.FC = () => {
+  const { styleSettings } = useTheme();
+  
   return (
     <section className="py-20">
       <div className="container mx-auto px-6">
@@ -13,7 +16,14 @@ const CTASection: React.FC = () => {
             <p className="text-white/90 font-medium mb-12 max-w-xl mx-auto">
               Book en 30-minutters demo av Klubbnettside og opplev selv hvor enkelt alt kan være.
             </p>
-            <button className="bg-white text-black px-12 py-5 rounded-full font-black uppercase text-sm tracking-widest hover:scale-105 transition-transform shadow-xl">
+            <button 
+              className="px-12 py-5 font-black uppercase text-sm tracking-widest hover:scale-105 transition-transform shadow-xl"
+              style={{
+                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+                color: styleSettings.ctaTextColor || '#ffffff',
+                borderRadius: 'var(--radius-button)',
+              }}
+            >
               Book Demo
             </button>
           </div>

@@ -97,43 +97,27 @@ const NextMatch = () => {
 
       {/* Footer Buttons */}
       <div className="grid grid-cols-2 mt-4">
-        <button 
-          className="py-4 text-[12px] font-black uppercase tracking-widest border-r transition-colors"
-          style={{ 
-            backgroundColor: 'var(--color-secondary)',
-            color: '#ffffff',
-            borderColor: 'rgba(255,255,255,0.2)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-        >
-          Alle kamper
-        </button>
-        <button 
-          className="py-4 text-[12px] font-black uppercase tracking-widest transition-colors"
-          style={{ 
-            backgroundColor: 'var(--color-secondary)',
-            color: '#ffffff',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-        >
-          Tabellen
-        </button>
+        <NextMatchButton label="Alle kamper" hasBorder />
+        <NextMatchButton label="Tabellen" />
       </div>
     </div>
+  );
+};
+
+// Egen komponent for NextMatch knapper som bruker CTA-stil
+const NextMatchButton: React.FC<{ label: string; hasBorder?: boolean }> = ({ label, hasBorder }) => {
+  const { styleSettings } = useTheme();
+  return (
+    <button 
+      className={`py-4 text-[12px] font-black uppercase tracking-widest transition-all hover:brightness-110 ${hasBorder ? 'border-r' : ''}`}
+      style={{ 
+        background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+        color: styleSettings.ctaTextColor || '#ffffff',
+        borderColor: 'rgba(255,255,255,0.2)',
+      }}
+    >
+      {label}
+    </button>
   );
 };
 

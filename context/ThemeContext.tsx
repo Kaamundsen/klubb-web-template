@@ -126,6 +126,10 @@ export interface StyleSettings {
   ctaTextColor: string;      // Tekstfarge for CTA-knapper
   newsBarColor: ColorChoice;
   
+  // Tags/kategorier
+  tagColor: ColorChoice;     // Bakgrunnsfarge for tags
+  tagTextColor: string;      // Tekstfarge for tags
+  
   // Legacy støtte (for bakoverkompatibilitet under migrering)
   primary1?: string;
   primary2?: string;
@@ -335,6 +339,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       ctaGradientColor: initialClub.colors.accentLight || '#ff6b8a',
       ctaTextColor: '#ffffff',
       newsBarColor: 'secondary',
+      tagColor: 'secondary',
+      tagTextColor: '#ffffff',
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
