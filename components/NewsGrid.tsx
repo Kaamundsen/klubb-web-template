@@ -183,7 +183,7 @@ const NewsGrid: React.FC = () => {
   const { scrapedContent, clubContent, newsLayout, styleSettings } = useTheme();
   
   // Seksjon-knapper for hver artikkel (meny-navigering)
-  const sectionLabels = ['Klubben', 'Nyhet', 'Fotball', 'Håndball', 'Basketball', 'Volleyball'];
+  const sectionLabels = ['Klubben', 'Nyhet', 'Fotball', 'Klubben', 'Klubben', 'Klubben'];
   
   // Bruk scraped artikler hvis tilgjengelig, ellers klubb-spesifikt innhold
   // Alltid 6 nyheter som standard
