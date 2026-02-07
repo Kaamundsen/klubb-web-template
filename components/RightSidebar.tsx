@@ -33,6 +33,9 @@ const MSLogo = () => (
 );
 
 const NextMatch = () => {
+  const { styleSettings } = useTheme();
+  const moduleStyle = styleSettings.moduleStyles?.[0] || { backgroundColor: '', textColor: '' };
+  
   return (
     <div 
       className="overflow-hidden shadow-xl flex flex-col mb-4"
@@ -45,9 +48,14 @@ const NextMatch = () => {
       {/* Header - Date/Time */}
       <div 
         className="py-3 px-4 text-center"
-        style={{ backgroundColor: 'var(--color-primary)' }}
+        style={{ 
+          backgroundColor: moduleStyle.backgroundColor || 'var(--color-primary)',
+        }}
       >
-        <span className="text-white font-bold uppercase tracking-wider text-sm">
+        <span 
+          className="font-bold uppercase tracking-wider text-sm"
+          style={{ color: moduleStyle.textColor || '#ffffff' }}
+        >
           Tirsdag 7. April kl. 20:15
         </span>
       </div>

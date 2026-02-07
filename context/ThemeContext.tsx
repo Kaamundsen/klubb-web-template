@@ -18,6 +18,12 @@ export type ColorChoice = 'primary' | 'secondary' | 'support1' | 'support2' | 's
 // Hero tekst-farger
 export type HeroTextColor = 'white' | 'primary' | 'secondary' | 'support1' | 'support2' | 'support3' | 'support4';
 
+// Modul-stil (bakgrunn og tekst for hver modul)
+export interface ModuleStyle {
+  backgroundColor: string;
+  textColor: string;
+}
+
 export interface StyleSettings {
   // ===== LOGOER =====
   
@@ -129,6 +135,11 @@ export interface StyleSettings {
   // Tags/kategorier
   tagColor: ColorChoice;     // Bakgrunnsfarge for tags
   tagTextColor: string;      // Tekstfarge for tags
+  
+  // ===== MODUL-STILER =====
+  
+  // Stil for moduler 1-6 (bakgrunn og tekstfarge)
+  moduleStyles: ModuleStyle[];
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
   primary1?: string;
@@ -341,6 +352,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       newsBarColor: 'secondary',
       tagColor: 'secondary',
       tagTextColor: '#ffffff',
+      
+      // Modul-stiler (standardverdier: bruker primary/secondary med hvit tekst)
+      moduleStyles: [
+        { backgroundColor: '', textColor: '' }, // Modul 1 - Neste kamp
+        { backgroundColor: '', textColor: '' }, // Modul 2 - Tabell
+        { backgroundColor: '', textColor: '' }, // Modul 3 - Fremtidens klubbdrift
+        { backgroundColor: '', textColor: '' }, // Modul 4 - Sponsor
+        { backgroundColor: '', textColor: '' }, // Modul 5 - (Reserve)
+        { backgroundColor: '', textColor: '' }, // Modul 6 - (Reserve)
+      ],
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
@@ -588,9 +609,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         console.error('Kunne ikke laste innstillinger:', e);
       }
     } else {
-      // Ingen lagrede innstillinger - bruk klubbens standard farger
+      // Ingen lagrede innstillinger - bruk klubbens standard farger og nullstill logoer
       setStyleSettings(prev => ({
         ...prev,
+        // Nullstill logoer (disse viser klubbens standard logoer fra clubSandbox.ts)
+        logoHorizontal: '',
+        logoHorizontalLight: '',
+        logoVertical: '',
+        logoFavicon: '',
+        logoSocialMedia: '',
+        // Bruk klubbens standard farger
         primaryColor: newClub.colors.primary,
         secondaryColor: newClub.colors.accent,
         supportColor1: newClub.colors.accentLight || newClub.colors.accent,

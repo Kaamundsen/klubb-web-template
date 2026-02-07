@@ -275,7 +275,7 @@ const DevToolbar: React.FC = () => {
 
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'import'>('klubb');
+  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'modul' | 'import'>('klubb');
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
@@ -355,7 +355,7 @@ const DevToolbar: React.FC = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
-            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'import'] as const).map((tab) => (
+            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'modul', 'import'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -827,6 +827,43 @@ const DevToolbar: React.FC = () => {
               </select>
               <WeightSlider value={styleSettings.moduleHeadingWeight} onChange={(v) => updateStyleSettings({ moduleHeadingWeight: v })} />
             </div>
+          </div>
+        )}
+
+        {/* MODUL */}
+        {activeTab === 'modul' && (
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Modul-navn for referanse */}
+            {['Neste kamp', 'Tabell', 'Fremtidens klubbdrift', 'Sponsor', 'Modul 5', 'Modul 6'].map((moduleName, index) => {
+              const moduleStyle = styleSettings.moduleStyles?.[index] || { backgroundColor: '', textColor: '' };
+              return (
+                <div key={index} className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+                  <span className="text-gray-400 text-[9px] uppercase w-16 truncate" title={moduleName}>
+                    {index + 1}. {moduleName.split(' ')[0]}
+                  </span>
+                  <ColorPicker 
+                    label="Bgr" 
+                    color={moduleStyle.backgroundColor || ''} 
+                    onChange={(c) => {
+                      const newModuleStyles = [...(styleSettings.moduleStyles || [])];
+                      newModuleStyles[index] = { ...newModuleStyles[index], backgroundColor: c };
+                      updateStyleSettings({ moduleStyles: newModuleStyles });
+                    }} 
+                    presets={colorPresets} 
+                  />
+                  <ColorPicker 
+                    label="Tekst" 
+                    color={moduleStyle.textColor || ''} 
+                    onChange={(c) => {
+                      const newModuleStyles = [...(styleSettings.moduleStyles || [])];
+                      newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
+                      updateStyleSettings({ moduleStyles: newModuleStyles });
+                    }} 
+                    presets={colorPresets} 
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 
