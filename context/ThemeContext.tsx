@@ -88,6 +88,9 @@ export interface StyleSettings {
   
   // ===== HERO INNSTILLINGER =====
   
+  // Flytende logo (høyre side i hero)
+  heroFloatingLogoVisible: boolean;
+  
   // Hero tekst
   heroLine1Color: HeroTextColor;
   heroLine2Color: HeroTextColor;
@@ -291,6 +294,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       bodyWeight: 400,
       
       // ===== HERO =====
+      heroFloatingLogoVisible: true,
       heroLine1Color: 'white',
       heroLine2Color: 'secondary',
       heroOverlayColor: 'primary',

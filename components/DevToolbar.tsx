@@ -440,6 +440,24 @@ const DevToolbar: React.FC = () => {
         {/* HERO - Hero innstillinger samlet */}
         {activeTab === 'hero' && (
           <div className="flex items-center gap-6 flex-wrap">
+            {/* Flytende logo toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Logo:</span>
+              <button
+                onClick={() => updateStyleSettings({ heroFloatingLogoVisible: !styleSettings.heroFloatingLogoVisible })}
+                className={`px-2 py-1 rounded text-[9px] font-medium transition-all ${
+                  styleSettings.heroFloatingLogoVisible 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-white/10 text-white/50'
+                }`}
+                title={styleSettings.heroFloatingLogoVisible ? 'Skjul flytende logo' : 'Vis flytende logo'}
+              >
+                {styleSettings.heroFloatingLogoVisible ? 'På' : 'Av'}
+              </button>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
             {/* Seksjon-topp stil */}
             <div className="flex items-center gap-2">
               <span className="text-gray-400 text-[9px] uppercase">Seksjon-topp:</span>

@@ -6,10 +6,7 @@ const VerticalLogo = () => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 260 182" 
-    width="520" 
-    height="364"
-    style={{ minWidth: '520px', minHeight: '364px' }}
-    className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+    className="w-full max-w-[420px] h-auto drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
   >
     <g id="Klubbnettside-Logo_Hvit_v1" transform="translate(-1380 -33)">
       <g id="Group_67" data-name="Group 67" transform="translate(-3058.274 -5334.416)">
@@ -141,7 +138,7 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-9">
+        <div className={styleSettings.heroFloatingLogoVisible ? "lg:col-span-9" : "lg:col-span-12"}>
           {styleSettings.heroTaglineVisible && styleSettings.heroTaglineText && (
             <div 
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
@@ -214,22 +211,24 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Vertical Logo (Right Side) - Klubb-spesifikk flytende logo */}
-        <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
-           <div className="relative animate-float w-full flex justify-center">
-              <div className="flex items-center justify-center">
-                <FloatingLogo club={club} />
-              </div>
-              {/* Decorative glows focused on the logo */}
-              <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[120px] -z-10"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--color-secondary) 15%, transparent)' }}
-              />
-              <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-[100px] -z-10"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 25%, transparent)' }}
-              />
-           </div>
-        </div>
+        {styleSettings.heroFloatingLogoVisible && (
+          <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
+             <div className="relative animate-float w-full flex justify-center">
+                <div className="flex items-center justify-center max-w-full px-4">
+                  <FloatingLogo club={club} />
+                </div>
+                {/* Decorative glows focused on the logo */}
+                <div 
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[120px] -z-10"
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--color-secondary) 15%, transparent)' }}
+                />
+                <div 
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-[100px] -z-10"
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 25%, transparent)' }}
+                />
+             </div>
+          </div>
+        )}
       </div>
     </section>
   );
