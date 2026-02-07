@@ -4,8 +4,20 @@ import { NAV_ITEMS } from '../constants';
 import { useTheme } from '../hooks/useTheme';
 
 // Klubb-spesifikk logo komponent
-const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean }> = ({ club, dark, isScrolled }) => {
+const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; customLogo?: string }> = ({ club, dark, isScrolled, customLogo }) => {
   const [logoError, setLogoError] = React.useState(false);
+  
+  // Prioriter opplastet logo fra admin
+  if (customLogo && !logoError) {
+    return (
+      <img 
+        src={customLogo} 
+        alt={club.name}
+        className={`w-auto transition-all duration-300 ${isScrolled ? 'h-10' : 'h-14'}`}
+        onError={() => setLogoError(true)}
+      />
+    );
+  }
   
   // For master bruker vi alltid den innebygde SVG-logoen
   if (club.id === 'master') {
@@ -174,7 +186,7 @@ const TopNav: React.FC = () => {
           {/* Logo (Left) - Klubb-spesifikk */}
           <div className="flex-shrink-0">
             <div className="cursor-pointer inline-block">
-              <ClubLogo club={club} dark={isDarkMode || !isScrolled} isScrolled={isScrolled} />
+              <ClubLogo club={club} dark={isDarkMode || !isScrolled} isScrolled={isScrolled} customLogo={styleSettings.logoHorizontal} />
             </div>
           </div>
 

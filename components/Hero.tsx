@@ -48,7 +48,23 @@ const VerticalLogo = () => (
 );
 
 // Klubb-spesifikk flytende logo
-const FloatingLogo: React.FC<{ club: any }> = ({ club }) => {
+const FloatingLogo: React.FC<{ club: any; customLogo?: string }> = ({ club, customLogo }) => {
+  // Prioriter opplastet logo fra admin
+  if (customLogo) {
+    return (
+      <img 
+        src={customLogo} 
+        alt={club.name}
+        className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+        style={{ 
+          width: '400px',
+          height: 'auto',
+          maxWidth: '100%',
+        }}
+      />
+    );
+  }
+  
   // For master bruker vi alltid den store inline SVG-logoen
   if (club.id === 'master') {
     return <VerticalLogo />;
@@ -218,7 +234,7 @@ const Hero: React.FC = () => {
           <div className="hidden lg:flex lg:col-span-3 justify-center items-center">
              <div className="relative animate-float w-full flex justify-center">
                 <div className="flex items-center justify-center">
-                  <FloatingLogo club={club} />
+                  <FloatingLogo club={club} customLogo={styleSettings.logoVertical} />
                 </div>
                 {/* Decorative glows focused on the logo */}
                 <div 
