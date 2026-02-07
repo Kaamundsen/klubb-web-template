@@ -108,10 +108,12 @@ const App: React.FC = () => {
                 Nå kan klubben endelig fordele arbeidet på flere, slik at ildsjelene kan fokusere på det som betyr mest: idrettsgleden.
               </p>
               <button 
-                className="px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all text-white shadow-2xl"
+                className="px-12 py-5 font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-2xl"
                 style={{
-                  background: `linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%)`,
-                  boxShadow: `0 25px 50px -12px var(--color-accent)`
+                  background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+                  boxShadow: `0 25px 50px -12px var(--color-${styleSettings.ctaButtonColor})`,
+                  color: styleSettings.ctaTextColor || '#ffffff',
+                  borderRadius: 'var(--radius-button)',
                 }}
               >
                 Bli en del av laget
