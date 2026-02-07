@@ -642,24 +642,24 @@ const DevToolbar: React.FC = () => {
         {/* BAKGRUNN - Lys/mørk modus bakgrunner */}
         {activeTab === 'bakgrunn' && (
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Meny-bakgrunn */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Meny bgr:</span>
-              <ColorPicker label="Lys" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
-              <ColorPicker label="Mørk" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
-            {/* Logo for lys bakgrunn */}
-            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Logo (lys bgr):</span>
-              <LogoUploader 
-                label="v1-lys" 
-                value={styleSettings.logoHorizontalLight || ''} 
-                onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
-              />
-              <span className="text-gray-500 text-[9px]">Brukes når logo ikke er synlig på lys bakgrunn</span>
+            {/* Modus-toggle - bytter også selve siden */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5">
+              <button 
+                onClick={() => { setEditMode('light'); if (isDarkMode) toggleDarkMode(); }}
+                className={`p-1.5 rounded transition-all flex items-center gap-1 ${!isDarkMode ? 'bg-yellow-500 text-black' : 'text-white/50 hover:text-white'}`}
+                title="Lysmodus"
+              >
+                {Icons.sun}
+                <span className="text-[9px] font-medium">Lys</span>
+              </button>
+              <button 
+                onClick={() => { setEditMode('dark'); if (!isDarkMode) toggleDarkMode(); }}
+                className={`p-1.5 rounded transition-all flex items-center gap-1 ${isDarkMode ? 'bg-indigo-600 text-white' : 'text-white/50 hover:text-white'}`}
+                title="Mørkmodus"
+              >
+                {Icons.moon}
+                <span className="text-[9px] font-medium">Mørk</span>
+              </button>
             </div>
             
             <div className="w-px h-6 bg-white/20" />
@@ -682,24 +682,6 @@ const DevToolbar: React.FC = () => {
             </div>
             
             <div className="w-px h-6 bg-white/20" />
-            
-            {/* Modus-toggle for bakgrunner */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5">
-              <button 
-                onClick={() => setEditMode('light')}
-                className={`p-1 rounded transition-all ${editMode === 'light' ? 'bg-white/20 text-white' : 'text-white/50'}`}
-                title="Rediger lysmodus"
-              >
-                {Icons.sun}
-              </button>
-              <button 
-                onClick={() => setEditMode('dark')}
-                className={`p-1 rounded transition-all ${editMode === 'dark' ? 'bg-indigo-600 text-white' : 'text-white/50'}`}
-                title="Rediger mørkmodus"
-              >
-                {Icons.moon}
-              </button>
-            </div>
             
             {/* Bakgrunner - viser basert på editMode */}
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
@@ -742,6 +724,28 @@ const DevToolbar: React.FC = () => {
               onChange={(c) => updateStyleSettings({ moduleHeadingColor: c })} 
               presets={colorPresets}
             />
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Meny-bakgrunn */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Meny bgr:</span>
+              <ColorPicker label="Lys" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
+              <ColorPicker label="Mørk" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Logo for lys bakgrunn */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Logo (lys bgr):</span>
+              <LogoUploader 
+                label="v1-lys" 
+                value={styleSettings.logoHorizontalLight || ''} 
+                onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
+              />
+              <span className="text-gray-500 text-[9px]">Brukes når logo ikke er synlig på lys bakgrunn</span>
+            </div>
           </div>
         )}
 
