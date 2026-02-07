@@ -249,7 +249,7 @@ const DevToolbar: React.FC = () => {
 
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'import'>('klubb');
+  const [activeTab, setActiveTab] = useState<'klubb' | 'meny' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'import'>('klubb');
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
@@ -329,7 +329,7 @@ const DevToolbar: React.FC = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
-            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'import'] as const).map((tab) => (
+            {(['klubb', 'meny', 'layout', 'hero', 'bakgrunn', 'tekst', 'import'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -386,11 +386,6 @@ const DevToolbar: React.FC = () => {
                 onChange={(url) => updateStyleSettings({ logoHorizontal: url })} 
               />
               <LogoUploader 
-                label="v1-lys" 
-                value={styleSettings.logoHorizontalLight || ''} 
-                onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
-              />
-              <LogoUploader 
                 label="v2" 
                 value={styleSettings.logoVertical} 
                 onChange={(url) => updateStyleSettings({ logoVertical: url })} 
@@ -437,15 +432,6 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Meny-bakgrunn */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Meny bgr:</span>
-              <ColorPicker label="Lys" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
-              <ColorPicker label="Mørk" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
             {/* Tagline/Motto */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Motto:</span>
@@ -483,6 +469,31 @@ const DevToolbar: React.FC = () => {
               </select>
             </div>
             
+          </div>
+        )}
+
+        {/* MENY - Meny-bakgrunn og logo for lys/mørk */}
+        {activeTab === 'meny' && (
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Meny-bakgrunn */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Bakgrunn:</span>
+              <ColorPicker label="Lysmodus" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
+              <ColorPicker label="Mørkmodus" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
+            </div>
+            
+            <div className="w-px h-6 bg-white/20" />
+            
+            {/* Logo for lys bakgrunn */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">Logo (lys bgr):</span>
+              <LogoUploader 
+                label="v1-lys" 
+                value={styleSettings.logoHorizontalLight || ''} 
+                onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
+              />
+              <span className="text-gray-500 text-[9px]">Brukes når menyen har lys bakgrunn</span>
+            </div>
           </div>
         )}
 
