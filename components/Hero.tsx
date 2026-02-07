@@ -6,9 +6,9 @@ const VerticalLogo = () => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 260 182" 
-    width="468" 
-    height="328"
-    style={{ minWidth: '468px', minHeight: '328px' }}
+    width="450" 
+    height="315"
+    style={{ minWidth: '450px', minHeight: '315px' }}
     className="drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
   >
     <g id="Klubbnettside-Logo_Hvit_v1" transform="translate(-1380 -33)">
