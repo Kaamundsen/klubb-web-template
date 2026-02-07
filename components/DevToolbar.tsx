@@ -646,19 +646,17 @@ const DevToolbar: React.FC = () => {
             <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5">
               <button 
                 onClick={() => { setEditMode('light'); if (isDarkMode) toggleDarkMode(); }}
-                className={`p-1.5 rounded transition-all flex items-center gap-1 ${!isDarkMode ? 'bg-yellow-500 text-black' : 'text-white/50 hover:text-white'}`}
+                className={`p-1 rounded transition-all ${!isDarkMode ? 'bg-white/20 text-white' : 'text-white/50'}`}
                 title="Lysmodus"
               >
                 {Icons.sun}
-                <span className="text-[9px] font-medium">Lys</span>
               </button>
               <button 
                 onClick={() => { setEditMode('dark'); if (!isDarkMode) toggleDarkMode(); }}
-                className={`p-1.5 rounded transition-all flex items-center gap-1 ${isDarkMode ? 'bg-indigo-600 text-white' : 'text-white/50 hover:text-white'}`}
+                className={`p-1 rounded transition-all ${isDarkMode ? 'bg-indigo-600 text-white' : 'text-white/50'}`}
                 title="Mørkmodus"
               >
                 {Icons.moon}
-                <span className="text-[9px] font-medium">Mørk</span>
               </button>
             </div>
             
