@@ -87,6 +87,12 @@
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-navy) 100%);
 }
 
+/* Gratis demo-boks: horisontal gradient Primær → Sekundær (grønn → gul) */
+.gradient-demo {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: var(--color-primary);
+}
+
 /* ============================================
    Base Styles
    ============================================ */

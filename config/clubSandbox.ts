@@ -34,7 +34,7 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
   // DFI - Drammen Fotballklubb International
   {
     id: 'dfi',
-    name: 'DFI',
+    name: 'Drøbak Frogn IL',
     domain: 'dfi.no',
     template: 'v2',
     colors: {

@@ -14,6 +14,8 @@ export interface ClubColors {
 export interface ClubLogos {
   horizontal: string;   // Bred logo for navbar
   vertical: string;     // Høy logo for hero/footer
+  /** Valgfri logo kun for Grasrotandelen-modulen (f.eks. annen variant som passer bedre) */
+  grasrotModule?: string;
 }
 
 export interface ClubConfig {

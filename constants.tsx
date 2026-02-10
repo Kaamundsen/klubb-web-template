@@ -58,7 +58,7 @@ export const NAV_ITEMS: any[] = [
         ]
       },
       { 
-        label: 'Turn', 
+        label: 'Ski', 
         href: '#',
         hasNested: true,
         items: [

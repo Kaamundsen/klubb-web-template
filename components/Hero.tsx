@@ -133,7 +133,7 @@ const Hero: React.FC = () => {
     : null;
   
   return (
-    <section className="relative min-h-[95vh] flex items-center pt-24 overflow-hidden transition-colors duration-300">
+    <section className="relative h-screen flex items-center pt-24 pb-32 overflow-hidden transition-colors duration-300">
       {/* Dynamic Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -162,7 +162,10 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
-        <div className={styleSettings.heroFloatingLogoVisible ? "lg:col-span-9" : "lg:col-span-12"}>
+        <div className={`${styleSettings.heroFloatingLogoVisible ? "lg:col-span-9" : "lg:col-span-12"} ${
+          styleSettings.heroContentAlign === 'center' ? 'text-center flex flex-col items-center' : 
+          styleSettings.heroContentAlign === 'right' ? 'text-right flex flex-col items-end' : ''
+        }`}>
           {styleSettings.heroTaglineVisible && styleSettings.heroTaglineText && (
             <div 
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6"
@@ -213,25 +216,27 @@ const Hero: React.FC = () => {
             Opplev fremtidens klubbnettside. Vi gir dere verktøyene som trengs for å skape engasjement, samhold og vekst i idrettslaget.
           </p>
 
-          <div className="flex flex-wrap gap-6">
-            <button 
-              className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
-              style={{
-                background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, ${styleSettings.ctaGradientColor} 100%)`,
-                boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
-                color: styleSettings.ctaTextColor || '#ffffff',
-                borderRadius: 'var(--radius-button)',
-              }}
-            >
-              Bli medlem
-            </button>
-            <button 
-              className="bg-white/10 backdrop-blur-xl border border-white/20 px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:bg-white/20 transition-all text-white"
-              style={{ borderRadius: 'var(--radius-button)' }}
-            >
-              Bli Sponsor
-            </button>
-          </div>
+          {styleSettings.heroCtaVisible && (
+            <div className="flex flex-wrap gap-6">
+              <button 
+                className="px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
+                style={{
+                  background: `linear-gradient(135deg, ${getColorVar(styleSettings.ctaButtonColor)} 0%, ${styleSettings.ctaGradientColor} 100%)`,
+                  boxShadow: `0 25px 50px -12px ${getColorVar(styleSettings.ctaButtonColor)}`,
+                  color: styleSettings.ctaTextColor || '#ffffff',
+                  borderRadius: 'var(--radius-button)',
+                }}
+              >
+                Bli medlem
+              </button>
+              <button 
+                className="bg-white/10 backdrop-blur-xl border border-white/20 px-14 py-6 text-[12px] font-black uppercase tracking-widest hover:bg-white/20 transition-all text-white"
+                style={{ borderRadius: 'var(--radius-button)' }}
+              >
+                Bli Sponsor
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Vertical Logo (Right Side) - Klubb-spesifikk flytende logo */}
@@ -254,6 +259,39 @@ const Hero: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Hurtigknapper - Snarvei til idrettsgrener */}
+      {styleSettings.heroShortcutsVisible && (
+        <div className={`absolute ${styleSettings.heroCtaVisible ? 'bottom-[10vh]' : 'bottom-[18vh]'} left-0 right-0 z-20 transition-all duration-300`}>
+          <div className="container mx-auto px-6">
+            <div className={`flex flex-col gap-4 ${
+              styleSettings.heroShortcutsAlign === 'right' ? 'items-end' : 
+              styleSettings.heroShortcutsAlign === 'left' ? 'items-start' : 'items-center'
+            }`}>
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60">
+                <span className="w-[3px] h-4 rounded-full" style={{ backgroundColor: getColorVar(styleSettings.newsBarColor) }} />
+                Snarvei – Våre idrettsgrener
+              </div>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {[
+                  { label: 'Fotball', icon: '/icons/fotball.svg' },
+                  { label: 'Håndball', icon: '/icons/haandball.svg' },
+                  { label: 'Ski', icon: '/icons/ski.svg' },
+                  { label: 'Allidrett', icon: '/icons/allidrett.svg' },
+                ].map((sport) => (
+                  <button
+                    key={sport.label}
+                    className="flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all hover:scale-105"
+                  >
+                    <img src={sport.icon} alt={sport.label} className="w-5 h-5" />
+                    {sport.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

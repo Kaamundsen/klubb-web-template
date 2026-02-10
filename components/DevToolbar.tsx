@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
-import { NewsLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor } from '../context/ThemeContext';
+import { NewsLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor, SECTION_NAMES, SectionConfig, DEFAULT_SECTIONS, MODULE_NAMES, ModuleConfig, DEFAULT_MODULES } from '../context/ThemeContext';
 import { generateBalancedSupportColors } from '../utils/colorUtils';
 import DocsModal from './DocsModal';
 
@@ -275,7 +275,7 @@ const DevToolbar: React.FC = () => {
 
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'modul' | 'import'>('klubb');
+  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'modul' | 'seksjoner' | 'import'>('klubb');
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
@@ -355,7 +355,7 @@ const DevToolbar: React.FC = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
-            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'modul', 'import'] as const).map((tab) => (
+            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'modul', 'seksjoner', 'import'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -682,6 +682,72 @@ const DevToolbar: React.FC = () => {
               onChange={(v) => updateStyleSettings({ heroOverlayOpacity: v })}
               suffix="%"
             />
+
+            <div className="w-px h-6 bg-white/20" />
+
+            {/* CTA-knapper toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">CTA:</span>
+              <button
+                onClick={() => updateStyleSettings({ heroCtaVisible: !styleSettings.heroCtaVisible })}
+                className={`px-2 py-1 rounded text-[9px] font-medium transition-all ${
+                  styleSettings.heroCtaVisible 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-white/10 text-white/50'
+                }`}
+                title={styleSettings.heroCtaVisible ? 'Skjul CTA-knapper' : 'Vis CTA-knapper'}
+              >
+                {styleSettings.heroCtaVisible ? 'På' : 'Av'}
+              </button>
+            </div>
+
+            <div className="w-px h-6 bg-white/20" />
+
+            {/* Hurtigknapper toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Hurtigknapper:</span>
+              <button
+                onClick={() => updateStyleSettings({ heroShortcutsVisible: !styleSettings.heroShortcutsVisible })}
+                className={`px-2 py-1 rounded text-[9px] font-medium transition-all ${
+                  styleSettings.heroShortcutsVisible 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-white/10 text-white/50'
+                }`}
+                title={styleSettings.heroShortcutsVisible ? 'Skjul hurtigknapper' : 'Vis hurtigknapper'}
+              >
+                {styleSettings.heroShortcutsVisible ? 'På' : 'Av'}
+              </button>
+            </div>
+
+            {/* Hurtigknapper plassering */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Snarvei:</span>
+              <select
+                value={styleSettings.heroShortcutsAlign || 'center'}
+                onChange={(e) => updateStyleSettings({ heroShortcutsAlign: e.target.value as 'left' | 'center' | 'right' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="left" className="bg-gray-900">Venstre</option>
+                <option value="center" className="bg-gray-900">Senter</option>
+                <option value="right" className="bg-gray-900">Høyre</option>
+              </select>
+            </div>
+
+            <div className="w-px h-6 bg-white/20" />
+
+            {/* Hovedinnhold plassering */}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 text-[9px] uppercase">Innhold:</span>
+              <select
+                value={styleSettings.heroContentAlign || 'left'}
+                onChange={(e) => updateStyleSettings({ heroContentAlign: e.target.value as 'left' | 'center' | 'right' })}
+                className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white text-[10px]"
+              >
+                <option value="left" className="bg-gray-900">Venstre</option>
+                <option value="center" className="bg-gray-900">Senter</option>
+                <option value="right" className="bg-gray-900">Høyre</option>
+              </select>
+            </div>
           </div>
         )}
 
@@ -758,6 +824,18 @@ const DevToolbar: React.FC = () => {
                 onChange={(c) => updateStyleSettings(editMode === 'light' ? { lightModuleBackground: c } : { darkModuleBackground: c })} 
                 presets={colorPresets}
               />
+              <ColorPicker 
+                label="Meny" 
+                color={editMode === 'light' ? (styleSettings.menuBackgroundLight || '#ffffff') : (styleSettings.menuBackgroundDark || '#0b0e14')} 
+                onChange={(c) => updateStyleSettings(editMode === 'light' ? { menuBackgroundLight: c } : { menuBackgroundDark: c })} 
+                presets={colorPresets}
+              />
+              <ColorPicker 
+                label="Footer" 
+                color={editMode === 'light' ? (styleSettings.footerBackgroundLight || '') : (styleSettings.footerBackgroundDark || '')} 
+                onChange={(c) => updateStyleSettings(editMode === 'light' ? { footerBackgroundLight: c } : { footerBackgroundDark: c })} 
+                presets={colorPresets}
+              />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
@@ -771,15 +849,6 @@ const DevToolbar: React.FC = () => {
             
             <div className="w-px h-6 bg-white/20" />
             
-            {/* Meny-bakgrunn */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">Meny bgr:</span>
-              <ColorPicker label="Lys" color={styleSettings.menuBackgroundLight || '#ffffff'} onChange={(c) => updateStyleSettings({ menuBackgroundLight: c })} presets={colorPresets} />
-              <ColorPicker label="Mørk" color={styleSettings.menuBackgroundDark || '#0b0e14'} onChange={(c) => updateStyleSettings({ menuBackgroundDark: c })} presets={colorPresets} />
-            </div>
-            
-            <div className="w-px h-6 bg-white/20" />
-            
             {/* Logo for lys bakgrunn */}
             <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
               <span className="text-gray-500 text-[9px] uppercase mr-1">Logo (lys bgr):</span>
@@ -788,7 +857,6 @@ const DevToolbar: React.FC = () => {
                 value={styleSettings.logoHorizontalLight || ''} 
                 onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} 
               />
-              <span className="text-gray-500 text-[9px]">Brukes når logo ikke er synlig på lys bakgrunn</span>
             </div>
           </div>
         )}
@@ -832,9 +900,9 @@ const DevToolbar: React.FC = () => {
 
         {/* MODUL */}
         {activeTab === 'modul' && (
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-start gap-3 flex-wrap">
             {/* Modus-toggle - bytter også selve siden */}
-            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5">
+            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5 self-center">
               <button 
                 onClick={() => { setEditMode('light'); if (isDarkMode) toggleDarkMode(); }}
                 className={`p-1 rounded transition-all ${!isDarkMode ? 'bg-white/20 text-white' : 'text-white/50'}`}
@@ -851,47 +919,314 @@ const DevToolbar: React.FC = () => {
               </button>
             </div>
             
-            <div className="w-px h-6 bg-white/20" />
-            
-            {/* Modulfarger basert på valgt modus */}
-            {[1, 2, 3, 4, 5, 6].map((num) => {
-              const index = num - 1;
+            <div className="w-px h-6 bg-white/20 self-center" />
+
+            {/* Modul rekkefølge, synlighet og farger. Stilindeks fast per modul-id slik at Bgr/Txt alltid styrer riktig modul. */}
+            {(() => {
+              const MODULE_STYLE_INDEX: Record<string, number> = {
+                'neste-kamp': 0,
+                'snarveier': 1,
+                'aktiviteter': 2,
+                'grasrotandelen': 3,
+                'sponsorer': 4,
+                'folg-oss': 5,
+              };
+              const raw = styleSettings.modules || [];
+              const modules = raw.some(m => m.id === 'aktiviteter') ? raw : [...DEFAULT_MODULES];
               const isLightMode = editMode === 'light';
-              const currentStyles = isLightMode ? styleSettings.moduleStyles : styleSettings.moduleStylesDark;
-              const moduleStyle = currentStyles?.[index] || { backgroundColor: '', textColor: '' };
+              const base = isLightMode ? styleSettings.moduleStyles : styleSettings.moduleStylesDark;
+              const ensured = Array.from({ length: 6 }, (_, i) => ({ backgroundColor: '', textColor: '', ...(base?.[i] || {}) }));
+              return modules.map((mod, index) => {
+                const styleIndex = MODULE_STYLE_INDEX[mod.id] ?? index;
+                const moduleStyle = ensured[styleIndex] || { backgroundColor: '', textColor: '' };
+                return (
+                  <div key={mod.id} className={`flex items-center gap-1 rounded px-2 py-1 ${mod.enabled ? 'bg-white/5' : 'bg-white/5 opacity-50'}`}>
+                    <div className="flex flex-col gap-0.5 mr-1">
+                      <button 
+                        onClick={() => {
+                          if (index === 0) return;
+                          const newModules = [...modules];
+                          [newModules[index - 1], newModules[index]] = [newModules[index], newModules[index - 1]];
+                          updateStyleSettings({ modules: newModules });
+                        }}
+                        className="text-white/40 hover:text-white text-[8px] leading-none"
+                        title="Flytt opp"
+                      >▲</button>
+                      <button 
+                        onClick={() => {
+                          if (index === modules.length - 1) return;
+                          const newModules = [...modules];
+                          [newModules[index], newModules[index + 1]] = [newModules[index + 1], newModules[index]];
+                          updateStyleSettings({ modules: newModules });
+                        }}
+                        className="text-white/40 hover:text-white text-[8px] leading-none"
+                        title="Flytt ned"
+                      >▼</button>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newModules = [...modules];
+                        newModules[index] = { ...newModules[index], enabled: !newModules[index].enabled };
+                        updateStyleSettings({ modules: newModules });
+                      }}
+                      className={`px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                        mod.enabled ? 'bg-green-600 text-white' : 'bg-white/10 text-white/50'
+                      }`}
+                      title={mod.enabled ? 'Deaktiver' : 'Aktiver'}
+                    >
+                      {mod.enabled ? 'På' : 'Av'}
+                    </button>
+                    <span className="text-gray-400 text-[9px] mr-1 truncate max-w-[60px]">{MODULE_NAMES[mod.id] || mod.id}</span>
+                    <ColorPicker 
+                      label="Bgr" 
+                      color={moduleStyle.backgroundColor || ''} 
+                      onChange={(c) => {
+                        if (isLightMode) {
+                          const newModuleStyles = Array.from({ length: 6 }, (_, i) => ({ backgroundColor: '', textColor: '', ...(styleSettings.moduleStyles?.[i] || {}) }));
+                          newModuleStyles[styleIndex] = { ...newModuleStyles[styleIndex], backgroundColor: c };
+                          updateStyleSettings({ moduleStyles: newModuleStyles });
+                        } else {
+                          const newModuleStylesDark = Array.from({ length: 6 }, (_, i) => ({ backgroundColor: '', textColor: '', ...(styleSettings.moduleStylesDark?.[i] || {}) }));
+                          newModuleStylesDark[styleIndex] = { ...newModuleStylesDark[styleIndex], backgroundColor: c };
+                          updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
+                        }
+                      }} 
+                      presets={colorPresets} 
+                    />
+                    <ColorPicker 
+                      label="Txt" 
+                      color={moduleStyle.textColor || ''} 
+                      onChange={(c) => {
+                        if (isLightMode) {
+                          const newModuleStyles = Array.from({ length: 6 }, (_, i) => ({ backgroundColor: '', textColor: '', ...(styleSettings.moduleStyles?.[i] || {}) }));
+                          newModuleStyles[styleIndex] = { ...newModuleStyles[styleIndex], textColor: c };
+                          updateStyleSettings({ moduleStyles: newModuleStyles });
+                        } else {
+                          const newModuleStylesDark = Array.from({ length: 6 }, (_, i) => ({ backgroundColor: '', textColor: '', ...(styleSettings.moduleStylesDark?.[i] || {}) }));
+                          newModuleStylesDark[styleIndex] = { ...newModuleStylesDark[styleIndex], textColor: c };
+                          updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
+                        }
+                      }} 
+                      presets={colorPresets} 
+                    />
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        )}
+
+        {/* SEKSJONER */}
+        {activeTab === 'seksjoner' && (
+          <div className="flex items-start gap-2 flex-wrap">
+            {/* Modus-toggle */}
+            <div className="flex items-center gap-1 bg-white/5 rounded px-1 py-0.5 self-center">
+              <button 
+                onClick={() => { setEditMode('light'); if (isDarkMode) toggleDarkMode(); }}
+                className={`p-1 rounded transition-all ${!isDarkMode ? 'bg-white/20 text-white' : 'text-white/50'}`}
+                title="Lysmodus"
+              >
+                {Icons.sun}
+              </button>
+              <button 
+                onClick={() => { setEditMode('dark'); if (!isDarkMode) toggleDarkMode(); }}
+                className={`p-1 rounded transition-all ${isDarkMode ? 'bg-indigo-600 text-white' : 'text-white/50'}`}
+                title="Mørkmodus"
+              >
+                {Icons.moon}
+              </button>
+            </div>
+            
+            <div className="w-px h-6 bg-white/20 self-center" />
+            
+            {/* Section list - same row */}
+            {(styleSettings.sections || DEFAULT_SECTIONS).map((section, index) => {
+              const isLightMode = editMode === 'light';
+              const sectionStyle = (isLightMode ? section.style?.light : section.style?.dark) ?? {};
+              const hasFlip = section.id === 'klubbkolleksjon' || section.id === 'grasrotandelen';
               
               return (
-                <div key={index} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
-                  <span className="text-gray-400 text-[9px] w-4">{num}</span>
+                <div key={section.id} className="flex items-center gap-1 bg-white/5 rounded px-2 py-1.5">
+                  {/* Reorder buttons */}
+                  <div className="flex flex-col gap-0.5 mr-1">
+                    <button
+                      onClick={() => {
+                        if (index === 0) return;
+                        const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                        [newSections[index - 1], newSections[index]] = [newSections[index], newSections[index - 1]];
+                        updateStyleSettings({ sections: newSections });
+                      }}
+                      className="text-white/40 hover:text-white text-[8px] leading-none"
+                      disabled={index === 0}
+                      title="Flytt opp"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      onClick={() => {
+                        const sections = styleSettings.sections || DEFAULT_SECTIONS;
+                        if (index === sections.length - 1) return;
+                        const newSections = [...sections];
+                        [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
+                        updateStyleSettings({ sections: newSections });
+                      }}
+                      className="text-white/40 hover:text-white text-[8px] leading-none"
+                      disabled={index === (styleSettings.sections || DEFAULT_SECTIONS).length - 1}
+                      title="Flytt ned"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  
+                  {/* Toggle on/off */}
+                  <button
+                    onClick={() => {
+                      const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                      newSections[index] = { ...newSections[index], enabled: !newSections[index].enabled };
+                      updateStyleSettings({ sections: newSections });
+                    }}
+                    className={`px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                      section.enabled 
+                        ? 'bg-green-600 text-white' 
+                        : 'bg-white/10 text-white/50'
+                    }`}
+                    title={section.enabled ? 'Deaktiver' : 'Aktiver'}
+                  >
+                    {section.enabled ? 'På' : 'Av'}
+                  </button>
+                  
+                  {/* Section name */}
+                  <span className="text-white text-[10px] font-medium mx-1 min-w-[60px]">
+                    {SECTION_NAMES[section.id] || section.id}
+                  </span>
+                  
+                  {/* Flip toggle (only for sections with text+image layout) */}
+                  {hasFlip && (
+                    <button
+                      onClick={() => {
+                        const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                        newSections[index] = { ...newSections[index], flipped: !newSections[index].flipped };
+                        updateStyleSettings({ sections: newSections });
+                      }}
+                      className={`px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                        section.flipped 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-white/10 text-white/50'
+                      }`}
+                      title="Bytt side (tekst/bilde)"
+                    >
+                      ⇄
+                    </button>
+                  )}
+                  
+                  {/* Sponsor heading style + logo border toggle */}
+                  {section.id === 'sponsorer' && (
+                    <>
+                      <select
+                        value={styleSettings.sponsorHeadingStyle || 'full'}
+                        onChange={(e) => updateStyleSettings({ sponsorHeadingStyle: e.target.value as any })}
+                        className="bg-white/10 border border-white/20 rounded px-1 py-0.5 text-white text-[9px]"
+                        title="Heading-stil"
+                      >
+                        <option value="full" className="bg-gray-900">Stor heading</option>
+                        <option value="module" className="bg-gray-900">Modul-heading</option>
+                        <option value="hidden" className="bg-gray-900">Skjult</option>
+                      </select>
+                      <button
+                        onClick={() => updateStyleSettings({ sponsorLogoShowBorder: !styleSettings.sponsorLogoShowBorder })}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                          styleSettings.sponsorLogoShowBorder 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-white/10 text-white/50'
+                        }`}
+                        title="Vis ramme/bakgrunn rundt logoer"
+                      >
+                        Ramme
+                      </button>
+                    </>
+                  )}
+                  
+                  {/* Sponsor CTA box controls */}
+                  {section.id === 'sponsor-cta' && (
+                    <>
+                      <ColorPicker label="G1" color={styleSettings.sponsorCTAColor1 || ''} onChange={(c) => updateStyleSettings({ sponsorCTAColor1: c })} presets={colorPresets} />
+                      <ColorPicker label="G2" color={styleSettings.sponsorCTAColor2 || ''} onChange={(c) => updateStyleSettings({ sponsorCTAColor2: c })} presets={colorPresets} />
+                      <ColorPicker label="G3" color={styleSettings.sponsorCTAColor3 || ''} onChange={(c) => updateStyleSettings({ sponsorCTAColor3: c })} presets={colorPresets} />
+                      <ColorPicker label="Boks-txt" color={styleSettings.sponsorCTABoxTextColor || ''} onChange={(c) => updateStyleSettings({ sponsorCTABoxTextColor: c })} presets={colorPresets} />
+                      <Slider label="Vinkel" value={styleSettings.sponsorCTAAngle ?? 135} min={0} max={360} onChange={(v) => updateStyleSettings({ sponsorCTAAngle: v })} suffix="°" />
+                    </>
+                  )}
+                  
+                  {/* Style controls */}
                   <ColorPicker 
                     label="Bgr" 
-                    color={moduleStyle.backgroundColor || ''} 
+                    color={sectionStyle.backgroundColor || ''} 
                     onChange={(c) => {
-                      if (isLightMode) {
-                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
-                        newModuleStyles[index] = { ...newModuleStyles[index], backgroundColor: c };
-                        updateStyleSettings({ moduleStyles: newModuleStyles });
-                      } else {
-                        const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
-                        newModuleStylesDark[index] = { ...newModuleStylesDark[index], backgroundColor: c };
-                        updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
-                      }
+                      const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                      const modeKey = isLightMode ? 'light' : 'dark';
+                      const prev = newSections[index];
+                      newSections[index] = {
+                        ...prev,
+                        style: {
+                          ...(prev.style || {}),
+                          [modeKey]: { ...(prev.style?.[modeKey] || {}), backgroundColor: c },
+                        },
+                      };
+                      updateStyleSettings({ sections: newSections });
                     }} 
                     presets={colorPresets} 
                   />
                   <ColorPicker 
                     label="Txt" 
-                    color={moduleStyle.textColor || ''} 
+                    color={sectionStyle.textColor || ''} 
                     onChange={(c) => {
-                      if (isLightMode) {
-                        const newModuleStyles = [...(styleSettings.moduleStyles || [])];
-                        newModuleStyles[index] = { ...newModuleStyles[index], textColor: c };
-                        updateStyleSettings({ moduleStyles: newModuleStyles });
-                      } else {
-                        const newModuleStylesDark = [...(styleSettings.moduleStylesDark || [])];
-                        newModuleStylesDark[index] = { ...newModuleStylesDark[index], textColor: c };
-                        updateStyleSettings({ moduleStylesDark: newModuleStylesDark });
-                      }
+                      const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                      const modeKey = isLightMode ? 'light' : 'dark';
+                      const prev = newSections[index];
+                      newSections[index] = {
+                        ...prev,
+                        style: {
+                          ...(prev.style || {}),
+                          [modeKey]: { ...(prev.style?.[modeKey] || {}), textColor: c },
+                        },
+                      };
+                      updateStyleSettings({ sections: newSections });
+                    }} 
+                    presets={colorPresets} 
+                  />
+                  <ColorPicker 
+                    label="L1" 
+                    color={sectionStyle.headingLine1Color || ''} 
+                    onChange={(c) => {
+                      const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                      const modeKey = isLightMode ? 'light' : 'dark';
+                      const prev = newSections[index];
+                      newSections[index] = {
+                        ...prev,
+                        style: {
+                          ...(prev.style || {}),
+                          [modeKey]: { ...(prev.style?.[modeKey] || {}), headingLine1Color: c },
+                        },
+                      };
+                      updateStyleSettings({ sections: newSections });
+                    }} 
+                    presets={colorPresets} 
+                  />
+                  <ColorPicker 
+                    label="L2" 
+                    color={sectionStyle.headingLine2Color || ''} 
+                    onChange={(c) => {
+                      const newSections = [...(styleSettings.sections || DEFAULT_SECTIONS)];
+                      const modeKey = isLightMode ? 'light' : 'dark';
+                      const prev = newSections[index];
+                      newSections[index] = {
+                        ...prev,
+                        style: {
+                          ...(prev.style || {}),
+                          [modeKey]: { ...(prev.style?.[modeKey] || {}), headingLine2Color: c },
+                        },
+                      };
+                      updateStyleSettings({ sections: newSections });
                     }} 
                     presets={colorPresets} 
                   />

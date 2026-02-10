@@ -24,6 +24,92 @@ export interface ModuleStyle {
   textColor: string;
 }
 
+// Seksjon-stil (bakgrunn og tekst per lys/mørk modus)
+export interface SectionStyle {
+  backgroundColor: string;
+  textColor: string;
+  headingLine1Color: string;
+  headingLine2Color: string;
+}
+
+export interface SectionConfig {
+  id: string;
+  enabled: boolean;
+  flipped: boolean; // Bytt side (tekst/bilde)
+  style: {
+    light: SectionStyle;
+    dark: SectionStyle;
+  };
+}
+
+// Modul-konfigurasjon (høyre sidebar-moduler)
+export interface ModuleConfig {
+  id: string;
+  enabled: boolean;
+}
+
+export const MODULE_NAMES: Record<string, string> = {
+  'neste-kamp': 'Neste kamp',
+  'snarveier': 'Snarveier',
+  'aktiviteter': 'Aktiviteter',
+  'grasrotandelen': 'Grasrotandelen',
+  'sponsorer': 'Hovedsponsorer',
+  'folg-oss': 'Følg oss',
+};
+
+export const DEFAULT_MODULES: ModuleConfig[] = [
+  { id: 'neste-kamp', enabled: true },
+  { id: 'snarveier', enabled: true },
+  { id: 'aktiviteter', enabled: true },
+  { id: 'grasrotandelen', enabled: true },
+  { id: 'sponsorer', enabled: true },
+  { id: 'folg-oss', enabled: true },
+];
+
+export const SECTION_NAMES: Record<string, string> = {
+  'klubbkolleksjon': 'Klubbkolleksjon',
+  'grasrotandelen': 'Grasrotandelen',
+  'bli-med': 'Bli med i klubben',
+  'sponsorer': 'Sponsorer',
+  'sponsor-cta': 'Sponsor-CTA',
+  'kontakt': 'Kontakt',
+};
+
+const DEFAULT_SECTION_STYLE: SectionStyle = { backgroundColor: '', textColor: '', headingLine1Color: '', headingLine2Color: '' };
+
+/** Sørger for at en seksjon alltid har full style-struktur (f.eks. etter load fra localStorage) */
+function normalizeSectionStyle(style: SectionConfig['style'] | undefined): SectionConfig['style'] {
+  return {
+    light: { ...DEFAULT_SECTION_STYLE, ...style?.light },
+    dark: { ...DEFAULT_SECTION_STYLE, ...style?.dark },
+  };
+}
+
+const DEFAULT_MODULE_STYLE: ModuleStyle = { backgroundColor: '', textColor: '' };
+
+/** Sørger for at moduleStyles og moduleStylesDark alltid har 6 elementer (f.eks. etter load fra localStorage) */
+function normalizeModuleStyles(arr: ModuleStyle[] | undefined): ModuleStyle[] {
+  const base = Array.isArray(arr) ? arr : [];
+  return Array.from({ length: 6 }, (_, i) => ({ ...DEFAULT_MODULE_STYLE, ...base[i] }));
+}
+
+/** Sørger for at modules alltid har alle 6 moduler i riktig rekkefølge (aktiviteter etter snarveier) */
+function normalizeModules(arr: ModuleConfig[] | undefined): ModuleConfig[] {
+  const defaultOrder: ModuleConfig['id'][] = ['neste-kamp', 'snarveier', 'aktiviteter', 'grasrotandelen', 'sponsorer', 'folg-oss'];
+  if (!Array.isArray(arr) || arr.length === 0) return [...DEFAULT_MODULES];
+  const byId = new Map(arr.map(m => [m.id, m.enabled]));
+  return defaultOrder.map(id => ({ id, enabled: byId.get(id) !== false }));
+}
+
+export const DEFAULT_SECTIONS: SectionConfig[] = [
+  { id: 'klubbkolleksjon', enabled: true, flipped: false, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+  { id: 'grasrotandelen', enabled: true, flipped: true, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+  { id: 'bli-med', enabled: true, flipped: false, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+  { id: 'sponsorer', enabled: true, flipped: false, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+  { id: 'sponsor-cta', enabled: true, flipped: false, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+  { id: 'kontakt', enabled: true, flipped: false, style: { light: { ...DEFAULT_SECTION_STYLE }, dark: { ...DEFAULT_SECTION_STYLE } } },
+];
+
 export interface StyleSettings {
   // ===== LOGOER =====
   
@@ -111,6 +197,16 @@ export interface StyleSettings {
   // Flytende logo (høyre side i hero)
   heroFloatingLogoVisible: boolean;
   
+  // Hurtigknapper (snarvei til idrettsgrener under hero)
+  heroShortcutsVisible: boolean;
+  heroShortcutsAlign: 'left' | 'center' | 'right';
+  
+  // CTA-knapper i hero (Bli medlem / Bli sponsor)
+  heroCtaVisible: boolean;
+  
+  // Hovedinnhold plassering i hero
+  heroContentAlign: 'left' | 'center' | 'right';
+  
   // Hero tekst
   heroLine1Color: HeroTextColor;
   heroLine2Color: HeroTextColor;
@@ -141,6 +237,29 @@ export interface StyleSettings {
   // 6 generiske modulfarger som kan brukes på vilkårlige moduler
   moduleStyles: ModuleStyle[];      // Lysmodus
   moduleStylesDark: ModuleStyle[];  // Mørkmodus
+  
+  // ===== MODULER (høyre sidebar) =====
+  modules: ModuleConfig[];
+  
+  // ===== SEKSJONER =====
+  sections: SectionConfig[];
+  
+  // Sponsor-heading stil
+  sponsorHeadingStyle: 'full' | 'module' | 'hidden';
+  
+  // Sponsor-logo stil
+  sponsorLogoShowBorder: boolean;
+  
+  // Sponsor-CTA boks
+  sponsorCTAColor1: string;
+  sponsorCTAColor2: string;
+  sponsorCTAColor3: string;
+  sponsorCTAAngle: number;
+  sponsorCTABoxTextColor: string;
+  
+  // Footer
+  footerBackgroundLight: string;
+  footerBackgroundDark: string;
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
   primary1?: string;
@@ -213,6 +332,85 @@ export interface ScrapedContent {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+/** Bygger standard StyleSettings for en gitt klubb (brukes ved klubbytte så lagret data merges mot klubbens defaults, ikke forrige klubb) */
+function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
+  return {
+    logoHorizontal: '',
+    logoHorizontalLight: '',
+    logoVertical: '',
+    logoFavicon: '',
+    logoSocialMedia: '',
+    menuBackgroundLight: '#ffffff',
+    menuBackgroundDark: '#0b0e14',
+    primaryColor: club.colors.primary,
+    secondaryColor: club.colors.accent,
+    supportColor1: club.colors.accentLight || club.colors.accent,
+    supportColor2: club.colors.dark || '#1a1a1a',
+    supportColor3: club.colors.navy || '#092c5c',
+    supportColor4: '#ffffff',
+    gradientColor: club.colors.accentLight || '#ff6b8a',
+    cardRadius: 16,
+    buttonRadius: 12,
+    moduleRadius: 24,
+    sectionTopStyle: 'flat' as SectionTopStyle,
+    lightPageBackground: '#ffffff',
+    lightNewsBackground: '#ffffff',
+    lightModuleBackground: '#f9fafb',
+    lightCardBackground: '#ffffff',
+    lightSectionBackground: '#ffffff',
+    darkPageBackground: '#0b0e14',
+    darkNewsBackground: '#111827',
+    darkModuleBackground: '#1f2937',
+    darkCardBackground: '#1f2937',
+    darkSectionBackground: '#0b0e14',
+    lightTextColor: '#111827',
+    darkTextColor: '#f9fafb',
+    borderColor: '#e5e7eb',
+    borderOpacity: 100,
+    cardBorderOpacity: 40,
+    moduleBorderOpacity: 40,
+    moduleHeadingColor: club.colors.primary,
+    moduleHeadingSize: 'xs',
+    moduleHeadingWeight: 900,
+    moduleHeadingFont: 'inter',
+    headingFont: 'inter',
+    headingWeight: 900,
+    bodyFont: 'inter',
+    bodyWeight: 400,
+    heroFloatingLogoVisible: true,
+    heroShortcutsVisible: true,
+    heroShortcutsAlign: 'center' as const,
+    heroCtaVisible: true,
+    heroContentAlign: 'left' as const,
+    heroLine1Color: 'white',
+    heroLine2Color: 'secondary',
+    heroOverlayColor: 'primary',
+    heroOverlayOpacity: 90,
+    heroTaglineText: 'Støtt din lokale idrett i dag',
+    heroTaglineVisible: true,
+    heroTaglineColor: 'secondary',
+    ctaButtonColor: 'secondary',
+    ctaGradientColor: club.colors.accentLight || '#ff6b8a',
+    ctaTextColor: '#ffffff',
+    newsBarColor: 'secondary',
+    tagColor: 'secondary',
+    tagTextColor: '#ffffff',
+    moduleStyles: Array(6).fill(null).map(() => ({ backgroundColor: '', textColor: '' })),
+    moduleStylesDark: Array(6).fill(null).map(() => ({ backgroundColor: '', textColor: '' })),
+    modules: [...DEFAULT_MODULES],
+    sections: [...DEFAULT_SECTIONS],
+    sponsorHeadingStyle: 'full' as const,
+    sponsorLogoShowBorder: false,
+    sponsorCTAColor1: '',
+    sponsorCTAColor2: '',
+    sponsorCTAColor3: '',
+    sponsorCTAAngle: 135,
+    sponsorCTABoxTextColor: '',
+    footerBackgroundLight: '',
+    footerBackgroundDark: '',
+  };
+}
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -338,6 +536,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       
       // ===== HERO =====
       heroFloatingLogoVisible: true,
+      heroShortcutsVisible: true,
+      heroShortcutsAlign: 'center' as const,
+      heroCtaVisible: true,
+      heroContentAlign: 'left' as const,
       heroLine1Color: 'white',
       heroLine2Color: 'secondary',
       heroOverlayColor: 'primary',
@@ -371,6 +573,29 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         { backgroundColor: '', textColor: '' }, // Modul 5 (dark)
         { backgroundColor: '', textColor: '' }, // Modul 6 (dark)
       ],
+      
+      // Moduler (høyre sidebar)
+      modules: [...DEFAULT_MODULES],
+      
+      // Seksjoner
+      sections: [...DEFAULT_SECTIONS],
+      
+      // Sponsor heading
+      sponsorHeadingStyle: 'full' as const,
+      
+      // Sponsor logo stil
+      sponsorLogoShowBorder: false,
+      
+      // Sponsor CTA boks
+      sponsorCTAColor1: '',
+      sponsorCTAColor2: '',
+      sponsorCTAColor3: '',
+      sponsorCTAAngle: 135,
+      sponsorCTABoxTextColor: '',
+      
+      // Footer
+      footerBackgroundLight: '',
+      footerBackgroundDark: '',
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
@@ -378,7 +603,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       try {
         const data = JSON.parse(saved);
         if (data.styleSettings) {
-          return { ...defaultSettings, ...data.styleSettings };
+          const merged = { ...defaultSettings, ...data.styleSettings };
+          if (Array.isArray(merged.sections)) {
+            merged.sections = merged.sections.map((s: SectionConfig) => ({
+              ...s,
+              style: normalizeSectionStyle(s.style),
+            }));
+          }
+          merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
+          merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
+          merged.modules = normalizeModules(merged.modules);
+          return merged;
         }
       } catch (e) {
         console.error('Kunne ikke laste lagrede innstillinger:', e);
@@ -603,14 +838,25 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setClubContent(getClubContent(clubId));
     setTemplateState(newClub.template);
     
-    // Last innstillinger for den nye klubben
+    // Last innstillinger for den nye klubben (alltid fra den nye klubbens defaults, ikke fra forrige klubb)
     const newKey = `klubb-settings-${clubId}`;
     const saved = localStorage.getItem(newKey);
     if (saved) {
       try {
         const data = JSON.parse(saved);
         if (data.styleSettings) {
-          setStyleSettings(prev => ({ ...prev, ...data.styleSettings }));
+          const defaultForNewClub = getDefaultStyleSettingsForClub(newClub);
+          const merged = { ...defaultForNewClub, ...data.styleSettings };
+          if (Array.isArray(merged.sections)) {
+            merged.sections = merged.sections.map((s: SectionConfig) => ({
+              ...s,
+              style: normalizeSectionStyle(s.style),
+            }));
+          }
+          merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
+          merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
+          merged.modules = normalizeModules(merged.modules);
+          setStyleSettings(merged);
         }
         if (data.newsLayout) setNewsLayout(data.newsLayout);
         if (typeof data.isDarkMode === 'boolean') setIsDarkMode(data.isDarkMode);
@@ -618,25 +864,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         console.error('Kunne ikke laste innstillinger:', e);
       }
     } else {
-      // Ingen lagrede innstillinger - bruk klubbens standard farger og nullstill logoer
-      setStyleSettings(prev => ({
-        ...prev,
-        // Nullstill logoer (disse viser klubbens standard logoer fra clubSandbox.ts)
-        logoHorizontal: '',
-        logoHorizontalLight: '',
-        logoVertical: '',
-        logoFavicon: '',
-        logoSocialMedia: '',
-        // Bruk klubbens standard farger
-        primaryColor: newClub.colors.primary,
-        secondaryColor: newClub.colors.accent,
-        supportColor1: newClub.colors.accentLight || newClub.colors.accent,
-        supportColor2: newClub.colors.dark || '#1a1a1a',
-        supportColor3: newClub.colors.navy || '#092c5c',
-        supportColor4: '#ffffff',
-        gradientColor: newClub.colors.accentLight || '#ff6b8a',
-        moduleHeadingColor: newClub.colors.primary,
-      }));
+      // Ingen lagrede innstillinger – bruk full standard for denne klubben (unngår at forrige klubb sitt innhold/logo henger igjen)
+      setStyleSettings(getDefaultStyleSettingsForClub(newClub));
     }
   }, [club.id, styleSettings, newsLayout, isDarkMode]);
 

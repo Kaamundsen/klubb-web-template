@@ -375,6 +375,54 @@ const SponsorLogo2 = () => (
   </svg>
 );
 
+// Grasrotandelen-modul (bruker modulstil index 3 = module4). Klubblogo prioriteres før opplastet logo.
+const GrasrotandelenModule: React.FC<{
+  club: { id: string; name: string; logos?: { vertical?: string; grasrotModule?: string } };
+  styleSettings: { logoVertical?: string };
+  moduleStyle: { backgroundColor: string; textColor: string };
+}> = ({ club, styleSettings, moduleStyle }) => {
+  const [logoError, setLogoError] = React.useState(false);
+  const logoUrl = club.logos?.grasrotModule ?? club.logos?.vertical ?? styleSettings.logoVertical;
+  return (
+    <div 
+      className="p-6 flex flex-col items-center text-center"
+      style={{ 
+        backgroundColor: moduleStyle.backgroundColor || '#e8f4ea',
+        color: moduleStyle.textColor || '#1a1a1a',
+        borderRadius: 'var(--radius-module)',
+      }}
+    >
+      <img 
+        src="/assets/grasrotandelen-logo.png" 
+        alt="Grasrotandelen" 
+        className="h-8 mb-4 object-contain"
+      />
+      <div className="w-24 h-24 mb-4 flex items-center justify-center">
+        {logoUrl && !logoError ? (
+          <img 
+            src={logoUrl} 
+            alt={club.name} 
+            className="max-w-full max-h-full object-contain"
+            onError={() => setLogoError(true)}
+          />
+        ) : (
+          <KlubbnettsideCrest />
+        )}
+      </div>
+      <h3 className="text-xl font-bold italic mb-3" style={{ color: moduleStyle.textColor || 'var(--color-primary)' }}>
+        Bli grasrotgiver i dag!
+      </h3>
+      <p className="text-sm opacity-80 mb-4">
+        Du kan bli grasrotgiver i alle Norsk Tippings kanaler eller ved å sende SMS: Grasrotandelen {club.id === 'master' ? '123456789' : '980245004'} til nummer 60000
+      </p>
+      <div className="flex gap-4 text-sm font-bold" style={{ color: moduleStyle.textColor || 'var(--color-primary)' }}>
+        <a href="#" className="hover:underline">Støtt oss</a>
+        <a href="#" className="hover:underline">Les mer</a>
+      </div>
+    </div>
+  );
+};
+
 const RightSidebar: React.FC = () => {
   const { styleSettings, club, isDarkMode } = useTheme();
   
@@ -384,7 +432,6 @@ const RightSidebar: React.FC = () => {
     const darkStyle = styleSettings.moduleStylesDark?.[index] || { backgroundColor: '', textColor: '' };
     
     if (isDarkMode) {
-      // Bruk dark-stil hvis definert, ellers fall tilbake til light-stil
       return {
         backgroundColor: darkStyle.backgroundColor || lightStyle.backgroundColor,
         textColor: darkStyle.textColor || lightStyle.textColor,
@@ -399,16 +446,25 @@ const RightSidebar: React.FC = () => {
   const module4 = getModuleStyle(3);
   const module5 = getModuleStyle(4);
   const module6 = getModuleStyle(5);
-  
+
+  const modules = styleSettings.modules || [
+    { id: 'neste-kamp', enabled: true },
+    { id: 'snarveier', enabled: true },
+    { id: 'aktiviteter', enabled: true },
+    { id: 'grasrotandelen', enabled: true },
+    { id: 'sponsorer', enabled: true },
+    { id: 'folg-oss', enabled: true },
+  ];
+  const aktiviteterEnabled = modules.find(m => m.id === 'aktiviteter')?.enabled !== false;
+
   const sponsors = [
     { name: 'SpareBank 1 Oslo Akershus', logo: '/sponsors/sparebank1-oslo-akershus.svg' },
     { name: 'Hovedsponsor 2', Component: SponsorLogo2 },
   ];
 
-  return (
-    <div className="flex flex-col gap-10 py-12">
-      
-      {/* ===== MODUL 1: Neste kamp ===== */}
+  // Modulkomponenter knyttet til ID-er
+  const moduleComponents: Record<string, React.ReactNode> = {
+    'neste-kamp': (
       <div>
         <h4 
           className="uppercase tracking-widest mb-3"
@@ -423,8 +479,8 @@ const RightSidebar: React.FC = () => {
         </h4>
         <NextMatch />
       </div>
-
-      {/* ===== MODUL 2 & 3: Snarveier (Bli medlem + Aktiviteter) ===== */}
+    ),
+    'snarveier': (
       <div className="flex flex-col gap-4">
         <h4 
           className="uppercase tracking-widest mb-1"
@@ -437,7 +493,6 @@ const RightSidebar: React.FC = () => {
         >
           Snarveier
         </h4>
-        {/* Modul 2: Bli medlem */}
         <button 
           className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
           style={{ 
@@ -452,69 +507,30 @@ const RightSidebar: React.FC = () => {
           </div>
           <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
         </button>
-        {/* Modul 3: Aktiviteter */}
-        <button 
-          className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
-          style={{ 
-            backgroundColor: module3.backgroundColor || 'var(--module-background)',
-            color: module3.textColor || 'var(--color-primary)',
-            borderRadius: 'var(--radius-module)',
-            border: module3.backgroundColor ? 'none' : '1px solid var(--module-border)',
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}>🏆</span>
-            <span>Aktiviteter</span>
-          </div>
-          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
-        </button>
+        {aktiviteterEnabled && (
+          <button 
+            className="w-full p-5 font-bold text-left transition-all flex justify-between items-center group shadow-lg hover:scale-[1.02]"
+            style={{ 
+              backgroundColor: module3.backgroundColor || 'var(--module-background)',
+              color: module3.textColor || 'var(--color-primary)',
+              borderRadius: 'var(--radius-module)',
+              border: module3.backgroundColor ? 'none' : '1px solid var(--module-border)',
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}>🏆</span>
+              <span>Aktiviteter</span>
+            </div>
+            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+          </button>
+        )}
       </div>
-
-      {/* ===== MODUL 4: Grasrotandelen ===== */}
-      <div 
-        className="p-6 flex flex-col items-center text-center"
-        style={{ 
-          backgroundColor: module4.backgroundColor || '#e8f4ea',
-          color: module4.textColor || '#1a1a1a',
-          borderRadius: 'var(--radius-module)',
-        }}
-      >
-        {/* Grasrotandelen logo */}
-        <img 
-          src="/assets/grasrotandelen-logo.png" 
-          alt="Grasrotandelen" 
-          className="h-8 mb-4 object-contain"
-        />
-        
-        {/* Klubb-logo */}
-        <div className="w-24 h-24 mb-4 flex items-center justify-center">
-          {(styleSettings.logoVertical || club.logos?.vertical) ? (
-            <img 
-              src={styleSettings.logoVertical || club.logos?.vertical} 
-              alt={club.name} 
-              className="max-w-full max-h-full object-contain"
-            />
-          ) : (
-            <KlubbnettsideCrest />
-          )}
-        </div>
-        
-        {/* Tekst */}
-        <h3 className="text-xl font-bold italic mb-3" style={{ color: module4.textColor || 'var(--color-primary)' }}>
-          Bli grasrotgiver i dag!
-        </h3>
-        <p className="text-sm opacity-80 mb-4">
-          Du kan bli grasrotgiver i alle Norsk Tippings kanaler eller ved å sende SMS: Grasrotandelen {club.id === 'master' ? '123456789' : '980245004'} til nummer 60000
-        </p>
-        
-        {/* Lenker */}
-        <div className="flex gap-4 text-sm font-bold" style={{ color: module4.textColor || 'var(--color-primary)' }}>
-          <a href="#" className="hover:underline">Støtt oss</a>
-          <a href="#" className="hover:underline">Les mer</a>
-        </div>
-      </div>
-
-      {/* ===== MODUL 5: Sponsorer ===== */}
+    ),
+    'aktiviteter': null,
+    'grasrotandelen': (
+      <GrasrotandelenModule club={club} styleSettings={styleSettings} moduleStyle={module4} />
+    ),
+    'sponsorer': (
       <div className="flex flex-col gap-4">
         <h4 
           className="uppercase tracking-[0.2em] mb-1"
@@ -547,8 +563,8 @@ const RightSidebar: React.FC = () => {
           </div>
         ))}
       </div>
-
-      {/* ===== MODUL 6: Følg oss på sosiale medier ===== */}
+    ),
+    'folg-oss': (
       <div 
         className="p-8 flex flex-col items-center"
         style={{ 
@@ -569,16 +585,26 @@ const RightSidebar: React.FC = () => {
           Følg oss
         </h3>
         <div className="grid grid-cols-2 gap-4 w-full">
-           {/* Facebook */}
            <a href="#" className="aspect-square bg-[#1877F2] rounded-2xl flex items-center justify-center cursor-pointer hover:scale-105 transition-all group shadow-xl">
               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
            </a>
-           {/* Instagram */}
            <a href="#" className="aspect-square bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-2xl flex items-center justify-center cursor-pointer hover:scale-105 transition-all group shadow-xl">
               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
            </a>
         </div>
       </div>
+    ),
+  };
+
+  return (
+    <div className="flex flex-col gap-10 py-12">
+      {modules.filter(m => m.enabled).map(m =>
+        m.id === 'aktiviteter' ? null : (
+          <React.Fragment key={m.id}>
+            {moduleComponents[m.id] ?? null}
+          </React.Fragment>
+        )
+      )}
     </div>
   );
 };
