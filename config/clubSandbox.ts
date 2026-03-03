@@ -108,17 +108,44 @@ export const SANDBOX_CLUBS: ClubConfig[] = [
   },
 ];
 
-// Hent klubb basert på ID
+const CUSTOM_CLUBS_KEY = 'klubb-custom-clubs';
+
+export function getCustomClubs(): ClubConfig[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const saved = localStorage.getItem(CUSTOM_CLUBS_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch { return []; }
+}
+
+export function saveCustomClub(club: ClubConfig): void {
+  const existing = getCustomClubs();
+  const idx = existing.findIndex(c => c.id === club.id);
+  if (idx >= 0) {
+    existing[idx] = club;
+  } else {
+    existing.push(club);
+  }
+  localStorage.setItem(CUSTOM_CLUBS_KEY, JSON.stringify(existing));
+}
+
+export function removeCustomClub(clubId: string): void {
+  const existing = getCustomClubs().filter(c => c.id !== clubId);
+  localStorage.setItem(CUSTOM_CLUBS_KEY, JSON.stringify(existing));
+}
+
+function getAllClubs(): ClubConfig[] {
+  return [...SANDBOX_CLUBS, ...getCustomClubs()];
+}
+
 export function getClubById(id: string): ClubConfig {
-  return SANDBOX_CLUBS.find(club => club.id === id) || MASTER_CONFIG;
+  return getAllClubs().find(club => club.id === id) || MASTER_CONFIG;
 }
 
-// Hent klubb basert på domene
 export function getClubByDomain(domain: string): ClubConfig {
-  return SANDBOX_CLUBS.find(club => club.domain === domain) || MASTER_CONFIG;
+  return getAllClubs().find(club => club.domain === domain) || MASTER_CONFIG;
 }
 
-// Liste over alle tilgjengelige klubb-IDer
 export function getAvailableClubIds(): string[] {
-  return SANDBOX_CLUBS.map(club => club.id);
+  return getAllClubs().map(club => club.id);
 }

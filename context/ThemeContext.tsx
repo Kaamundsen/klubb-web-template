@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { ClubConfig, generateCSSVariables, MASTER_CONFIG } from '../config/clubConfig';
-import { getClubById, SANDBOX_CLUBS } from '../config/clubSandbox';
+import { getClubById, SANDBOX_CLUBS, getCustomClubs } from '../config/clubSandbox';
 import { ClubContent, getClubContent } from '../config/clubContent';
+import { getSavedSettings } from '../config/savedSettings';
 
 export type TemplateVersion = 'v1' | 'v2';
 export type NewsViewMode = 'mosaic' | 'grid' | 'list';
@@ -465,7 +466,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [template, setTemplateState] = useState<TemplateVersion>('v2');
   const [newsViewMode, setNewsViewMode] = useState<NewsViewMode>('mosaic');
   
-  // Last newsLayout fra localStorage ved oppstart
+  // Last newsLayout fra localStorage → savedSettings → default
   const [newsLayout, setNewsLayout] = useState<NewsLayout>(() => {
     const initialClub = getInitialClub();
     const savedKey = `klubb-settings-${initialClub.id}`;
@@ -476,10 +477,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         if (data.newsLayout) return data.newsLayout;
       } catch (e) { /* ignorer */ }
     }
+    const baked = getSavedSettings(initialClub.id);
+    if (baked?.newsLayout) return baked.newsLayout;
     return 'mosaic';
   });
   
-  // Last isDarkMode fra localStorage ved oppstart
+  // Last isDarkMode fra localStorage → savedSettings → default
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const initialClub = getInitialClub();
     const savedKey = `klubb-settings-${initialClub.id}`;
@@ -490,6 +493,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         if (typeof data.isDarkMode === 'boolean') return data.isDarkMode;
       } catch (e) { /* ignorer */ }
     }
+    const baked = getSavedSettings(initialClub.id);
+    if (baked && typeof baked.isDarkMode === 'boolean') return baked.isDarkMode;
     return true; // Standard: dark mode
   });
   const [isColorsSwapped, setIsColorsSwapped] = useState(false);
@@ -660,26 +665,23 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       heroImage: '',
     };
     
-    // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.styleSettings) {
-          const merged = { ...defaultSettings, ...data.styleSettings };
-          if (Array.isArray(merged.sections)) {
-            merged.sections = merged.sections.map((s: SectionConfig) => ({
-              ...s,
-              style: normalizeSectionStyle(s.style),
-            }));
-          }
-          merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
-          merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
-          merged.modules = normalizeModules(merged.modules);
-          return merged;
-        }
-      } catch (e) {
-        console.error('Kunne ikke laste lagrede innstillinger:', e);
+    // Priority: localStorage → baked-in savedSettings → defaults
+    const sourceData = saved
+      ? (() => { try { return JSON.parse(saved); } catch { return null; } })()
+      : getSavedSettings(initialClub.id);
+
+    if (sourceData?.styleSettings) {
+      const merged = { ...defaultSettings, ...sourceData.styleSettings };
+      if (Array.isArray(merged.sections)) {
+        merged.sections = merged.sections.map((s: SectionConfig) => ({
+          ...s,
+          style: normalizeSectionStyle(s.style),
+        }));
       }
+      merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
+      merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
+      merged.modules = normalizeModules(merged.modules);
+      return merged;
     }
     
     return defaultSettings;
@@ -906,33 +908,29 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       setScrapedContentRaw(savedScraped ? JSON.parse(savedScraped) : null);
     } catch { setScrapedContentRaw(null); }
     
-    // Last innstillinger for den nye klubben (alltid fra den nye klubbens defaults, ikke fra forrige klubb)
+    // Priority: localStorage → baked-in savedSettings → defaults
     const newKey = `klubb-settings-${clubId}`;
     const saved = localStorage.getItem(newKey);
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.styleSettings) {
-          const defaultForNewClub = getDefaultStyleSettingsForClub(newClub);
-          const merged = { ...defaultForNewClub, ...data.styleSettings };
-          if (Array.isArray(merged.sections)) {
-            merged.sections = merged.sections.map((s: SectionConfig) => ({
-              ...s,
-              style: normalizeSectionStyle(s.style),
-            }));
-          }
-          merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
-          merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
-          merged.modules = normalizeModules(merged.modules);
-          setStyleSettings(merged);
-        }
-        if (data.newsLayout) setNewsLayout(data.newsLayout);
-        if (typeof data.isDarkMode === 'boolean') setIsDarkMode(data.isDarkMode);
-      } catch (e) {
-        console.error('Kunne ikke laste innstillinger:', e);
+    const sourceData = saved
+      ? (() => { try { return JSON.parse(saved); } catch { return null; } })()
+      : getSavedSettings(clubId);
+
+    if (sourceData?.styleSettings) {
+      const defaultForNewClub = getDefaultStyleSettingsForClub(newClub);
+      const merged = { ...defaultForNewClub, ...sourceData.styleSettings };
+      if (Array.isArray(merged.sections)) {
+        merged.sections = merged.sections.map((s: SectionConfig) => ({
+          ...s,
+          style: normalizeSectionStyle(s.style),
+        }));
       }
+      merged.moduleStyles = normalizeModuleStyles(merged.moduleStyles);
+      merged.moduleStylesDark = normalizeModuleStyles(merged.moduleStylesDark);
+      merged.modules = normalizeModules(merged.modules);
+      setStyleSettings(merged);
+      if (sourceData.newsLayout) setNewsLayout(sourceData.newsLayout);
+      if (typeof sourceData.isDarkMode === 'boolean') setIsDarkMode(sourceData.isDarkMode);
     } else {
-      // Ingen lagrede innstillinger – bruk full standard for denne klubben (unngår at forrige klubb sitt innhold/logo henger igjen)
       setStyleSettings(getDefaultStyleSettingsForClub(newClub));
     }
   }, [club.id, styleSettings, newsLayout, isDarkMode]);
@@ -950,7 +948,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const value: ThemeContextType = {
     club,
     setClub,
-    availableClubs: SANDBOX_CLUBS,
+    availableClubs: [...SANDBOX_CLUBS, ...getCustomClubs()],
     clubContent,
     template,
     setTemplate,

@@ -3,6 +3,8 @@ import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
 import { NewsLayout, WebLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor, SECTION_NAMES, SectionConfig, DEFAULT_SECTIONS, MODULE_NAMES, ModuleConfig, DEFAULT_MODULES } from '../context/ThemeContext';
 import { generateBalancedSupportColors } from '../utils/colorUtils';
+import { saveCustomClub, getCustomClubs, getAvailableClubIds } from '../config/clubSandbox';
+import { ClubConfig } from '../config/clubConfig';
 import DocsModal from './DocsModal';
 
 // SVG Icons
@@ -109,6 +111,12 @@ const TOOLBAR_LABELS = {
     no_content: 'Fant ikke innhold', fetching: 'Henter...',
     fetch_error: 'Feil ved henting', articles_imported: 'artikler importert for',
     upload_label: 'Last opp', remove_logo: 'Fjern logo',
+    // Export all & Add club
+    export_all: 'Eksporter alle klubber', export_all_copied: 'Kode for savedSettings.ts kopiert!',
+    add_club: 'Legg til klubb', new_club: 'Ny klubb', club_id: 'Klubb-ID (kort, ingen mellomrom)',
+    club_name: 'Klubbnavn', club_domain: 'Domene', primary_color: 'Primærfarge', secondary_color: 'Sekundærfarge',
+    create_club: 'Opprett', cancel: 'Avbryt', club_id_exists: 'Denne ID-en finnes allerede',
+    remove_club: 'Fjern klubb', confirm_remove: 'Fjerne denne klubben?',
     // Module names
     mod_neste_kamp: 'Neste kamp', mod_snarveier: 'Snarveier', mod_aktiviteter: 'Aktiviteter',
     mod_grasrotandelen: 'Grasrotandelen', mod_hovedsponsorer: 'Hovedsponsorer', mod_folg_oss: 'Følg oss',
@@ -163,6 +171,11 @@ const TOOLBAR_LABELS = {
     no_content: 'No content found', fetching: 'Fetching...',
     fetch_error: 'Error fetching', articles_imported: 'articles imported for',
     upload_label: 'Upload', remove_logo: 'Remove logo',
+    export_all: 'Export all clubs', export_all_copied: 'Code for savedSettings.ts copied!',
+    add_club: 'Add club', new_club: 'New club', club_id: 'Club ID (short, no spaces)',
+    club_name: 'Club name', club_domain: 'Domain', primary_color: 'Primary color', secondary_color: 'Secondary color',
+    create_club: 'Create', cancel: 'Cancel', club_id_exists: 'This ID already exists',
+    remove_club: 'Remove club', confirm_remove: 'Remove this club?',
     mod_neste_kamp: 'Next match', mod_snarveier: 'Shortcuts', mod_aktiviteter: 'Activities',
     mod_grasrotandelen: 'Grasrotandelen', mod_hovedsponsorer: 'Main sponsors', mod_folg_oss: 'Follow us',
     sec_klubbkolleksjon: 'Club collection', sec_grasrotandelen: 'Grasrotandelen',
@@ -428,6 +441,9 @@ const DevToolbar: React.FC = () => {
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
   const [showDocs, setShowDocs] = useState(false);
+  const [showAddClub, setShowAddClub] = useState(false);
+  const [newClubData, setNewClubData] = useState({ id: '', name: '', domain: '', primary: '#003087', secondary: '#ffd700' });
+  const [addClubError, setAddClubError] = useState('');
   const [lang, setLang] = useState<'no' | 'en'>('no');
 
   const t = (key: LabelKey): string => TOOLBAR_LABELS[lang][key] ?? key;
@@ -456,6 +472,74 @@ const DevToolbar: React.FC = () => {
       supportColor3: colors.support3,
       supportColor4: colors.support4,
     });
+  };
+
+  const handleExportAll = () => {
+    saveSettings();
+    const allClubIds = getAvailableClubIds();
+    const entries: string[] = [];
+    let savedCount = 0;
+    for (const id of allClubIds) {
+      const saved = localStorage.getItem(`klubb-settings-${id}`);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          entries.push(`  '${id}': ${JSON.stringify(data, null, 2).split('\n').map((l, i) => i === 0 ? l : '  ' + l).join('\n')}`);
+          savedCount++;
+        } catch { /* skip */ }
+      }
+    }
+    const output = `// Auto-generated from admin Export All — ${new Date().toISOString().split('T')[0]}
+// Paste this into config/savedSettings.ts
+
+export const SAVED_SETTINGS: Record<string, any> = {
+${entries.join(',\n')}
+};
+
+export function getSavedSettings(clubId: string): any | null {
+  return SAVED_SETTINGS[clubId] || null;
+}
+`;
+    navigator.clipboard.writeText(output);
+    const missing = allClubIds.length - savedCount;
+    if (missing > 0) {
+      const unsaved = allClubIds.filter(id => !localStorage.getItem(`klubb-settings-${id}`));
+      alert(`${t('export_all_copied')}\n\n⚠️ ${savedCount}/${allClubIds.length} ${lang === 'no' ? 'klubber eksportert. Disse mangler lagrede innstillinger' : 'clubs exported. These are missing saved settings'}:\n${unsaved.join(', ')}\n\n${lang === 'no' ? 'Åpne hver klubb og trykk Lagre (grønn knapp) først.' : 'Open each club and click Save (green button) first.'}`);
+    } else {
+      alert(`${t('export_all_copied')} (${savedCount}/${allClubIds.length})`);
+    }
+  };
+
+  const handleAddClub = () => {
+    const id = newClubData.id.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!id || !newClubData.name) return;
+    if (getAvailableClubIds().includes(id)) {
+      setAddClubError(t('club_id_exists'));
+      return;
+    }
+    const newClub: ClubConfig = {
+      id,
+      name: newClubData.name,
+      domain: newClubData.domain || `${id}.no`,
+      template: 'v2',
+      colors: {
+        primary: newClubData.primary,
+        accent: newClubData.secondary,
+        accentLight: newClubData.secondary,
+        dark: '#1a1a1a',
+        navy: newClubData.primary,
+      },
+      logos: {
+        horizontal: `/clubs/${id}/logo.svg`,
+        vertical: `/clubs/${id}/logo.svg`,
+      },
+    };
+    saveCustomClub(newClub);
+    setClub(id);
+    setShowAddClub(false);
+    setNewClubData({ id: '', name: '', domain: '', primary: '#003087', secondary: '#ffd700' });
+    setAddClubError('');
+    window.location.reload();
   };
 
   const generateSlug = (title: string): string => {
@@ -552,6 +636,11 @@ const DevToolbar: React.FC = () => {
               <option key={c.id} value={c.id} className="bg-gray-900">{c.name}</option>
             ))}
           </select>
+          <button
+            onClick={() => setShowAddClub(true)}
+            className="p-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs font-bold leading-none"
+            title={t('add_club')}
+          >+</button>
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
@@ -579,6 +668,9 @@ const DevToolbar: React.FC = () => {
           </button>
           <button onClick={() => { navigator.clipboard.writeText(exportSettings()); alert(t('copied')); }} className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded" title={t('export_json')}>
             {Icons.export}
+          </button>
+          <button onClick={handleExportAll} className="px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[9px] font-medium" title={t('export_all')}>
+            ALL
           </button>
           <div className="w-px h-4 bg-white/20 mx-1" />
           <button onClick={swapColors} className={`p-1.5 rounded transition-all ${isColorsSwapped ? 'bg-yellow-500 text-black' : 'bg-white/10 text-white hover:bg-white/20'}`} title={t('swap_colors')}>
@@ -1454,6 +1546,76 @@ const DevToolbar: React.FC = () => {
       
       {/* Dokumentasjons-modal */}
       <DocsModal isOpen={showDocs} onClose={() => setShowDocs(false)} />
+
+      {/* Add Club modal */}
+      {showAddClub && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setShowAddClub(false)} />
+          <div className="relative bg-gray-900 rounded-xl border border-white/20 p-6 w-96 shadow-2xl">
+            <h3 className="text-white font-bold text-sm mb-4">{t('new_club')}</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="text-gray-400 text-[10px] uppercase block mb-1">{t('club_id')}</label>
+                <input
+                  value={newClubData.id}
+                  onChange={(e) => { setNewClubData(d => ({ ...d, id: e.target.value })); setAddClubError(''); }}
+                  placeholder="minklubb"
+                  className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-[10px] uppercase block mb-1">{t('club_name')}</label>
+                <input
+                  value={newClubData.name}
+                  onChange={(e) => setNewClubData(d => ({ ...d, name: e.target.value }))}
+                  placeholder="Min Klubb IL"
+                  className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-[10px] uppercase block mb-1">{t('club_domain')}</label>
+                <input
+                  value={newClubData.domain}
+                  onChange={(e) => setNewClubData(d => ({ ...d, domain: e.target.value }))}
+                  placeholder="minklubb.no"
+                  className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white text-xs"
+                />
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="text-gray-400 text-[10px] uppercase block mb-1">{t('primary_color')}</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={newClubData.primary} onChange={(e) => setNewClubData(d => ({ ...d, primary: e.target.value }))} className="w-8 h-8 rounded cursor-pointer bg-transparent border-0" />
+                    <span className="text-white/60 text-[10px] font-mono">{newClubData.primary}</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <label className="text-gray-400 text-[10px] uppercase block mb-1">{t('secondary_color')}</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={newClubData.secondary} onChange={(e) => setNewClubData(d => ({ ...d, secondary: e.target.value }))} className="w-8 h-8 rounded cursor-pointer bg-transparent border-0" />
+                    <span className="text-white/60 text-[10px] font-mono">{newClubData.secondary}</span>
+                  </div>
+                </div>
+              </div>
+              {addClubError && <p className="text-red-400 text-xs">{addClubError}</p>}
+              <div className="flex gap-2 pt-2">
+                <button
+                  onClick={handleAddClub}
+                  className="flex-1 py-2 bg-green-600 hover:bg-green-500 text-white rounded text-xs font-medium"
+                >
+                  {t('create_club')}
+                </button>
+                <button
+                  onClick={() => { setShowAddClub(false); setAddClubError(''); }}
+                  className="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white rounded text-xs"
+                >
+                  {t('cancel')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

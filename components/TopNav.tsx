@@ -450,7 +450,7 @@ const TopNav: React.FC = () => {
         >
           <div className="rounded-xl overflow-hidden mb-4 flex-shrink-0">
             <img 
-              src="https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&q=80&w=400&h=200" 
+              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=400&h=200" 
               alt="Sport"
               className="w-full h-[140px] object-cover"
             />
