@@ -187,14 +187,18 @@ const TopNav: React.FC = () => {
     );
   };
 
-  // Bestem om logoen skal være lys (for mørk bakgrunn) eller mørk (for lys bakgrunn)
-  const shouldUseDarkLogo = isScrolled && !isDarkMode; // Scrollet + lysmodus = mørk logo
-  
+  const webLayout = styleSettings.webLayout || 'full';
+  const isNarrowLayout = webLayout === '1490' || webLayout === '1248';
+  const showNavBg = isScrolled || isNarrowLayout;
+
+  // For smale layouts vises alltid bakgrunn → logo skal følge lys/mørk bakgrunn
+  const shouldUseDarkLogo = showNavBg && !isDarkMode;
+
   return (
     <>
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-2 shadow-lg' : 'bg-transparent py-5'}`}
-        style={isScrolled ? {
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-2' : 'py-5'} ${showNavBg ? 'shadow-lg' : 'bg-transparent'}`}
+        style={showNavBg ? {
           backgroundColor: isDarkMode ? styleSettings.menuBackgroundDark : styleSettings.menuBackgroundLight,
           backdropFilter: 'blur(12px)',
         } : undefined}

@@ -124,16 +124,29 @@ const getColorVarName = (colorChoice: string): string => {
 const Hero: React.FC = () => {
   const { club, styleSettings } = useTheme();
   
-  // Hero-seksjonen bruker alltid mal-designet med standard bakgrunnsbilde
-  const heroImage = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
+  const defaultHeroFallback = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
+  const heroImage = styleSettings.heroImage || `/clubs/${club.id}/hero.jpg`;
   
   // Få CSS-variabel for overlay-farge
   const overlayColorVar = styleSettings.heroOverlayColor !== 'none' 
     ? getColorVar(styleSettings.heroOverlayColor) 
     : null;
+
+  const webLayout = styleSettings.webLayout || 'full';
+  const isNarrowLayout = webLayout === '1490' || webLayout === '1248';
   
   return (
-    <section className="relative h-screen flex items-center pt-24 pb-32 overflow-hidden transition-colors duration-300">
+    <>
+    <section 
+      className={`relative flex items-center overflow-hidden transition-colors duration-300 ${
+        isNarrowLayout ? 'pt-12 pb-16' : 'h-screen pt-24 pb-32'
+      }`}
+      style={isNarrowLayout ? {
+        height: '700px',
+        marginTop: 'calc(104px + 20px)',
+        borderRadius: 'var(--radius-card, 16px)',
+      } : undefined}
+    >
       {/* Dynamic Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -141,7 +154,7 @@ const Hero: React.FC = () => {
           alt="Sports Stadium Action" 
           className="w-full h-full object-cover scale-105"
           onError={(e) => {
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=85&w=2400';
+            e.currentTarget.src = defaultHeroFallback;
           }}
         />
         {/* Brand-tinted overlay - bruker valgt farge fra de 4 */}
@@ -188,29 +201,52 @@ const Hero: React.FC = () => {
             </div>
           )}
           
-          <h1 
-            className="uppercase mb-10 hero-heading"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 'clamp(56px, 10vw, 112px)',
-              fontWeight: 900,
-              letterSpacing: '-0.05em',
-              lineHeight: '1',
-              fontFeatureSettings: 'normal',
-              fontVariationSettings: 'normal',
-            }}
-          >
-            <span style={{ color: getColorVar(styleSettings.heroLine1Color) }}>
-              DIN KLUBB,
-            </span>
-            <br/>
-            <span 
-              className="text-glow" 
-              style={{ color: getColorVar(styleSettings.heroLine2Color) }}
-            >
-              DIN STOLTHET
-            </span>
-          </h1>
+          {(() => {
+            const hasBg = styleSettings.heroLine1BgEnabled || styleSettings.heroLine2BgEnabled;
+            return (
+              <h1 
+                className="uppercase mb-10 hero-heading"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: 'clamp(56px, 10vw, 112px)',
+                  fontWeight: 900,
+                  letterSpacing: '-0.05em',
+                  lineHeight: '1',
+                  fontFeatureSettings: 'normal',
+                  fontVariationSettings: 'normal',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: styleSettings.heroContentAlign === 'center' ? 'center' : 
+                    styleSettings.heroContentAlign === 'right' ? 'flex-end' : 'flex-start',
+                  gap: hasBg ? '0.15em' : '0',
+                }}
+              >
+                <span 
+                  style={{ 
+                    color: getColorVar(styleSettings.heroLine1Color),
+                    ...(styleSettings.heroLine1BgEnabled ? {
+                      backgroundColor: getColorVar(styleSettings.heroLine1BgColor),
+                      padding: '0.02em 0.25em',
+                    } : {}),
+                  }}
+                >
+                  DIN KLUBB,
+                </span>
+                <span 
+                  className={styleSettings.heroLine2BgEnabled ? '' : 'text-glow'}
+                  style={{ 
+                    color: getColorVar(styleSettings.heroLine2Color),
+                    ...(styleSettings.heroLine2BgEnabled ? {
+                      backgroundColor: getColorVar(styleSettings.heroLine2BgColor),
+                      padding: '0.02em 0.25em',
+                    } : {}),
+                  }}
+                >
+                  DIN STOLTHET
+                </span>
+              </h1>
+            );
+          })()}
           
           <p className="text-xl text-gray-200 mb-12 max-w-xl leading-relaxed font-medium">
             Opplev fremtidens klubbnettside. Vi gir dere verktøyene som trengs for å skape engasjement, samhold og vekst i idrettslaget.
@@ -260,8 +296,8 @@ const Hero: React.FC = () => {
         )}
       </div>
 
-      {/* Hurtigknapper - Snarvei til idrettsgrener */}
-      {styleSettings.heroShortcutsVisible && (
+      {/* Hurtigknapper - inne i hero for full/1920 */}
+      {styleSettings.heroShortcutsVisible && !isNarrowLayout && (
         <div className={`absolute ${styleSettings.heroCtaVisible ? 'bottom-[10vh]' : 'bottom-[18vh]'} left-0 right-0 z-20 transition-all duration-300`}>
           <div className="container mx-auto px-6">
             <div className={`flex flex-col gap-4 ${
@@ -293,6 +329,45 @@ const Hero: React.FC = () => {
         </div>
       )}
     </section>
+
+    {/* Hurtigknapper - under hero for 1490/1248 */}
+    {styleSettings.heroShortcutsVisible && isNarrowLayout && (
+      <div className="py-8">
+        <div className="container mx-auto px-6">
+          <div className={`flex flex-col gap-4 ${
+            styleSettings.heroShortcutsAlign === 'right' ? 'items-end' : 
+            styleSettings.heroShortcutsAlign === 'left' ? 'items-start' : 'items-center'
+          }`}>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--color-text)', opacity: 0.5 }}>
+              <span className="w-[3px] h-4 rounded-full" style={{ backgroundColor: getColorVar(styleSettings.newsBarColor) }} />
+              Snarvei – Våre idrettsgrener
+            </div>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {[
+                { label: 'Fotball', icon: '/icons/fotball.svg' },
+                { label: 'Håndball', icon: '/icons/haandball.svg' },
+                { label: 'Ski', icon: '/icons/ski.svg' },
+                { label: 'Allidrett', icon: '/icons/allidrett.svg' },
+              ].map((sport) => (
+                <button
+                  key={sport.label}
+                  className="flex items-center gap-2.5 px-6 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: getColorVar(styleSettings.ctaButtonColor),
+                    borderColor: getColorVar(styleSettings.ctaButtonColor),
+                    color: styleSettings.ctaTextColor || '#ffffff',
+                  }}
+                >
+                  <img src={sport.icon} alt={sport.label} className="w-5 h-5" />
+                  {sport.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

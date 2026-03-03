@@ -65,6 +65,13 @@ const KlubbnettsideLogo: React.FC<{ className?: string; dark?: boolean }> = ({ c
   );
 };
 
+const WEB_LAYOUT_MAX_WIDTH: Record<string, string | undefined> = {
+  full: undefined,
+  '1920': '1920px',
+  '1490': '1490px',
+  '1248': '1248px',
+};
+
 const App: React.FC = () => {
   const { styleSettings, club, isDarkMode } = useTheme();
   
@@ -93,64 +100,99 @@ const App: React.FC = () => {
     }
     return null;
   })();
+
+  const webLayout = styleSettings.webLayout || 'full';
+  const maxWidth = WEB_LAYOUT_MAX_WIDTH[webLayout];
+  const isConstrained = webLayout !== 'full';
+  const isNarrowLayout = webLayout === '1490' || webLayout === '1248';
+  const outerBg = isConstrained && styleSettings.webLayoutBgColor
+    ? styleSettings.webLayoutBgColor
+    : undefined;
   
+  const sectionGap = isNarrowLayout ? (styleSettings.sectionGap ?? 24) : 0;
+  const sectionRadius = isNarrowLayout ? `var(--radius-card, 16px)` : undefined;
+
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-brand-dark transition-colors duration-300">
-      <TopNav />
-      
-      <main className="flex-grow">
-        <Hero />
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: outerBg }}
+    >
+      <div
+        className={`flex flex-col min-h-screen transition-colors duration-300 ${isNarrowLayout ? 'narrow-layout' : 'bg-white dark:bg-brand-dark'}`}
+        style={{
+          maxWidth: maxWidth,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          ...(isConstrained && !isNarrowLayout ? { boxShadow: '0 0 60px rgba(0,0,0,0.15)' } : {}),
+        }}
+      >
+        <TopNav />
         
-        {/* Main Content Area */}
-        <div 
-          className="-mt-16 relative z-20 overflow-hidden"
-          style={{ 
-            backgroundColor: 'var(--section-background)',
-            borderTopLeftRadius: 'var(--section-top-radius, 0)',
-            borderTopRightRadius: 'var(--section-top-radius, 0)',
-          }}
-        >
-          <div className="container mx-auto px-6 py-16 lg:py-24">
-            <div className="grid lg:grid-cols-12 gap-16">
-              {/* News Section */}
-              <div className="lg:col-span-8">
-                <NewsGrid />
-              </div>
+        <main className="flex-grow">
+          <Hero />
+          
+          {/* Main Content Area */}
+          <div 
+            className={`${isNarrowLayout ? '' : '-mt-16'} relative z-20 overflow-hidden`}
+            style={{ 
+              backgroundColor: 'var(--section-background)',
+              ...(isNarrowLayout ? {
+                borderRadius: sectionRadius,
+                marginTop: `${sectionGap}px`,
+              } : {
+                borderTopLeftRadius: 'var(--section-top-radius, 0)',
+                borderTopRightRadius: 'var(--section-top-radius, 0)',
+              }),
+            }}
+          >
+            <div className="container mx-auto px-6 py-16 lg:py-24">
+              <div className="grid lg:grid-cols-12 gap-16">
+                {/* News Section */}
+                <div className="lg:col-span-8">
+                  <NewsGrid />
+                </div>
 
-              {/* Sidebar Section */}
-              <div className="lg:col-span-4">
-                <RightSidebar />
+                {/* Sidebar Section */}
+                <div className="lg:col-span-4">
+                  <RightSidebar />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Dynamic Sections */}
-        <DynamicSections />
+          {/* Dynamic Sections */}
+          <DynamicSections />
 
-        {/* Footer */}
-        <footer 
-          className={`py-16 border-t ${footerBgIsLight ? 'border-black/5' : 'border-white/5'}`}
-          style={{ backgroundColor: footerBg }}
-        >
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-              <div className="flex items-center gap-4 group cursor-pointer">
-                {footerLogo ? (
-                  <img src={footerLogo} alt="Logo" className="h-[52px] w-auto" />
-                ) : (
-                  <KlubbnettsideLogo className="h-10 w-auto" dark={!footerBgIsLight} />
-                )}
-              </div>
-              <div className={`flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] ${footerBgIsLight ? 'text-gray-500' : 'text-gray-400'}`}>
-                <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Hjem</a>
-                <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Bli medlem</a>
-                <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Personvern</a>
+          {/* Footer */}
+          <footer 
+            className={`py-16 border-t ${footerBgIsLight ? 'border-black/5' : 'border-white/5'}`}
+            style={{ 
+              backgroundColor: footerBg,
+              ...(isNarrowLayout ? {
+                borderRadius: sectionRadius,
+                marginTop: `${sectionGap}px`,
+              } : {}),
+            }}
+          >
+            <div className="container mx-auto px-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+                <div className="flex items-center gap-4 group cursor-pointer">
+                  {footerLogo ? (
+                    <img src={footerLogo} alt="Logo" className="h-[52px] w-auto" />
+                  ) : (
+                    <KlubbnettsideLogo className="h-10 w-auto" dark={!footerBgIsLight} />
+                  )}
+                </div>
+                <div className={`flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] ${footerBgIsLight ? 'text-gray-500' : 'text-gray-400'}`}>
+                  <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Hjem</a>
+                  <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Bli medlem</a>
+                  <a href="#" className={`transition-colors ${footerBgIsLight ? 'hover:text-gray-900' : 'hover:text-white'}`}>Personvern</a>
+                </div>
               </div>
             </div>
-          </div>
-        </footer>
-      </main>
+          </footer>
+        </main>
+      </div>
     </div>
   );
 };

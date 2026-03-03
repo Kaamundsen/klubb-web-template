@@ -336,13 +336,56 @@ const SponsorCTASection: React.FC<{ config: SectionConfig }> = ({ config }) => {
   const { styleSettings } = useTheme();
   const sectionStyle = useSectionStyle(config);
   const line1Color = sectionStyle.headingLine1Color || undefined;
+  const showBox = styleSettings.sponsorCTAShowGradient !== false;
   
   const color1 = styleSettings.sponsorCTAColor1 || 'var(--color-primary)';
   const color2 = styleSettings.sponsorCTAColor2 || 'var(--color-secondary)';
   const color3 = styleSettings.sponsorCTAColor3 || 'var(--color-support1)';
   const angle = styleSettings.sponsorCTAAngle ?? 135;
   const boxTextColor = styleSettings.sponsorCTABoxTextColor || 'var(--color-support1)';
-  
+  const gradient = `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 50%, ${color3} 100%)`;
+
+  const content = (
+    <div className="relative z-10 text-center">
+      <h2 className="text-4xl lg:text-7xl font-black mb-6 uppercase tracking-tight" style={{ color: line1Color }}>
+        Vil du bli sponsor?
+      </h2>
+      <p className="text-lg font-medium mb-12 max-w-xl mx-auto opacity-90">
+        Som sponsor bidrar du til klubbens arbeid samtidig som du får synlighet i lokalmiljøet. 
+        Sammen skaper vi verdi for både klubb og næringsliv.
+      </p>
+      <button
+        type="button"
+        className="px-12 py-5 font-black uppercase text-sm tracking-widest hover:scale-105 transition-transform shadow-xl"
+        style={{
+          background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
+          color: styleSettings.ctaTextColor || '#ffffff',
+          borderRadius: 'var(--radius-button)',
+        }}
+      >
+        Ta kontakt
+      </button>
+    </div>
+  );
+
+  if (!showBox) {
+    return (
+      <section
+        className="py-20 lg:py-28 transition-colors duration-300 relative overflow-hidden"
+        style={{
+          background: gradient,
+          color: boxTextColor,
+        }}
+      >
+        <div className="container mx-auto px-6">
+          {content}
+        </div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+      </section>
+    );
+  }
+
   return (
     <section 
       className="py-20 transition-colors duration-300"
@@ -354,31 +397,11 @@ const SponsorCTASection: React.FC<{ config: SectionConfig }> = ({ config }) => {
         <div 
           className="rounded-[40px] py-20 px-10 text-center relative overflow-hidden shadow-2xl"
           style={{
-            background: `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 50%, ${color3} 100%)`,
+            background: gradient,
             color: boxTextColor,
           }}
         >
-          <div className="relative z-10">
-            <h2 className="text-4xl lg:text-7xl font-black mb-6 uppercase tracking-tight" style={{ color: line1Color }}>
-              Vil du bli sponsor?
-            </h2>
-            <p className="text-lg font-medium mb-12 max-w-xl mx-auto opacity-90">
-              Som sponsor bidrar du til klubbens arbeid samtidig som du får synlighet i lokalmiljøet. 
-              Sammen skaper vi verdi for både klubb og næringsliv.
-            </p>
-            <button
-              type="button"
-              className="px-12 py-5 font-black uppercase text-sm tracking-widest hover:scale-105 transition-transform shadow-xl"
-              style={{
-                background: `linear-gradient(135deg, var(--color-${styleSettings.ctaButtonColor}) 0%, ${styleSettings.ctaGradientColor} 100%)`,
-                color: styleSettings.ctaTextColor || '#ffffff',
-                borderRadius: 'var(--radius-button)',
-              }}
-            >
-              Ta kontakt
-            </button>
-          </div>
-          {/* Decorative blur elements */}
+          {content}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
         </div>
@@ -446,6 +469,9 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ config: SectionConfig }>> = 
 const DynamicSections: React.FC = () => {
   const { styleSettings } = useTheme();
   const sections = styleSettings.sections || [];
+  const webLayout = styleSettings.webLayout || 'full';
+  const isNarrowLayout = webLayout === '1490' || webLayout === '1248';
+  const sectionGap = isNarrowLayout ? (styleSettings.sectionGap ?? 24) : 0;
   
   return (
     <>
@@ -454,6 +480,20 @@ const DynamicSections: React.FC = () => {
         .map(section => {
           const Component = SECTION_COMPONENTS[section.id];
           if (!Component) return null;
+          if (isNarrowLayout) {
+            return (
+              <div 
+                key={section.id}
+                style={{
+                  marginTop: `${sectionGap}px`,
+                  borderRadius: 'var(--radius-card, 16px)',
+                  overflow: 'hidden',
+                }}
+              >
+                <Component config={section} />
+              </div>
+            );
+          }
           return <Component key={section.id} config={section} />;
         })}
     </>

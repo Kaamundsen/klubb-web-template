@@ -6,6 +6,7 @@ import { ClubContent, getClubContent } from '../config/clubContent';
 export type TemplateVersion = 'v1' | 'v2';
 export type NewsViewMode = 'mosaic' | 'grid' | 'list';
 export type NewsLayout = 'mosaic' | 'featured' | 'twoCol' | 'threeCol' | 'list';
+export type WebLayout = 'full' | '1920' | '1490' | '1248';
 export type FontFamily = 'inter' | 'roboto' | 'poppins' | 'montserrat' | 'opensans' | 'lato' | 'nunito' | 'raleway';
 export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
@@ -141,6 +142,13 @@ export interface StyleSettings {
   
   // ===== LAYOUT =====
   
+  // Sidebredde (full / 1920px / 1490px / 1248px)
+  webLayout: WebLayout;
+  webLayoutBgColor: string;
+  
+  // Luft mellom seksjoner for smale layouts (0-48px)
+  sectionGap: number;
+  
   // Border radius (0-48px)
   cardRadius: number;
   buttonRadius: number;
@@ -211,6 +219,12 @@ export interface StyleSettings {
   heroLine1Color: HeroTextColor;
   heroLine2Color: HeroTextColor;
   
+  // Hero tekst bakgrunnsfarge
+  heroLine1BgEnabled: boolean;
+  heroLine1BgColor: HeroTextColor;
+  heroLine2BgEnabled: boolean;
+  heroLine2BgColor: HeroTextColor;
+  
   // Hero overlay/filter på bildet
   heroOverlayColor: ColorChoice | 'none';
   heroOverlayOpacity: number;  // 0-100
@@ -251,6 +265,7 @@ export interface StyleSettings {
   sponsorLogoShowBorder: boolean;
   
   // Sponsor-CTA boks
+  sponsorCTAShowGradient: boolean;
   sponsorCTAColor1: string;
   sponsorCTAColor2: string;
   sponsorCTAColor3: string;
@@ -260,6 +275,9 @@ export interface StyleSettings {
   // Footer
   footerBackgroundLight: string;
   footerBackgroundDark: string;
+  
+  // Hero bakgrunnsbilde (per klubb)
+  heroImage: string;
   
   // Legacy støtte (for bakoverkompatibilitet under migrering)
   primary1?: string;
@@ -321,6 +339,7 @@ export interface ScrapedContent {
   heroNews?: {
     image: string;
     title: string;
+    originalImage?: string;
   };
   articles?: Array<{
     id: string;
@@ -328,6 +347,7 @@ export interface ScrapedContent {
     title: string;
     category: string;
     date?: string;
+    originalImage?: string;
   }>;
 }
 
@@ -350,6 +370,9 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     supportColor3: club.colors.navy || '#092c5c',
     supportColor4: '#ffffff',
     gradientColor: club.colors.accentLight || '#ff6b8a',
+    webLayout: 'full',
+    webLayoutBgColor: '',
+    sectionGap: 24,
     cardRadius: 16,
     buttonRadius: 12,
     moduleRadius: 24,
@@ -385,6 +408,10 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     heroContentAlign: 'left' as const,
     heroLine1Color: 'white',
     heroLine2Color: 'secondary',
+    heroLine1BgEnabled: false,
+    heroLine1BgColor: 'primary',
+    heroLine2BgEnabled: false,
+    heroLine2BgColor: 'secondary',
     heroOverlayColor: 'primary',
     heroOverlayOpacity: 90,
     heroTaglineText: 'Støtt din lokale idrett i dag',
@@ -402,6 +429,7 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     sections: [...DEFAULT_SECTIONS],
     sponsorHeadingStyle: 'full' as const,
     sponsorLogoShowBorder: false,
+    sponsorCTAShowGradient: true,
     sponsorCTAColor1: '',
     sponsorCTAColor2: '',
     sponsorCTAColor3: '',
@@ -409,6 +437,7 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     sponsorCTABoxTextColor: '',
     footerBackgroundLight: '',
     footerBackgroundDark: '',
+    heroImage: '',
   };
 }
 
@@ -462,8 +491,27 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     return true; // Standard: dark mode
   });
   const [isColorsSwapped, setIsColorsSwapped] = useState(false);
-  const [scrapedContent, setScrapedContent] = useState<ScrapedContent | null>(null);
+  const [scrapedContent, setScrapedContentRaw] = useState<ScrapedContent | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(`klubb-scraped-${getInitialClub().id}`);
+        return saved ? JSON.parse(saved) : null;
+      } catch { return null; }
+    }
+    return null;
+  });
   const [isLoadingContent, setIsLoadingContent] = useState(false);
+
+  const setScrapedContent = useCallback((content: ScrapedContent | null) => {
+    setScrapedContentRaw(content);
+    try {
+      if (content) {
+        localStorage.setItem(`klubb-scraped-${club.id}`, JSON.stringify(content));
+      } else {
+        localStorage.removeItem(`klubb-scraped-${club.id}`);
+      }
+    } catch { /* ignore */ }
+  }, [club.id]);
   
   // Stil-innstillinger med standardverdier (laster fra localStorage om tilgjengelig)
   const [styleSettings, setStyleSettings] = useState<StyleSettings>(() => {
@@ -495,6 +543,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       gradientColor: initialClub.colors.accentLight || '#ff6b8a',
       
       // ===== LAYOUT =====
+      webLayout: 'full' as WebLayout,
+      webLayoutBgColor: '',
+      sectionGap: 24,
       cardRadius: 16,
       buttonRadius: 12,
       moduleRadius: 24,
@@ -542,6 +593,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       heroContentAlign: 'left' as const,
       heroLine1Color: 'white',
       heroLine2Color: 'secondary',
+      heroLine1BgEnabled: false,
+      heroLine1BgColor: 'primary',
+      heroLine2BgEnabled: false,
+      heroLine2BgColor: 'secondary',
       heroOverlayColor: 'primary',
       heroOverlayOpacity: 90,
       heroTaglineText: 'Støtt din lokale idrett i dag',
@@ -587,6 +642,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       sponsorLogoShowBorder: false,
       
       // Sponsor CTA boks
+      sponsorCTAShowGradient: true,
       sponsorCTAColor1: '',
       sponsorCTAColor2: '',
       sponsorCTAColor3: '',
@@ -596,6 +652,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       // Footer
       footerBackgroundLight: '',
       footerBackgroundDark: '',
+      
+      // Hero bakgrunnsbilde
+      heroImage: '',
     };
     
     // Hvis det finnes lagrede innstillinger, merg dem med standardverdier
@@ -837,6 +896,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setClubState(newClub);
     setClubContent(getClubContent(clubId));
     setTemplateState(newClub.template);
+
+    // Last scraped content for den nye klubben (per-klubb lagring)
+    try {
+      const savedScraped = localStorage.getItem(`klubb-scraped-${clubId}`);
+      setScrapedContentRaw(savedScraped ? JSON.parse(savedScraped) : null);
+    } catch { setScrapedContentRaw(null); }
     
     // Last innstillinger for den nye klubben (alltid fra den nye klubbens defaults, ikke fra forrige klubb)
     const newKey = `klubb-settings-${clubId}`;
