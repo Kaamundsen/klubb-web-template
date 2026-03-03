@@ -1,145 +1,72 @@
-# Designmal V2 - Omstruktureringsplan
+# Design Template V2 – Implementation Status
 
-## 📁 Foreslått Filstruktur
+> **Originally created:** Early 2026
+> **Last updated:** March 2026
+> **Status:** Most items completed — this document is kept for reference.
 
-```
-Klubb-web-template/
-├── src/
-│   ├── config/
-│   │   ├── clubConfig.ts          # Sentral klubbkonfigurasjon (farger, logoer)
-│   │   └── clubThemes.ts          # Predefinerte temaer for test-klubber
-│   ├── hooks/
-│   │   ├── useClubTheme.ts        # Hook for å hente aktiv klubb-tema
-│   │   └── useThemeInjector.ts    # Hook for å injisere CSS-variabler
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── TopNav.tsx         # Oppgradert med 3-nivå navigasjon
-│   │   │   └── ClubSwitcher.tsx  # Dev-only komponent for å bytte klubb
-│   │   ├── content/
-│   │   │   ├── Hero.tsx           # Oppdatert med CSS-variabler
-│   │   │   ├── NewsGrid.tsx       # Sikret aspect-ratio på bilder
-│   │   │   └── RightSidebar.tsx   # Sticky behavior + modulær
-│   │   └── shared/
-│   │       └── Logo.tsx           # Dynamisk logo-komponent
-│   ├── styles/
-│   │   ├── theme.css              # CSS-variabler definert her
-│   │   └── globals.css             # Global styling
-│   ├── utils/
-│   │   └── themeUtils.ts          # Hjelpefunksjoner for tema-håndtering
-│   ├── App.tsx
-│   └── index.tsx
-├── public/
-│   └── logos/                      # Logoer for ulike klubber
-│       ├── club-1-horizontal.svg
-│       ├── club-1-vertical.svg
-│       ├── club-2-horizontal.svg
-│       └── club-2-vertical.svg
-└── package.json
-```
+---
 
-## 🎨 Implementasjonsplan
+## Implementation Status / Implementeringsstatus
 
-### Fase 1: Global Theme Engine
-1. **clubConfig.ts** - Sentral konfigurasjonsfil
-   - Struktur for klubb-ID, farger, logo-stier
-   - Støtte for multiple klubber
-   - TypeScript interfaces
+### Phase 1: Global Theme Engine ✅ COMPLETED
+- [x] `clubConfig.ts` — Central configuration with `ClubConfig`, `ClubColors`, `ClubLogos`, `MASTER_CONFIG`
+- [x] CSS variables — Dynamic injection via `ThemeContext.tsx` (replaces all hardcoded colors)
+- [x] `useTheme` hook — `useTheme()`, `useClubColors()`, `useDevMode()`
+- [x] Support colors (1–4) with auto-generation from `colorUtils.ts`
 
-2. **CSS-variabler** - Erstatte hardkodede farger
-   - `--color-primary` (erstatter brand-blue)
-   - `--color-accent` (erstatter brand-red)
-   - `--color-dark` (erstatter brand-dark)
-   - `--color-navy` (erstatter brand-navy)
-   - Dynamisk injeksjon basert på aktiv klubb
+### Phase 2: Navigation ✅ COMPLETED
+- [x] `TopNav.tsx` — Multi-level navigation with mega menu
+- [x] 3 dropdown styles: simple, megabox, megafull
+- [x] Sport icons: Fotball, Håndball, Ski, Allidrett
+- [x] Sticky navigation with glassmorphism
 
-3. **useThemeInjector hook**
-   - Injiserer CSS-variabler på :root ved klubb-bytt
-   - Oppdaterer Tailwind config dynamisk
+### Phase 3: Content Handling ✅ COMPLETED
+- [x] `NewsGrid.tsx` — 5 layout modes: mosaic (1+5), featured (2+4), twoCol (2x3), threeCol (3x2), list
+- [x] `Hero.tsx` — Floating logo, image overlay, 2-line headline, CTA buttons, quick links
+- [x] Content scraping via `contentScraper.ts` with CORS proxy
 
-### Fase 2: Navigasjonshierarki (V2)
-1. **TopNav.tsx** - Tre-nivå struktur
-   - Nivå 1: Hovedmeny (Hjem, Klubben, Sport, Sponsor, Kontakt)
-   - Nivå 2: Idrettsgrener (Fotball, Håndball, Turn, Allidrett)
-   - Nivå 3: Lag/Undersider (A-lag, G16, Treningstider, etc.)
-   - Hover fly-out med smooth animations
-   - Sticky behavior med glassmorphism
+### Phase 4: Modular Sidebar ✅ COMPLETED
+- [x] `RightSidebar.tsx` — 6 reorderable modules with per-module styling
+- [x] Modules: Next match, Shortcuts, Activities, Grasrotandelen, Sponsors, Follow us
 
-### Fase 3: Robust Innholdshåndtering
-1. **NewsGrid.tsx**
-   - Sikre `aspect-ratio` på alle bilder
-   - `object-fit: cover` for konsistent visning
-   - 6 nyheter i responsivt grid (2 per rad desktop)
-   - Fallback for manglende bilder
+### Phase 5: Dark/Light Mode ✅ COMPLETED
+- [x] Full light/dark mode with independent backgrounds per element
+- [x] Smooth CSS variable transitions
+- [x] Per-mode styling for modules and sections
+- [x] Club identity preserved in both modes
 
-2. **Hero.tsx**
-   - Dynamisk bakgrunnsbilde med aspect-ratio
-   - CSS-variabler for farger
-   - Responsiv tekststørrelse
+### Phase 6: Developer Experience ✅ COMPLETED
+- [x] `DevToolbar.tsx` — Full admin console with 9 tabs (evolved beyond original plan)
+- [x] Club switcher integrated in DevToolbar header
+- [x] Settings persistence in `localStorage` per club
+- [x] JSON export/import for backup and sharing
+- [x] Norwegian/English language toggle
 
-### Fase 4: Modulær Sidebar
-1. **RightSidebar.tsx**
-   - Sticky positioning som følger scroll
-   - Modulær struktur klar for admin-panel integrasjon
-   - Dynamiske farger basert på tema
+---
 
-### Fase 5: Dark/Light Mode
-1. **Integrasjon med Tailwind dark:**
-   - CSS-variabler fungerer i både light og dark mode
-   - Klubbens fargeidentitet bevares
-   - Smooth transitions
+## What Changed from the Original Plan
 
-### Fase 6: Developer Experience
-1. **ClubSwitcher.tsx**
-   - Kun synlig i dev-miljø (process.env.NODE_ENV === 'development')
-   - Dropdown for å bytte mellom test-klubber
-   - Visuell bekrefte av tema-endringer
+| Planned | Actual |
+|---------|--------|
+| `src/` directory structure | Flat structure without `src/` (simpler) |
+| Separate `useClubTheme` + `useThemeInjector` hooks | Single `ThemeContext` with `useTheme` hook |
+| `ClubSwitcher.tsx` as standalone | Integrated into `DevToolbar` header |
+| Tailwind CSS integration | Custom CSS variables without Tailwind |
+| 4 admin tabs (Stil, Farger, Tekst, Import) | 9 admin tabs (Klubb, Layout, Meny, Hero, Bakgrunn, Tekst, Modul, Seksjoner, Import) |
+| `public/logos/` folder | `public/clubs/{clubId}/` with full asset structure |
+| `DynamicSections.tsx` — not planned | Added: 6 configurable page sections |
+| Module/section reordering — not planned | Added: full drag reordering + per-item styling |
 
-## 🔧 Tekniske Detaljer
+---
 
-### CSS-variabler struktur:
-```css
-:root {
-  --color-primary: #092c5c;
-  --color-accent: #e5003c;
-  --color-dark: #0b0e14;
-  --color-navy: #0f2e58;
-  --color-primary-light: #ff1a57;
-}
-```
+## Remaining Opportunities / Gjenstående muligheter
 
-### ClubConfig struktur:
-```typescript
-interface ClubConfig {
-  id: string;
-  name: string;
-  colors: {
-    primary: string;
-    accent: string;
-    dark: string;
-    navy: string;
-  };
-  logos: {
-    horizontal: string;
-    vertical: string;
-  };
-}
-```
+- Router integration for multi-page navigation
+- Authentication for production admin access
+- Backend API for settings storage (replace localStorage)
+- Content management system (CMS) integration
+- Performance optimization (code splitting, lazy loading)
 
-## ✅ Krav og Begrensninger
+---
 
-- ✅ All eksisterende artikkelstruktur beholdes
-- ✅ Admin-data strukturer uendret
-- ✅ Kun visuell og strukturell endring
-- ✅ Backward compatible med eksisterende data
-- ✅ Performance-optimalisert (minimal re-rendering)
-
-## 📝 Neste Steg
-
-1. Opprett filstruktur
-2. Implementer clubConfig.ts med test-data
-3. Bygg CSS-variabel system
-4. Oppdater alle komponenter til å bruke CSS-variabler
-5. Forbedre TopNav med 3-nivå navigasjon
-6. Sikre bildhåndtering i NewsGrid
-7. Implementer ClubSwitcher
-8. Test med flere klubb-konfigurasjoner
+*This plan is archived for reference. See [README.md](README.md) and [docs/DESIGNSYSTEM-ANALYSE.md](docs/DESIGNSYSTEM-ANALYSE.md) for current documentation.*

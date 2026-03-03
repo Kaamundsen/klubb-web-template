@@ -285,6 +285,25 @@ body {
 }
 
 /* ============================================
+   Mega Menu Styles
+   ============================================ */
+
+.mega-menu-panel {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 250ms ease, transform 250ms ease, visibility 250ms ease;
+}
+
+.mega-menu-panel.mega-menu-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* ============================================
    Mobile Menu Styles
    ============================================ */
 

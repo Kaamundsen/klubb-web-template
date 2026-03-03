@@ -120,10 +120,11 @@ export interface StyleSettings {
   logoFavicon: string;       // Favicon (symbol uten tekst)
   logoSocialMedia: string;   // Ikon for sosiale medier
   
-  // ===== MENY-BAKGRUNN =====
+  // ===== MENY =====
   
   menuBackgroundLight: string;  // Bakgrunnsfarge for meny i lysmodus (når scrollet)
   menuBackgroundDark: string;   // Bakgrunnsfarge for meny i mørkmodus (når scrollet)
+  menuStyle: 'simple' | 'megabox' | 'megafull';  // Dropdown-stil: enkel, megameny (boks), megameny (fullbredde)
   
   // ===== FARGER =====
   
@@ -363,6 +364,7 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     logoSocialMedia: '',
     menuBackgroundLight: '#ffffff',
     menuBackgroundDark: '#0b0e14',
+    menuStyle: 'megabox',
     primaryColor: club.colors.primary,
     secondaryColor: club.colors.accent,
     supportColor1: club.colors.accentLight || club.colors.accent,
@@ -529,9 +531,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       logoFavicon: '',
       logoSocialMedia: '',
       
-      // ===== MENY-BAKGRUNN =====
+      // ===== MENY =====
       menuBackgroundLight: '#ffffff',
       menuBackgroundDark: '#0b0e14',
+      menuStyle: 'megabox',
       
       // ===== FARGER =====
       primaryColor: initialClub.colors.primary,

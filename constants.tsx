@@ -24,57 +24,78 @@ export const NAV_ITEMS: any[] = [
     label: 'Klubben', 
     href: '#', 
     hasSubmenu: true,
+    isMegaMenu: true,
     submenu: [
-      { label: 'Om oss', href: '#' },
-      { label: 'Medlemskap', href: '#' },
-      { label: 'Styret', href: '#' },
-      { label: 'Anlegg', href: '#' },
-      { label: 'Dokumenter', href: '#' },
+      { label: 'Om oss', href: '#', icon: 'building', iconBg: '#3B82F6', description: 'Historien og visjonen vår' },
+      { label: 'Nyheter', href: '#', icon: 'newspaper', iconBg: '#10B981', description: 'Siste nytt fra klubben' },
+      { label: 'Medlemskap', href: '#', icon: 'users', iconBg: '#8B5CF6', description: 'Bli en del av fellesskapet' },
+      { label: 'Styret', href: '#', icon: 'briefcase', iconBg: '#F97316', description: 'Ledelse og organisasjon' },
+      { label: 'Anlegg', href: '#', icon: 'mapPin', iconBg: '#F59E0B', description: 'Baner og fasiliteter' },
+      { label: 'Dokumenter', href: '#', icon: 'document', iconBg: '#14B8A6', description: 'Referater og protokoller' },
+      { label: 'Arrangementer', href: '#', icon: 'ticket', iconBg: '#EC4899', description: 'Cuper, turneringer og events' },
+      { label: 'Kamper & resultater', href: '#', icon: 'calendar', iconBg: '#EF4444', description: 'Kommende og spilte kamper' },
     ]
   },
   { 
     label: 'Sport', 
     href: '#', 
     hasSubmenu: true,
+    isMegaMenu: true,
     submenu: [
       { 
         label: 'Fotball', 
         href: '#',
+        icon: 'football',
+        iconSrc: '/icons/fotball.svg',
+        iconBg: '#22C55E',
+        description: 'Lag, kamper og treningstider',
         hasNested: true,
         items: [
-          { label: 'Lagsoversikt', href: '#' },
-          { label: 'Treningstider', href: '#' },
-          { label: 'Sportslig plan', href: '#' },
+          { label: 'Lagsoversikt', href: '#', icon: 'list', iconBg: '#E0F2FE' },
+          { label: 'Treningstider', href: '#', icon: 'clock', iconBg: '#FEF3C7' },
+          { label: 'Sportsplan', href: '#', icon: 'clipboard', iconBg: '#F3E8FF' },
         ]
       },
       { 
         label: 'Håndball', 
         href: '#',
+        icon: 'handball',
+        iconSrc: '/icons/haandball.svg',
+        iconBg: '#F97316',
+        description: 'Lag, kamper og treningstider',
         hasNested: true,
         items: [
-          { label: 'Lagsoversikt', href: '#' },
-          { label: 'Treningstider', href: '#' },
-          { label: 'Sportslig plan', href: '#' },
+          { label: 'Lagsoversikt', href: '#', icon: 'list', iconBg: '#E0F2FE' },
+          { label: 'Treningstider', href: '#', icon: 'clock', iconBg: '#FEF3C7' },
+          { label: 'Sportsplan', href: '#', icon: 'clipboard', iconBg: '#F3E8FF' },
         ]
       },
       { 
         label: 'Ski', 
         href: '#',
+        icon: 'ski',
+        iconSrc: '/icons/ski.svg',
+        iconBg: '#3B82F6',
+        description: 'Langrenn og alpint',
         hasNested: true,
         items: [
-          { label: 'Lagsoversikt', href: '#' },
-          { label: 'Treningstider', href: '#' },
-          { label: 'Sportslig plan', href: '#' },
+          { label: 'Lagsoversikt', href: '#', icon: 'list', iconBg: '#E0F2FE' },
+          { label: 'Treningstider', href: '#', icon: 'clock', iconBg: '#FEF3C7' },
+          { label: 'Sportsplan', href: '#', icon: 'clipboard', iconBg: '#F3E8FF' },
         ]
       },
       { 
         label: 'Allidrett', 
         href: '#',
+        icon: 'running',
+        iconSrc: '/icons/allidrett.svg',
+        iconBg: '#A855F7',
+        description: 'Aktiviteter for alle aldersgrupper',
         hasNested: true,
         items: [
-          { label: 'Lagsoversikt', href: '#' },
-          { label: 'Treningstider', href: '#' },
-          { label: 'Sportslig plan', href: '#' },
+          { label: 'Lagsoversikt', href: '#', icon: 'list', iconBg: '#E0F2FE' },
+          { label: 'Treningstider', href: '#', icon: 'clock', iconBg: '#FEF3C7' },
+          { label: 'Sportsplan', href: '#', icon: 'clipboard', iconBg: '#F3E8FF' },
         ]
       },
     ]
@@ -83,8 +104,10 @@ export const NAV_ITEMS: any[] = [
     label: 'Sponsor', 
     href: '#', 
     hasSubmenu: true,
+    isMegaMenu: true,
     submenu: [
-      { label: 'Sponsorinfo', href: '#' },
+      { label: 'Sponsorinfo', href: '#', icon: 'handshake', iconBg: '#EC4899', description: 'Våre samarbeidspartnere' },
+      { label: 'Bli sponsor', href: '#', icon: 'star', iconBg: '#F59E0B', description: 'Støtt klubben og bli synlig' },
     ]
   },
   { label: 'Kontakt', href: '#' },

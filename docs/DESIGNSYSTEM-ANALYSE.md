@@ -1,310 +1,235 @@
-# Designmal V2 - Systemanalyse og Dokumentasjon
+# Design System Analysis / Designsystem-analyse
 
-**Dato:** Januar 2026  
-**Status:** Arbeidsdokument for refaktorering
+**Date / Dato:** March 2026  
+**Status:** Current documentation / Gjeldende dokumentasjon
 
 ---
 
-## 1. NÅVÆRENDE SYSTEMSTRUKTUR
+## 1. COLOR SYSTEM / FARGESYSTEM
 
-### 1.1 Fargekonfigurasjonen (StyleSettings)
+### 1.1 Club Colors / Klubbfarger
 
-Systemet har følgende fargevariabler:
+The club's identity is defined by two main colors plus up to 4 auto-generated support colors.
 
-| Variabel | Kode-navn | CSS-variabel | Faktisk bruk |
-|----------|-----------|--------------|--------------|
-| primary1 | `styleSettings.primary1` | `--color-primary` | Klubbens hovedfarge (tekst, titler, hover) |
-| primary2 | `styleSettings.primary2` | `--color-dark` | Mørk bakgrunnsfarge (dark mode bakgrunn) |
-| accent1 | `styleSettings.accent1` | `--color-accent` | Aksentfarge (knapper, highlights) |
-| accent2 | `styleSettings.accent2` | `--color-accent-light` | Lysere variant av aksent (knapp hover, gradienter) |
+Klubbens identitet defineres av to hovedfarger pluss opptil 4 autogenererte støttefarger.
 
-**PROBLEM:** Navngivningen er forvirrende:
-- "Hovedfarge 1 & 2" antyder to klubbfarger som jobber sammen
-- Men "Hovedfarge 2" (primary2) brukes som mørk bakgrunnsfarge, ikke som klubbfarge
-- "Støttefarge 1" (accent1) er egentlig klubbens andre hovedfarge
-- "Støttefarge 2" (accent2) brukes på knappers gradient-effekt
+| Setting | CSS Variable | Purpose / Bruk |
+|---------|-------------|----------------|
+| Primary / Primær | `--color-primary` | Main club color (headings, accents) / Hovedfarge |
+| Secondary / Sekundær | `--color-accent` | Second club color (buttons, highlights) / Sekundærfarge |
+| Support 1–4 / Støtte 1–4 | `--color-support-1` … `--color-support-4` | Derived helper colors / Utledede hjelpefarger |
 
-### 1.2 Hvordan fargene brukes i layouten
+### 1.2 Mode-dependent Colors / Modusavhengige farger
 
-#### TOPPMENY (TopNav.tsx)
+These change automatically between light and dark mode:
+
+| CSS Variable | Purpose / Bruk |
+|-------------|----------------|
+| `--page-background` | Page background / Sidebakgrunn |
+| `--section-background` | Section between hero and content / Seksjonsbakgrunn |
+| `--news-background` | News section / Nyhetsseksjon |
+| `--card-background` | Cards / Kort |
+| `--module-background` | Sidebar modules / Sidebarmoduler |
+| `--menu-background` | Navigation menu / Meny |
+| `--footer-background` | Footer / Bunntekst |
+| `--color-text` | Main text color / Hovedtekstfarge |
+| `--color-text-light` | Light mode text / Tekst i lysmodus |
+| `--color-text-dark` | Dark mode text / Tekst i mørk modus |
+
+### 1.3 Auto-calculated Colors / Autoberegnede farger
+
+| CSS Variable | Purpose / Bruk |
+|-------------|----------------|
+| `--color-text-on-primary` | Contrast text on primary / Kontrasttekst på primær |
+| `--color-text-on-accent` | Contrast text on accent / Kontrasttekst på aksent |
+
+---
+
+## 2. HOW COLORS ARE USED / HVORDAN FARGENE BRUKES
+
+### TopNav / Toppmeny
 ```
-"Bli medlem" knapp:
-├── Bakgrunn: gradient fra accent1 til accent2
-├── Tekst: --color-text-on-accent (automatisk beregnet)
-└── Border-radius: var(--radius-button)
-
-Dropdown meny:
-├── Bakgrunn: var(--card-background)
-├── Border: var(--card-border)
-├── Hover: var(--color-accent) med --color-text-on-accent
-└── Border-radius: var(--radius-card)
-```
-
-#### HERO-SEKSJON (Hero.tsx)
-```
-Farget filter på bilde:
-├── Styres av: heroOverlayColor (primary/accent/none)
-├── Styrke: heroOverlayOpacity (0-100)
-└── CSS: color-mix(in srgb, var(--color-[valg]) [%], transparent)
-
-Overskrift linje 1:
-├── Styres av: heroLine1Color (white/primary/accent)
-└── Fargeverdier: #ffffff / var(--color-primary) / var(--color-accent)
-
-Overskrift linje 2:
-├── Styres av: heroLine2Color (white/primary/accent)  
-└── Fargeverdier: #ffffff / var(--color-primary) / var(--color-accent)
-
-Knapper:
-├── Primær: accent1 gradient, --radius-button
-└── Sekundær: hvit/transparent med border
+Navigation bar:
+├── Background: --menu-background
+├── "Bli medlem" button: accent gradient, --radius-button
+├── Dropdown menu: --card-background, --card-border
+├── Dropdown hover: --color-accent with --color-text-on-accent
+├── Sport icons: Fotball, Håndball, Ski, Allidrett
+└── Mega menu: simple / megabox / megafull styles
 ```
 
-#### NYHETER (NewsGrid.tsx)
+### Hero Section / Hero-seksjon
 ```
-Nyhetsseksjon:
-├── Bakgrunn: var(--news-background) [modus-avhengig]
-├── Border: var(--module-border)
-└── Border-radius: var(--radius-module)
-
-Nyhetskort:
-├── Bakgrunn: var(--card-background) [modus-avhengig]
-├── Border: var(--card-border)
-└── Border-radius: var(--radius-card)
-
-Tags på nyheter:
-├── Bakgrunn: var(--color-accent)
-├── Tekst: var(--color-text-on-accent)
-└── Høyde: 24px, font 10px
+Hero area:
+├── Image filter: heroOverlayColor (primary/accent/none) + heroOverlayOpacity
+├── Floating logo: toggleable
+├── Section top: flat / rounded
+├── Headline line 1: heroLine1Color + optional background
+├── Headline line 2: heroLine2Color + optional background
+├── CTA buttons: toggleable, accent gradient
+├── Quick links: toggleable, left/center/right alignment
+└── Content alignment: left/center/right
 ```
 
-#### SIDEBAR-MODULER (RightSidebar.tsx)
+### News Grid / Nyhetsgrid
 ```
-Modulfarge og stil:
-├── Bakgrunn: var(--module-background)
-├── Border: var(--module-border)
-├── Border-radius: var(--radius-module)
-└── Tittel-farge: var(--module-heading-color)
-```
-
-### 1.3 Admin-konsollen (DevToolbar.tsx)
-
-#### Tab: STIL
-```
-Layout:          [1+5] [2+4] [2x3] [3x2] [Liste]
-Avrunding:       Kort [slider]px | Knapp [slider]px | Modul [slider]px
-Topp:            [Rett ▼] / [Avrundet]
-Linje 1:         [Hvit ▼] / [Hovedfarge] / [Støttefarge]
-Linje 2:         [Hvit ▼] / [Hovedfarge] / [Støttefarge]
-Filter:          [Hovedfarge ▼] / [Støttefarge] / [Ingen]
-Filter %:        [slider] [verdi]px  <-- BUG: Viser "px" men skal være "%"
+News section:
+├── Layout: mosaic (1+5), featured (2+4), twoCol (2x3), threeCol (3x2), list
+├── Section bg: --news-background
+├── Cards: --card-background, --card-border, --radius-card
+├── Tags: configurable bg + text color
+└── Heading bar: configurable color
 ```
 
-#### Tab: FARGER
+### Right Sidebar / Høyre sidebar
 ```
-Klubb:           [Primær] [Sekundær]     <-- Disse er primary1 og accent1
-Bakgrunn:        [Mørk] [Lys]            <-- Disse er primary2 og accent2 (FORVIRRENDE!)
-Tekst:           [Lys] [Mørk]
-[☀️/🌙] Lys/Mørk-modus toggle for redigering
-[Seksjon] [Nyheter] [Kort] [Modul]       <-- Bakgrunner per modus
-[Modul-tittel]
-```
-
-#### Tab: TEKST
-```
-Overskrift:      [Font ▼] [Weight slider]
-Brødtekst:       [Font ▼] [Weight slider]
-Modul-tittel:    [Font ▼] [Size ▼] [Weight slider]
+6 reorderable modules:
+├── Neste kamp / Next match
+├── Snarveier / Shortcuts
+├── Aktiviteter / Activities
+├── Grasrotandelen
+├── Sponsorer / Sponsors
+└── Følg oss / Follow us
+Each module: independent bg + text color per light/dark mode
 ```
 
-#### Tab: IMPORT
+### Dynamic Sections / Dynamiske seksjoner
 ```
-[URL input] [Hent] [status] /clubs/{klubb}/
+6 reorderable sections:
+├── Klubbkolleksjon (flippable layout)
+├── Grasrotandelen (flippable layout)
+├── Bli med / Join us
+├── Sponsorer / Sponsors (heading style: full/module/hidden, logo border)
+├── Sponsor-CTA (gradient box with configurable colors + angle)
+└── Kontakt / Contact
+Each section: independent bg + text + heading line colors per light/dark mode
 ```
 
 ---
 
-## 2. KJENTE PROBLEMER
+## 3. CSS VARIABLES REFERENCE / CSS-VARIABLER
 
-### 2.1 Navngivning og logikk
-
-**Problem 1: Hovedfarge vs Støttefarge**
-- Brukeren forventer: "Hovedfarge 1 & 2" = klubbens to primære farger
-- Faktisk: "Hovedfarge 2" (primary2) = mørk bakgrunnsfarge
-- Resultat: Må sette "Støttefarge 1" til det som egentlig er klubbens andre hovedfarge
-
-**Problem 2: Filter-slider viser feil enhet**
-- Slider for "Filter %" viser "px" som enhet
-- Bør vise "%" siden det er en prosent-verdi
-
-**Problem 3: Bakgrunn-gruppen er forvirrende**
-- "Bakgrunn: Mørk" og "Bakgrunn: Lys" er egentlig primary2 og accent2
-- Disse navnene stemmer ikke med hvordan de faktisk brukes
-- accent2 brukes primært som gradient på knapper, ikke som "lys bakgrunn"
-
-### 2.2 Inkonsistent fargebruk
-
-**Hero filter:**
-- Kan velge "Hovedfarge" eller "Støttefarge"
-- Men selve fargeverdien settes under "Farger"-fanen
-- Disconnect mellom hvor man velger type og hvor man setter verdi
-
-**Knapp-gradienter:**
-- Bruker accent1 → accent2 for gradient
-- Men accent2 vises som "Bakgrunn: Lys" i admin
-- Ikke intuitivt at dette påvirker knapper
-
----
-
-## 3. CSS-VARIABLER REFERANSE
-
-### 3.1 Farger
+### 3.1 Colors / Farger
 ```css
---color-primary:          Hovedfarge (primary1)
---color-accent:           Aksentfarge (accent1)
---color-accent-light:     Lys aksent (accent2)
---color-dark:             Mørk bakgrunn (primary2)
---color-navy:             Sekundær mørk (arvet fra klubb)
---color-text:             Tekstfarge (modus-avhengig)
---color-text-on-primary:  Tekst på hovedfarge (auto-beregnet)
---color-text-on-accent:   Tekst på aksent (auto-beregnet)
---color-primary-1/2:      Direkte tilgang til primary1/2
---color-accent-1/2:       Direkte tilgang til accent1/2
+--color-primary            /* Club primary / Primærfarge */
+--color-accent             /* Club secondary / Sekundærfarge */
+--color-support-1 … 4     /* Support colors / Støttefarger */
+--color-text               /* Text (mode-dependent) / Tekst */
+--color-text-light         /* Light mode text / Lys tekst */
+--color-text-dark          /* Dark mode text / Mørk tekst */
+--color-text-on-primary    /* Auto contrast on primary */
+--color-text-on-accent     /* Auto contrast on accent */
 ```
 
-### 3.2 Border-radius
+### 3.2 Border Radius / Avrunding
 ```css
---radius-card:            Kort-avrunding (cardRadius + 'px')
---radius-button:          Knapp-avrunding (buttonRadius + 'px')
---radius-module:          Modul-avrunding (moduleRadius + 'px')
+--radius-card              /* Card radius / Kortavrunding */
+--radius-button            /* Button radius / Knappavrunding */
+--radius-module            /* Module radius / Modulavrunding */
 ```
 
-### 3.3 Bakgrunner (modus-avhengig)
+### 3.3 Backgrounds / Bakgrunner (mode-dependent)
 ```css
---page-background:        Sidebakgrunn
---section-background:     Seksjon mellom hero og innhold
---news-background:        Nyhetsseksjon
---module-background:      Moduler
---card-background:        Kort
+--page-background          /* Page / Side */
+--section-background       /* Section / Seksjon */
+--news-background          /* News / Nyheter */
+--card-background          /* Cards / Kort */
+--module-background        /* Modules / Moduler */
+--menu-background          /* Menu / Meny */
+--footer-background        /* Footer / Bunn */
 ```
 
-### 3.4 Border
+### 3.4 Borders
 ```css
---border-color:           Border-farge
---border-opacity:         Border-opacity
---card-border:            color-mix(...) med opacity
---module-border:          color-mix(...) med opacity
+--border-color             /* Border color / Kantfarge */
+--border-opacity           /* Border opacity */
+--card-border              /* Card border (color-mix) */
+--module-border            /* Module border (color-mix) */
 ```
 
-### 3.5 Fonter
+### 3.5 Typography / Typografi
 ```css
---font-heading:           Overskrift-font
---font-heading-weight:    Overskrift-vekt
---font-body:              Brødtekst-font
---font-body-weight:       Brødtekst-vekt
---module-heading-font:    Modul-tittel font
---module-heading-size:    Modul-tittel størrelse (xs/sm/md/lg → px)
---module-heading-weight:  Modul-tittel vekt
---module-heading-color:   Modul-tittel farge
+--font-heading             /* Heading font / Overskriftsfont */
+--font-heading-weight      /* Heading weight / Overskriftsvekt */
+--font-body                /* Body font / Brødtekstfont */
+--font-body-weight         /* Body weight / Brødtekstvekt */
+--module-heading-font      /* Module heading font */
+--module-heading-size      /* Module heading size (xs/sm/md/lg) */
+--module-heading-weight    /* Module heading weight */
+--module-heading-color     /* Module heading color */
 ```
 
 ---
 
-## 4. FILSTRUKTUR
+## 4. ADMIN CONSOLE STRUCTURE / ADMIN-KONSOLL
+
+The DevToolbar has 9 tabs:
+
+| # | Tab (NO) | Tab (EN) | Content |
+|---|----------|----------|---------|
+| 1 | Klubb | Club | Logos (horizontal, vertical, favicon, SoMe), primary + secondary color, support colors 1–4 with auto-generate, motto text + visibility + color |
+| 2 | Layout | Layout | Page width (full/1920/1490/1248), outer background, section gap, news grid layout, card/button/module radius, CTA button color + gradient + text, heading bar color, tag colors |
+| 3 | Meny | Menu | Dropdown style: simple / megabox / megafull |
+| 4 | Hero | Hero | Floating logo, section top style, line 1/2 colors + backgrounds, image overlay color + opacity, CTA toggle, quick links toggle + alignment, content alignment |
+| 5 | Bakgrunn | Background | Light/dark edit mode, text colors, per-element backgrounds (section/news/card/module/menu/footer), module heading color, logo for light backgrounds |
+| 6 | Tekst | Text | Heading font + weight, body font + weight, module heading font + size + weight |
+| 7 | Modul | Module | Reorder sidebar modules (up/down), enable/disable, per-module bg + text color per mode |
+| 8 | Seksjoner | Sections | Reorder sections, enable/disable, flip layout, per-section bg + text + heading colors, sponsor heading style, sponsor logo border, sponsor-CTA gradient |
+| 9 | Import | Import | Fetch content from URL (scraping), hero image upload, image path mappings |
+
+---
+
+## 5. FILE STRUCTURE / FILSTRUKTUR
 
 ```
 /context/
-  ThemeContext.tsx        # All state og CSS-variabel-injeksjon
+  ThemeContext.tsx          # Central state + CSS variable injection
 
 /components/
-  DevToolbar.tsx          # Admin-konsoll
-  Hero.tsx                # Hero-seksjon
-  TopNav.tsx              # Toppmeny
-  NewsGrid.tsx            # Nyheter
-  RightSidebar.tsx        # Sidebar-moduler
+  DevToolbar.tsx            # Admin console (9 tabs)
+  DocsModal.tsx             # Built-in documentation modal
+  TopNav.tsx                # Top navigation with mega menu
+  Hero.tsx                  # Hero section
+  NewsGrid.tsx              # News grid (5 layouts)
+  RightSidebar.tsx          # Right sidebar (6 modules)
+  DynamicSections.tsx       # Dynamic page sections (6 sections)
+  CTASection.tsx            # CTA section
+  ClubLogos.tsx             # Club logo display
+  RoleSection.tsx           # Role section
+  StatsSection.tsx          # Statistics section
 
 /config/
-  clubConfig.ts           # ClubConfig interface, MASTER_CONFIG
-  clubSandbox.ts          # Test-klubber med farger/logoer
-  clubContent.ts          # Klubb-spesifikt innhold
+  clubConfig.ts             # ClubConfig interface, MASTER_CONFIG
+  clubSandbox.ts            # Sandbox clubs (6 clubs)
+  clubContent.ts            # Per-club content (news, hero)
+
+/hooks/
+  useTheme.ts               # useTheme, useClubColors, useDevMode
+
+/utils/
+  colorUtils.ts             # HSL/HEX/RGB conversions, contrast
+  contentScraper.ts         # URL scraping for club content
 
 /public/clubs/
-  master/                 # Klubbnettside logoer
-  msfotball/              # MS Fotball logoer og bilder
-  dfi/                    # DFI logoer
-  kolbotn/                # Kolbotn logoer
-  honefoss/               # Hønefoss logoer
-  ulkisa/                 # Ullensaker/Kisa logoer
+  master/                   # Klubbnettside.no (default)
+  msfotball/                # MS Fotball
+  dfi/                      # DFI
+  kolbotn/                  # Kolbotn IL
+  honefoss/                 # Hønefoss BK
+  ulkisa/                   # Ullensaker/Kisa IL
 ```
 
 ---
 
-## 5. ANBEFALT NY STRUKTUR
+## 6. PERSISTENCE / LAGRING
 
-### 5.1 Foreslått farge-hierarki
-
-```
-KLUBBFARGER (de to fargene som definerer klubben):
-├── Primærfarge (primary):    Klubbens hovedfarge
-└── Sekundærfarge (secondary): Klubbens andre farge (den som nå er accent1)
-
-STØTTEFARGER (hjelpefarger for layout):
-├── Mørk bakgrunn (dark):     For dark mode
-├── Lys variant (light):      For hover-effekter på primær/sekundær
-└── Grå-skala:                For borders, subtil tekst, etc.
-
-MODUS-AVHENGIGE (byttes automatisk):
-├── Sidebakgrunn
-├── Kort-bakgrunn
-├── Modul-bakgrunn
-├── Tekstfarge
-└── Border-farge/opacity
-```
-
-### 5.2 Foreslått admin-struktur
-
-```
-KLUBB-TAB:
-├── Velg klubb [dropdown]
-├── Primærfarge [picker]
-├── Sekundærfarge [picker]
-└── Preview-knapp [viser hvordan de spiller sammen]
-
-HERO-TAB:
-├── Overskrift linje 1 [Hvit / Primær / Sekundær]
-├── Overskrift linje 2 [Hvit / Primær / Sekundær]
-├── Filter-farge [Primær / Sekundær / Ingen]
-├── Filter-styrke [slider 0-100%]
-└── (Eventuelt: Logo-valg)
-
-ELEMENTER-TAB:
-├── Kort [radius, border]
-├── Knapper [radius, stil]
-├── Moduler [radius, border]
-└── Tags [størrelse, stil]
-
-BAKGRUNNER-TAB:
-├── Lysmodus: [Seksjon] [Nyheter] [Kort] [Modul]
-├── Mørkmodus: [Seksjon] [Nyheter] [Kort] [Modul]
-└── Border: [Farge] [Opacity kort] [Opacity modul]
-
-TEKST-TAB:
-├── Overskrifter: [Font] [Vekt]
-├── Brødtekst: [Font] [Vekt]
-├── Modul-titler: [Font] [Størrelse] [Vekt] [Farge]
-└── Tekstfarge: [Lys modus] [Mørk modus]
-```
+| Key | Content |
+|-----|---------|
+| `klubb-settings-{clubId}` | All style settings (colors, layout, fonts, etc.) |
+| `klubb-scraped-{clubId}` | Scraped/imported content |
+| Export JSON | Contains `clubId`, `styleSettings`, `newsLayout` |
 
 ---
 
-## 6. HANDLINGSPUNKTER
-
-1. **Fiks "px"-bug på filter-slider** - Endre suffix fra "px" til "%"
-2. **Rename farger i admin** - Tydeligere navngiving
-3. **Restrukturerer farge-logikk** - Primær + Sekundær = klubbfarger
-4. **Separér bakgrunner fra klubbfarger** - Ikke bland primary2/accent2 med bakgrunner
-5. **Lag konsistent referanse** - Når "Hovedfarge" velges i dropdown, bruk alltid samme farge
-
----
-
-*Dette dokumentet er grunnlag for videre planlegging og refaktorering.*
+*This document reflects the current state of the system as of March 2026.*
+*Dette dokumentet gjenspeiler systemets nåværende tilstand per mars 2026.*

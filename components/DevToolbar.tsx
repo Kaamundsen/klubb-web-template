@@ -53,7 +53,7 @@ const FONT_OPTIONS: { id: FontFamily; label: string }[] = [
 const TOOLBAR_LABELS = {
   no: {
     // Tabs
-    tab_klubb: 'Klubb', tab_layout: 'Layout', tab_hero: 'Hero', tab_bakgrunn: 'Bakgrunn',
+    tab_klubb: 'Klubb', tab_layout: 'Layout', tab_meny: 'Meny', tab_hero: 'Hero', tab_bakgrunn: 'Bakgrunn',
     tab_tekst: 'Tekst', tab_modul: 'Modul', tab_seksjoner: 'Seksjoner', tab_import: 'Import',
     // Header actions
     save: 'Lagre innstillinger', load: 'Last innstillinger', export_json: 'Eksporter JSON',
@@ -118,7 +118,7 @@ const TOOLBAR_LABELS = {
     sec_sponsor_cta: 'Sponsor-CTA', sec_kontakt: 'Kontakt',
   },
   en: {
-    tab_klubb: 'Club', tab_layout: 'Layout', tab_hero: 'Hero', tab_bakgrunn: 'Background',
+    tab_klubb: 'Club', tab_layout: 'Layout', tab_meny: 'Menu', tab_hero: 'Hero', tab_bakgrunn: 'Background',
     tab_tekst: 'Text', tab_modul: 'Module', tab_seksjoner: 'Sections', tab_import: 'Import',
     save: 'Save settings', load: 'Load settings', export_json: 'Export JSON',
     copied: 'Copied to clipboard!', swap_colors: 'Swap colors', toggle_mode: 'Toggle mode',
@@ -183,7 +183,7 @@ const SECTION_NAMES_EN: Record<string, string> = {
 };
 
 const TAB_DISPLAY: Record<string, LabelKey> = {
-  klubb: 'tab_klubb', layout: 'tab_layout', hero: 'tab_hero', bakgrunn: 'tab_bakgrunn',
+  klubb: 'tab_klubb', layout: 'tab_layout', meny: 'tab_meny', hero: 'tab_hero', bakgrunn: 'tab_bakgrunn',
   tekst: 'tab_tekst', modul: 'tab_modul', seksjoner: 'tab_seksjoner', import: 'tab_import',
 };
 
@@ -423,7 +423,7 @@ const DevToolbar: React.FC = () => {
 
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'hero' | 'bakgrunn' | 'tekst' | 'modul' | 'seksjoner' | 'import'>('klubb');
+  const [activeTab, setActiveTab] = useState<'klubb' | 'layout' | 'meny' | 'hero' | 'bakgrunn' | 'tekst' | 'modul' | 'seksjoner' | 'import'>('klubb');
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'light' | 'dark'>('light');
@@ -555,7 +555,7 @@ const DevToolbar: React.FC = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-l border-white/20 pl-3">
-            {(['klubb', 'layout', 'hero', 'bakgrunn', 'tekst', 'modul', 'seksjoner', 'import'] as const).map((tab) => (
+            {(['klubb', 'layout', 'meny', 'hero', 'bakgrunn', 'tekst', 'modul', 'seksjoner', 'import'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -616,6 +616,7 @@ const DevToolbar: React.FC = () => {
               <LogoUploader label="v2" value={styleSettings.logoVertical} onChange={(url) => updateStyleSettings({ logoVertical: url })} lang={lang} />
               <LogoUploader label="Favicon" value={styleSettings.logoFavicon} onChange={(url) => updateStyleSettings({ logoFavicon: url })} lang={lang} />
               <LogoUploader label="SoMe" value={styleSettings.logoSocialMedia} onChange={(url) => updateStyleSettings({ logoSocialMedia: url })} lang={lang} />
+              <LogoUploader label={t('logo_light_bg')} value={styleSettings.logoHorizontalLight || ''} onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} lang={lang} />
             </div>
             
             <div className="w-px h-6 bg-white/20" />
@@ -788,6 +789,33 @@ const DevToolbar: React.FC = () => {
                 <option value="support4" className="bg-gray-900">{t('support4')}</option>
               </select>
               <ColorPicker label={t('text')} color={styleSettings.tagTextColor || '#ffffff'} onChange={(c) => updateStyleSettings({ tagTextColor: c })} presets={colorPresets} />
+            </div>
+          </div>
+        )}
+
+        {/* MENY */}
+        {activeTab === 'meny' && (
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">{lang === 'no' ? 'Dropdown-stil' : 'Dropdown style'}:</span>
+              {([
+                { id: 'simple' as const, label: lang === 'no' ? 'Enkel' : 'Simple', desc: lang === 'no' ? 'Klassisk dropdown-meny' : 'Classic dropdown menu' },
+                { id: 'megabox' as const, label: lang === 'no' ? 'Megameny (boks)' : 'Mega (box)', desc: lang === 'no' ? 'Megameny med avrundede hjørner innenfor grid' : 'Mega menu with rounded corners inside grid' },
+                { id: 'megafull' as const, label: lang === 'no' ? 'Megameny (fullbredde)' : 'Mega (full)', desc: lang === 'no' ? 'Megameny som strekker seg over hele bredden' : 'Full-width mega menu' },
+              ]).map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => updateStyleSettings({ menuStyle: opt.id })}
+                  className={`px-3 py-1.5 rounded text-[10px] font-medium transition-all ${
+                    (styleSettings.menuStyle || 'megabox') === opt.id
+                      ? 'bg-white/30 text-white'
+                      : 'bg-white/10 text-white/60 hover:bg-white/20'
+                  }`}
+                  title={opt.desc}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -981,12 +1009,6 @@ const DevToolbar: React.FC = () => {
             
             <ColorPicker label={t('module_heading')} color={styleSettings.moduleHeadingColor} onChange={(c) => updateStyleSettings({ moduleHeadingColor: c })} presets={colorPresets} />
             
-            <div className="w-px h-6 bg-white/20" />
-            
-            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-              <span className="text-gray-500 text-[9px] uppercase mr-1">{t('logo_light_bg')}:</span>
-              <LogoUploader label="v1-lys" value={styleSettings.logoHorizontalLight || ''} onChange={(url) => updateStyleSettings({ logoHorizontalLight: url })} lang={lang} />
-            </div>
           </div>
         )}
 

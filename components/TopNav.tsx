@@ -1,21 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NAV_ITEMS } from '../constants';
 import { useTheme } from '../hooks/useTheme';
 
-// Klubb-spesifikk logo komponent
 const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; customLogo?: string; customLogoLight?: string }> = ({ club, dark, isScrolled, customLogo, customLogoLight }) => {
   const [logoError, setLogoError] = React.useState(false);
-  
-  // Velg riktig logo basert på bakgrunn (dark = mørk bakgrunn = bruk lys logo)
-  // Når dark=true: bruk customLogo (standard/mørk bakgrunn)
-  // Når dark=false: bruk customLogoLight hvis tilgjengelig, ellers customLogo
   const logoToUse = dark ? customLogo : (customLogoLight || customLogo);
-  
-  // Sjekk om valgt logo er en opplastet fil (data URL)
   const isUploadedLogo = logoToUse && logoToUse.startsWith('data:');
   
-  // Hvis det er en opplastet logo (data URL), bruk den
   if (isUploadedLogo && !logoError) {
     return (
       <img 
@@ -27,12 +19,10 @@ const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; cust
     );
   }
   
-  // For master bruker vi alltid den innebygde SVG-logoen
   if (club.id === 'master') {
     return <Logo dark={dark} isScrolled={isScrolled} />;
   }
   
-  // For andre klubber, bruk deres logo-fil fra clubSandbox.ts
   if (club.logos?.horizontal && !logoError) {
     return (
       <img 
@@ -44,11 +34,9 @@ const ClubLogo: React.FC<{ club: any; dark?: boolean; isScrolled?: boolean; cust
     );
   }
   
-  // Fallback til standard Klubbnettside-logo
   return <Logo dark={dark} isScrolled={isScrolled} />;
 };
 
-// Standard Klubbnettside logo
 const Logo = ({ dark, isScrolled }: { dark?: boolean; isScrolled?: boolean }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="349" height="94" viewBox="0 0 349 94" className={`w-auto transition-all duration-300 ${isScrolled ? 'h-[42px]' : 'h-[64px]'}`}>
     <g id="Klubbnettside-Logo_Hvit_v2" transform="translate(-697 -269)">
@@ -86,6 +74,164 @@ const Logo = ({ dark, isScrolled }: { dark?: boolean; isScrolled?: boolean }) =>
     </g>
   </svg>
 );
+
+// --- Mega Menu Icon System ---
+const ICON_PATHS: Record<string, React.ReactNode> = {
+  building: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+    </>
+  ),
+  users: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+    </>
+  ),
+  briefcase: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0" />
+    </>
+  ),
+  mapPin: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+    </>
+  ),
+  document: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </>
+  ),
+  football: (
+    <circle cx="12" cy="12" r="9" strokeLinecap="round" strokeLinejoin="round" />
+  ),
+  handball: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10.05 4.575a1.575 1.575 0 10-3.15 0v3.15M10.05 4.575a1.575 1.575 0 113.15 0v5.15M10.05 4.575v3.15M6.9 7.725a1.575 1.575 0 00-1.575 1.575v2.7a7.35 7.35 0 007.35 7.35h1.05a4.2 4.2 0 004.2-4.2v-3.15" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.2 4.575v2.1m0-2.1a1.575 1.575 0 113.15 0v4.2a1.575 1.575 0 01-3.15 0" />
+    </>
+  ),
+  ski: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 17.25L21 6.75M12 3v4.5M9.75 8.25l4.5 3" />
+      <circle cx="12" cy="3" r="1.5" fill="currentColor" />
+    </>
+  ),
+  running: (
+    <>
+      <circle cx="13.5" cy="4.5" r="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10 9l2.5 1.5L15 9l3 5h-3l-1.5 6.5-3-2.5L8 21l-1-3 3-4.5L8.5 11z" />
+    </>
+  ),
+  list: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm0 5.25h.007v.008H3.75V12zm0 5.25h.007v.008H3.75v-.008z" />
+    </>
+  ),
+  clock: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </>
+  ),
+  clipboard: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H10.5a2.25 2.25 0 00-2.15 1.586m0 0a48.11 48.11 0 00-4.1.08C3.095 4.008 2.25 4.973 2.25 6.108V19.5a2.25 2.25 0 002.25 2.25h.75" />
+    </>
+  ),
+  handshake: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9l-3 3-1.5-1.5-3 3M3.75 12h.007v.008H3.75V12zm16.5 0h.007v.008h-.007V12zM6 18.75l3-3m6 3l3-3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </>
+  ),
+  star: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+    </>
+  ),
+  newspaper: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6V7.5z" />
+    </>
+  ),
+  trophy: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0116.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-2.27.308 6.023 6.023 0 01-2.27-.308" />
+    </>
+  ),
+  calendar: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 12.75h.008v.008H12v-.008zm0 2.25h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+    </>
+  ),
+  ticket: (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
+    </>
+  ),
+};
+
+const MegaIcon: React.FC<{ name: string; bg?: string; size?: 'sm' | 'md' | 'lg'; colored?: boolean; iconSrc?: string }> = ({ name, bg, size = 'md', colored = true, iconSrc }) => {
+  const sizeClasses = {
+    sm: 'w-8 h-8',
+    md: 'w-9 h-9',
+    lg: 'w-11 h-11',
+  };
+  const iconSizeClasses = {
+    sm: 'w-3.5 h-3.5',
+    md: 'w-4 h-4',
+    lg: 'w-5 h-5',
+  };
+  const imgSizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-[18px] h-[18px]',
+    lg: 'w-5 h-5',
+  };
+
+  if (iconSrc && bg) {
+    return (
+      <div 
+        className={`${sizeClasses[size]} rounded-xl flex items-center justify-center flex-shrink-0`}
+        style={{ backgroundColor: bg }}
+      >
+        <img src={iconSrc} alt="" className={imgSizeClasses[size]} />
+      </div>
+    );
+  }
+
+  if (colored && bg) {
+    return (
+      <div 
+        className={`${sizeClasses[size]} rounded-xl flex items-center justify-center flex-shrink-0`}
+        style={{ backgroundColor: bg + '18' }}
+      >
+        <svg 
+          className={iconSizeClasses[size]} 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke={bg}
+          strokeWidth={1.8}
+        >
+          {ICON_PATHS[name] || ICON_PATHS.star}
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <svg 
+      className={`${iconSizeClasses[size]} flex-shrink-0`} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor"
+      strokeWidth={1.8}
+    >
+      {ICON_PATHS[name] || ICON_PATHS.star}
+    </svg>
+  );
+};
 
 // Mobile Menu Accordion Item
 interface MobileMenuItemProps {
@@ -148,7 +294,10 @@ const TopNav: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileItems, setOpenMobileItems] = useState<string[]>([]);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<number | null>(null);
+  const [activeSportIdx, setActiveSportIdx] = useState(0);
   const { isDarkMode, toggleDarkMode, club, styleSettings } = useTheme();
+  const megaMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -158,7 +307,6 @@ const TopNav: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lukk mobilmeny ved resize til desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -169,7 +317,6 @@ const TopNav: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Hindre scroll når mobilmeny er åpen
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -187,12 +334,181 @@ const TopNav: React.FC = () => {
     );
   };
 
+  const openMegaMenu = useCallback((idx: number) => {
+    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+    setActiveMegaMenu(idx);
+    setActiveSportIdx(0);
+  }, []);
+
+  const closeMegaMenu = useCallback(() => {
+    megaMenuTimeout.current = setTimeout(() => {
+      setActiveMegaMenu(null);
+    }, 200);
+  }, []);
+
+  const keepMegaMenuOpen = useCallback(() => {
+    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+  }, []);
+
   const webLayout = styleSettings.webLayout || 'full';
   const isNarrowLayout = webLayout === '1490' || webLayout === '1248';
   const showNavBg = isScrolled || isNarrowLayout;
-
-  // For smale layouts vises alltid bakgrunn → logo skal følge lys/mørk bakgrunn
   const shouldUseDarkLogo = showNavBg && !isDarkMode;
+  const menuStyle = styleSettings.menuStyle || 'megabox';
+  const isMegaMenu = menuStyle !== 'simple';
+
+  const activeItem = activeMegaMenu !== null ? NAV_ITEMS[activeMegaMenu] : null;
+  const hasSidebar = activeItem?.submenu?.some((sub: any) => sub.hasNested);
+
+  const renderSidebarMegaMenu = (item: any) => {
+    const activeSub = item.submenu[activeSportIdx] || item.submenu[0];
+    return (
+      <div className="flex min-h-[320px]">
+        {/* Left sidebar */}
+        <div 
+          className="w-[260px] flex-shrink-0 py-5 px-3"
+          style={{ borderRight: '1px solid var(--card-border)' }}
+        >
+          <div className="text-[10px] font-bold uppercase tracking-[0.15em] px-4 mb-3" style={{ color: 'var(--color-text)', opacity: 0.4 }}>
+            Retninger
+          </div>
+          {item.submenu.map((sub: any, sIdx: number) => {
+            const isActive = sIdx === activeSportIdx;
+            return (
+              <a
+                key={sIdx}
+                href={sub.href}
+                className="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer mb-0.5"
+                style={{
+                  backgroundColor: isActive ? (sub.iconBg + '14') : 'transparent',
+                  borderLeft: isActive ? `3px solid ${sub.iconBg}` : '3px solid transparent',
+                }}
+                onMouseEnter={() => setActiveSportIdx(sIdx)}
+              >
+                <MegaIcon name={sub.icon} bg={sub.iconBg} size="md" iconSrc={sub.iconSrc} />
+                <div className="min-w-0">
+                  <div className="text-[13px] font-bold" style={{ color: 'var(--color-text)' }}>{sub.label}</div>
+                  <div className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--color-text)', opacity: 0.5 }}>{sub.description}</div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        {/* Center content */}
+        <div className="flex-1 py-5 px-8">
+          <div className="text-[10px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'var(--color-text)', opacity: 0.4 }}>
+            {activeSub.label}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {activeSub.items?.map((nested: any, nIdx: number) => (
+              <a
+                key={nIdx}
+                href={nested.href}
+                className="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group/item"
+                style={{ color: 'var(--color-text)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                  e.currentTarget.style.color = 'var(--color-text-on-accent)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--color-text)';
+                }}
+              >
+                <MegaIcon name={nested.icon} bg={activeSub.iconBg} size="sm" />
+                <span className="text-[12px] font-semibold">{nested.label}</span>
+              </a>
+            ))}
+          </div>
+
+          {/* Bottom CTA row */}
+          <div 
+            className="mt-6 pt-5 flex items-center justify-between"
+            style={{ borderTop: '1px solid var(--card-border)' }}
+          >
+            <div className="text-[11px]" style={{ color: 'var(--color-text)', opacity: 0.5 }}>
+              Trenger du hjelp med noe annet?
+            </div>
+            <a 
+              href="#" 
+              className="text-[11px] font-bold uppercase tracking-wider px-5 py-2 rounded-lg transition-all hover:opacity-90"
+              style={{ 
+                backgroundColor: 'var(--color-accent)', 
+                color: 'var(--color-text-on-accent)' 
+              }}
+            >
+              Kontakt oss
+            </a>
+          </div>
+        </div>
+
+        {/* Right promo panel */}
+        <div 
+          className="w-[260px] flex-shrink-0 py-5 px-5 flex flex-col"
+          style={{ borderLeft: '1px solid var(--card-border)' }}
+        >
+          <div className="rounded-xl overflow-hidden mb-4 flex-shrink-0">
+            <img 
+              src="https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&q=80&w=400&h=200" 
+              alt="Sport"
+              className="w-full h-[140px] object-cover"
+            />
+          </div>
+          <div className="text-[13px] font-bold mb-1" style={{ color: 'var(--color-text)' }}>
+            Lær mer om aktivitetene
+          </div>
+          <div className="text-[11px] leading-relaxed" style={{ color: 'var(--color-text)', opacity: 0.5 }}>
+            Se treningskalender, kampoppsett og meld deg på aktiviteter.
+          </div>
+          <a 
+            href="#" 
+            className="mt-3 flex items-center gap-1.5 text-[11px] font-bold"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            Se alle aktiviteter
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderGridMegaMenu = (item: any) => {
+    return (
+      <div className="py-6 px-4">
+        <div className="text-[10px] font-bold uppercase tracking-[0.15em] px-3 mb-4" style={{ color: 'var(--color-text)', opacity: 0.4 }}>
+          {item.label}
+        </div>
+        <div className={`grid ${item.submenu.length > 3 ? 'grid-cols-3' : `grid-cols-${item.submenu.length}`} gap-1`}>
+          {item.submenu.map((sub: any, sIdx: number) => (
+            <a
+              key={sIdx}
+              href={sub.href}
+              className="flex items-center gap-3.5 px-4 py-4 rounded-xl transition-all duration-200"
+              style={{ color: 'var(--color-text)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = sub.iconBg + '14';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <MegaIcon name={sub.icon} bg={sub.iconBg} size="lg" iconSrc={sub.iconSrc} />
+              <div className="min-w-0">
+                <div className="text-[13px] font-bold">{sub.label}</div>
+                {sub.description && (
+                  <div className="text-[11px] mt-0.5" style={{ opacity: 0.5 }}>{sub.description}</div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -204,7 +520,7 @@ const TopNav: React.FC = () => {
         } : undefined}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
-          {/* Logo (Left) - Klubb-spesifikk */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <div className="cursor-pointer inline-block">
               <ClubLogo 
@@ -217,70 +533,83 @@ const TopNav: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Links (Centered) - Hidden on mobile */}
+          {/* Desktop Links */}
           <div className="hidden lg:flex flex-grow justify-center">
             <div className={`flex items-center gap-6 ${!shouldUseDarkLogo ? 'text-white' : 'text-brand-blue'}`}>
-            {NAV_ITEMS.map((item, idx) => (
-              <div key={idx} className="relative group">
-                {/* The "Bridge": Padding bottom ensures the mouse remains over a valid element when moving to the menu */}
-                <div className="py-4">
-                  <a 
-                    href={item.href} 
-                    className="text-[14px] uppercase font-semibold tracking-wider transition-colors flex items-center gap-1 whitespace-nowrap hover:text-[var(--color-accent)]"
-                  >
-                    {item.label}
-                    {item.hasSubmenu && (
-                      <svg className="w-3 h-3 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
-                    )}
-                  </a>
-                </div>
-                
-                {item.hasSubmenu && (
-                  <div 
-                    className="absolute top-[80%] left-1/2 -translate-x-1/2 w-64 shadow-2xl overflow-visible submenu-enter transition-all duration-300"
-                    style={{
-                      backgroundColor: 'var(--card-background)',
-                      border: '1px solid var(--card-border)',
-                      borderRadius: 'var(--radius-card)',
-                    }}
-                  >
-                    <div className="p-1.5">
-                      {item.submenu.map((sub: any, sIdx: number) => (
-                        <div key={sIdx} className="relative group/nested">
-                          <a 
-                            href={sub.href} 
-                            className="flex items-center justify-between px-5 py-3 text-[11px] font-black uppercase tracking-widest transition-colors mb-0.5 last:mb-0"
-                            style={{ 
-                              color: 'var(--color-text)',
-                              borderRadius: 'var(--radius-card)',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = 'var(--color-accent)';
-                              e.currentTarget.style.color = 'var(--color-text-on-accent)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = 'var(--color-text)';
-                            }}
-                          >
-                            {sub.label}
-                            {sub.hasNested && (
-                              <svg className="w-3 h-3 -rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
-                            )}
-                          </a>
-                          
-                          {sub.hasNested && (
-                            <div 
-                              className="absolute left-[95%] top-0 ml-1 w-56 shadow-2xl overflow-hidden opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300"
-                              style={{
-                                backgroundColor: 'var(--card-background)',
-                                border: '1px solid var(--card-border)',
+              {NAV_ITEMS.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className={`relative ${!isMegaMenu && item.hasSubmenu ? 'group' : ''}`}
+                  onMouseEnter={() => isMegaMenu && item.hasSubmenu && item.isMegaMenu ? openMegaMenu(idx) : undefined}
+                  onMouseLeave={() => isMegaMenu && item.hasSubmenu && item.isMegaMenu ? closeMegaMenu() : undefined}
+                >
+                  <div className="py-4">
+                    <a 
+                      href={item.href} 
+                      className="text-[14px] uppercase font-semibold tracking-wider transition-colors flex items-center gap-1 whitespace-nowrap hover:text-[var(--color-accent)]"
+                      onClick={item.hasSubmenu ? (e: React.MouseEvent) => e.preventDefault() : undefined}
+                    >
+                      {item.label}
+                      {item.hasSubmenu && (
+                        <svg 
+                          className={`w-3 h-3 transition-transform duration-300 ${isMegaMenu && activeMegaMenu === idx ? 'rotate-180' : ''} ${!isMegaMenu ? 'group-hover:rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      )}
+                    </a>
+                  </div>
+
+                  {/* Simple dropdown (when menuStyle is 'simple') */}
+                  {!isMegaMenu && item.hasSubmenu && (
+                    <div 
+                      className="absolute top-[80%] left-1/2 -translate-x-1/2 w-64 shadow-2xl overflow-visible submenu-enter transition-all duration-300"
+                      style={{
+                        backgroundColor: 'var(--card-background)',
+                        border: '1px solid var(--card-border)',
+                        borderRadius: 'var(--radius-card)',
+                      }}
+                    >
+                      <div className="p-1.5">
+                        {item.submenu.map((sub: any, sIdx: number) => (
+                          <div key={sIdx} className="relative group/nested">
+                            <a 
+                              href={sub.href} 
+                              className="flex items-center justify-between px-5 py-3 text-[11px] font-black uppercase tracking-widest transition-colors mb-0.5 last:mb-0"
+                              style={{ 
+                                color: 'var(--color-text)',
                                 borderRadius: 'var(--radius-card)',
                               }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                                e.currentTarget.style.color = 'var(--color-text-on-accent)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.color = 'var(--color-text)';
+                              }}
                             >
-                               <div className="p-1.5">
-                                 {sub.items.map((nested: any, nIdx: number) => (
-                                   <a 
+                              {sub.label}
+                              {sub.hasNested && (
+                                <svg className="w-3 h-3 -rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
+                              )}
+                            </a>
+                            
+                            {sub.hasNested && (
+                              <div 
+                                className="absolute left-[95%] top-0 ml-1 w-56 shadow-2xl overflow-hidden opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300"
+                                style={{
+                                  backgroundColor: 'var(--card-background)',
+                                  border: '1px solid var(--card-border)',
+                                  borderRadius: 'var(--radius-card)',
+                                }}
+                              >
+                                <div className="p-1.5">
+                                  {sub.items.map((nested: any, nIdx: number) => (
+                                    <a 
                                       key={nIdx}
                                       href={nested.href}
                                       className="block px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors mb-0.5 last:mb-0"
@@ -296,24 +625,24 @@ const TopNav: React.FC = () => {
                                         e.currentTarget.style.backgroundColor = 'transparent';
                                         e.currentTarget.style.color = 'var(--color-text)';
                                       }}
-                                   >
-                                     {nested.label}
-                                   </a>
-                                 ))}
-                               </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                                    >
+                                      {nested.label}
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Action Hub (Right) */}
+          {/* Action Hub */}
           <div className="hidden lg:flex flex-shrink-0 items-center gap-5">
             <button 
               onClick={toggleDarkMode}
@@ -356,6 +685,44 @@ const TopNav: React.FC = () => {
             )}
           </button>
         </div>
+
+        {/* === MEGA MENU PANEL === */}
+        {isMegaMenu && (
+          <div
+            className={`absolute top-full left-0 right-0 mega-menu-panel ${activeMegaMenu !== null && activeItem?.isMegaMenu ? 'mega-menu-open' : ''}`}
+            onMouseEnter={keepMegaMenuOpen}
+            onMouseLeave={closeMegaMenu}
+          >
+            {menuStyle === 'megabox' ? (
+              <div className="container mx-auto px-6 pt-2 pb-4">
+                <div 
+                  className="rounded-2xl overflow-hidden shadow-2xl"
+                  style={{
+                    backgroundColor: 'var(--card-background)',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  {activeItem && hasSidebar && renderSidebarMegaMenu(activeItem)}
+                  {activeItem && !hasSidebar && renderGridMegaMenu(activeItem)}
+                </div>
+              </div>
+            ) : (
+              <div 
+                className="shadow-2xl"
+                style={{
+                  backgroundColor: 'var(--card-background)',
+                  borderTop: '1px solid var(--card-border)',
+                  borderBottom: '2px solid var(--color-accent)',
+                }}
+              >
+                <div className="container mx-auto px-6">
+                  {activeItem && hasSidebar && renderSidebarMegaMenu(activeItem)}
+                  {activeItem && !hasSidebar && renderGridMegaMenu(activeItem)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </nav>
 
       {/* Mobile Menu Overlay */}
@@ -365,7 +732,6 @@ const TopNav: React.FC = () => {
         }`}
         style={{ backgroundColor: 'var(--color-support2)' }}
       >
-        {/* Menu Content */}
         <div className="pt-24 pb-8 h-full overflow-y-auto">
           <nav>
             {NAV_ITEMS.map((item, idx) => (
@@ -378,7 +744,6 @@ const TopNav: React.FC = () => {
             ))}
           </nav>
 
-          {/* Mobile CTA */}
           <div className="px-6 pt-8">
             <button 
               className="w-full text-[12px] font-black uppercase py-4 transition-all shadow-xl"
@@ -392,7 +757,6 @@ const TopNav: React.FC = () => {
             </button>
           </div>
 
-          {/* Mobile Dark Mode Toggle */}
           <div className="px-6 pt-4 flex justify-center">
             <button 
               onClick={toggleDarkMode}

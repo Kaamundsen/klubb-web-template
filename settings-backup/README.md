@@ -1,20 +1,24 @@
-# Backup av klubb-innstillinger
+# Settings Backup / Backup av klubb-innstillinger
+
+Store exported club settings (colors, styles, light + dark mode) as JSON files outside the browser.
 
 Her kan du lagre eksporterte farger og stiler (lys + mørk modus) per klubb, slik at du har backup utenfor nettleseren.
 
-## Slik lagrer du innstillinger her
+## How to save / Slik lagrer du
 
-1. **I appen:** Åpne admin (verktøylinjen), velg klubb, klikk **Eksporter**.
-2. **Kopier** hele JSON-teksten som vises.
-3. **Kjør i terminal** (fra prosjektmappen):
+1. **In the app / I appen:** Open admin (DevToolbar), select a club, click **Export / Eksporter**.
+2. **Copy** the full JSON text.
+3. **Run in terminal / Kjør i terminal** (from the project root / fra prosjektmappen):
    ```bash
    node scripts/save-settings-backup.js
    ```
-   Lim inn JSON-en (Ctrl+V), trykk Enter, deretter **Ctrl+D** (Mac/Linux) eller **Ctrl+Z** og Enter (Windows). Filen lagres som `settings-backup/<klubb-id>-<dato>.json`.
+   Paste the JSON (Ctrl+V), press Enter, then **Ctrl+D** (Mac/Linux) or **Ctrl+Z** + Enter (Windows). The file is saved as `settings-backup/<club-id>-<date>.json`.
 
-**Alternativ (fra fil):** Lagre den eksporterte JSON i en fil (f.eks. `temp.json`) og kjør:
+**Alternative (from file / fra fil):** Save the exported JSON to a file (e.g. `temp.json`) and run:
 ```bash
 node scripts/save-settings-backup.js temp.json
 ```
+
+These files can be committed to version control (git) for backup on GitHub.
 
 Du kan legge disse filene i versjonskontroll (git) for backup på GitHub.
