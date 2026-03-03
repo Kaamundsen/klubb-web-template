@@ -10,13 +10,13 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-// Dev-mode - ikke legg til padding siden toolbar er minimert som standard
+const showAdmin = import.meta.env.DEV || new URLSearchParams(window.location.search).has('admin');
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      {import.meta.env.DEV && <DevToolbar />}
+      {showAdmin && <DevToolbar />}
       <App />
     </ThemeProvider>
   </React.StrictMode>
