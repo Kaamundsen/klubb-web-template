@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="no" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klubbnettside - Profesjonelle løsninger for idretten</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700;900&family=Nunito:wght@300;400;500;600;700;800;900&family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                red: '#e5003c',
+                redLight: '#ff1a57',
+                blue: '#092c5c',
+                dark: '#0b0e14',
+                navy: '#0f2e58'
+              }
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            font-family: var(--font-body, 'Inter', sans-serif);
+            scroll-behavior: smooth;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        h1, h2, h3, h4, h5, h6, .heading {
+            font-family: var(--font-heading, 'Inter', sans-serif);
+        }
+        /* Gradient bruker nå CSS-variabler */
+        .gradient-brand {
+            background: linear-gradient(135deg, var(--color-accent, #e5003c) 0%, var(--color-accent-light, #ff1a57) 100%);
+        }
+        .nav-glass {
+            background: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .nav-glass-light {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .text-glow {
+            text-shadow: 0 0 20px var(--color-accent, rgba(229, 0, 60, 0.3));
+        }
+        /* Submenu animations */
+        .submenu-enter {
+            opacity: 0;
+            transform: translate(-50%, 10px);
+            pointer-events: none;
+        }
+        .group:hover .submenu-enter {
+            opacity: 1;
+            transform: translate(-50%, 0);
+            pointer-events: auto;
+        }
+        /* Økt padding for smale layouts (1490/1248) */
+        .narrow-layout .container {
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+        }
+    </style>
+
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/klubb-web-template/assets/index-CmAquQi2.js"></script>
+  <link rel="stylesheet" crossorigin href="/klubb-web-template/assets/index-B0Run-eL.css">
+</head>
+<body class="bg-white dark:bg-[var(--color-dark,#0b0e14)] text-gray-900 dark:text-white overflow-x-hidden">
+    <div id="root"></div>
+</body>
+</html>
