@@ -2,10 +2,30 @@
 import React from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { NewsArticle } from '../config/clubContent';
-import { NewsLayout, StyleSettings } from '../context/ThemeContext';
+import { NewsLayout, NewsHeadingSize, StyleSettings } from '../context/ThemeContext';
 
 // Fallback bilde for når bilder ikke laster
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=800';
+
+// Forhåndsdefinerte fontstørrelser for nyhetsoverskrifter (i px).
+// Tre nivåer (sm/md/lg) for vanlige kort + store kort, og en større variant
+// brukes automatisk når ingress-tekst er skrudd av (mer luft → større tittel).
+const NEWS_HEADING_SIZES: Record<NewsHeadingSize, { withExcerpt: number; withoutExcerpt: number }> = {
+  sm: { withExcerpt: 16, withoutExcerpt: 22 },
+  md: { withExcerpt: 18, withoutExcerpt: 26 },
+  lg: { withExcerpt: 22, withoutExcerpt: 32 },
+};
+const LARGE_NEWS_HEADING_SIZES: Record<NewsHeadingSize, { withExcerpt: number; withoutExcerpt: number }> = {
+  sm: { withExcerpt: 22, withoutExcerpt: 30 },
+  md: { withExcerpt: 28, withoutExcerpt: 38 },
+  lg: { withExcerpt: 34, withoutExcerpt: 46 },
+};
+
+function getHeadingFontSize(size: NewsHeadingSize, isLarge: boolean, excerptVisible: boolean): number {
+  const map = isLarge ? LARGE_NEWS_HEADING_SIZES : NEWS_HEADING_SIZES;
+  const entry = map[size] ?? map.md;
+  return excerptVisible ? entry.withExcerpt : entry.withoutExcerpt;
+}
 
 // Konverter NewsArticle til visningsformat
 interface DisplayArticle {
@@ -36,8 +56,12 @@ interface NewsCardProps {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, styleSettings }) => {
+  const excerptVisible = styleSettings.newsExcerptVisible !== false;
+  const headingSize = styleSettings.newsHeadingSize || 'md';
+
   // Liste-visning (bilde til venstre, tekst til høyre)
   if (layout === 'list') {
+    const listFontSize = getHeadingFontSize(headingSize, false, excerptVisible);
     return (
       <article 
         className="overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group flex gap-6"
@@ -83,14 +107,16 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, st
         </div>
         <div className="py-4 pr-6 flex flex-col justify-center flex-1">
           <h3 
-            className="font-bold text-lg leading-tight transition-colors mb-2 group-hover:text-[var(--color-primary)]"
-            style={{ color: 'var(--color-text)' }}
+            className={`font-bold leading-tight transition-colors group-hover:text-[var(--color-primary)] line-clamp-2 break-words hyphens-auto ${excerptVisible ? 'mb-2' : ''}`}
+            style={{ color: 'var(--color-text)', fontSize: `${listFontSize}px` }}
           >
             {item.title}
           </h3>
-          <p className="text-gray-500 text-sm line-clamp-2">
-            {item.excerpt || 'Les de siste oppdateringene om hva som skjer i klubben akkurat nå...'}
-          </p>
+          {excerptVisible && (
+            <p className="text-gray-500 text-sm line-clamp-2">
+              {item.excerpt || 'Les de siste oppdateringene om hva som skjer i klubben akkurat nå...'}
+            </p>
+          )}
         </div>
       </article>
     );
@@ -162,18 +188,25 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, isLarge, isMedium, layout, st
           </div>
         )}
       </div>
-      <div className={`p-6 ${isLarge ? 'lg:p-10' : ''} flex flex-col items-start`}>
+      <div className={`p-6 ${isLarge ? 'lg:p-10' : ''} flex flex-col items-start w-full min-w-0`}>
         <h3 
-          className={`font-extrabold leading-tight transition-colors mb-3 ${isLarge ? 'text-2xl lg:text-3xl' : 'text-lg'}`}
-          style={{ color: 'var(--color-text)' }}
+          className={`font-extrabold leading-tight transition-colors break-words hyphens-auto w-full ${
+            isLarge ? 'line-clamp-3' : 'line-clamp-2'
+          } ${excerptVisible ? 'mb-3' : ''}`}
+          style={{
+            color: 'var(--color-text)',
+            fontSize: `${getHeadingFontSize(headingSize, !!isLarge, excerptVisible)}px`,
+          }}
         >
           <span className="group-hover:text-[var(--color-primary)] transition-colors">
             {item.title}
           </span>
         </h3>
-        <p className="text-gray-500 text-sm line-clamp-2">
-          {item.excerpt || 'Les de siste oppdateringene om hva som skjer i klubben akkurat nå...'}
-        </p>
+        {excerptVisible && (
+          <p className="text-gray-500 text-sm line-clamp-2">
+            {item.excerpt || 'Les de siste oppdateringene om hva som skjer i klubben akkurat nå...'}
+          </p>
+        )}
       </div>
     </article>
   );

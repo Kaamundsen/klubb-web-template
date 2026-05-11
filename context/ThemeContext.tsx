@@ -11,6 +11,9 @@ export type WebLayout = 'full' | '1920' | '1490' | '1248';
 export type FontFamily = 'inter' | 'roboto' | 'poppins' | 'montserrat' | 'opensans' | 'lato' | 'nunito' | 'raleway';
 export type FontWeight = 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
+// Nyhets-overskrift størrelse (3 forhåndsvalgte størrelser - admin kan velge live)
+export type NewsHeadingSize = 'sm' | 'md' | 'lg';
+
 // Stil-innstillinger
 export type SectionTopStyle = 'flat' | 'rounded' | 'wave' | 'angle';
 
@@ -243,6 +246,13 @@ export interface StyleSettings {
   ctaGradientColor: string;  // Fri gradient-farge for CTA-knapper
   ctaTextColor: string;      // Tekstfarge for CTA-knapper
   newsBarColor: ColorChoice;
+
+  // ===== NYHETSGRID =====
+  // Vis kort ingress-tekst under overskriften (på/av)
+  newsExcerptVisible: boolean;
+  // Forhåndsvalgt størrelse på nyhetsoverskriften (sm / md / lg)
+  // Når ingress er av økes overskriften automatisk til større variant
+  newsHeadingSize: NewsHeadingSize;
   
   // Tags/kategorier
   tagColor: ColorChoice;     // Bakgrunnsfarge for tags
@@ -424,6 +434,8 @@ function getDefaultStyleSettingsForClub(club: ClubConfig): StyleSettings {
     ctaGradientColor: club.colors.accentLight || '#ff6b8a',
     ctaTextColor: '#ffffff',
     newsBarColor: 'secondary',
+    newsExcerptVisible: true,
+    newsHeadingSize: 'md',
     tagColor: 'secondary',
     tagTextColor: '#ffffff',
     moduleStyles: Array(6).fill(null).map(() => ({ backgroundColor: '', textColor: '' })),
@@ -616,6 +628,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       ctaGradientColor: initialClub.colors.accentLight || '#ff6b8a',
       ctaTextColor: '#ffffff',
       newsBarColor: 'secondary',
+      newsExcerptVisible: true,
+      newsHeadingSize: 'md',
       tagColor: 'secondary',
       tagTextColor: '#ffffff',
       

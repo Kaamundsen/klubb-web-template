@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { scrapeClubContent } from '../utils/contentScraper';
-import { NewsLayout, WebLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor, SECTION_NAMES, SectionConfig, DEFAULT_SECTIONS, MODULE_NAMES, ModuleConfig, DEFAULT_MODULES } from '../context/ThemeContext';
+import { NewsLayout, NewsHeadingSize, WebLayout, FontFamily, FontWeight, ColorChoice, HeroTextColor, SECTION_NAMES, SectionConfig, DEFAULT_SECTIONS, MODULE_NAMES, ModuleConfig, DEFAULT_MODULES } from '../context/ThemeContext';
 import { generateBalancedSupportColors } from '../utils/colorUtils';
 import { saveCustomClub, getCustomClubs, getAvailableClubIds } from '../config/clubSandbox';
 import { ClubConfig } from '../config/clubConfig';
@@ -79,6 +79,8 @@ const TOOLBAR_LABELS = {
     news_grid: 'Nyhetsgrid', rounding: 'Avrunding', card: 'Kort', button: 'Knapp',
     module: 'Modul', cta_button: 'CTA-knapp', gradient: 'Gradient', text: 'Tekst',
     heading_bar: 'Overskriftsstolpe', tags: 'Tags', list: 'Liste',
+    news_excerpt: 'Ingress', news_heading_size: 'Tittelstr.',
+    size_small: 'Liten', size_medium: 'Medium', size_large: 'Stor',
     // Hero tab
     logo: 'Logo', hide_float_logo: 'Skjul flytende logo', show_float_logo: 'Vis flytende logo',
     section_top: 'Seksjon-topp', flat: 'Rett', rounded: 'Avrundet',
@@ -144,6 +146,8 @@ const TOOLBAR_LABELS = {
     news_grid: 'News grid', rounding: 'Border radius', card: 'Card', button: 'Button',
     module: 'Module', cta_button: 'CTA button', gradient: 'Gradient', text: 'Text',
     heading_bar: 'Heading bar', tags: 'Tags', list: 'List',
+    news_excerpt: 'Excerpt', news_heading_size: 'Title size',
+    size_small: 'Small', size_medium: 'Medium', size_large: 'Large',
     logo: 'Logo', hide_float_logo: 'Hide floating logo', show_float_logo: 'Show floating logo',
     section_top: 'Section top', flat: 'Flat', rounded: 'Rounded',
     line1: 'Line 1', line2: 'Line 2', bg_on: 'Bg On', bg_off: 'Bg Off',
@@ -818,7 +822,45 @@ export function getSavedSettings(clubId: string): any | null {
                 >{opt.icon}</button>
               ))}
             </div>
-            
+
+            <div className="w-px h-6 bg-white/20" />
+
+            {/* Nyheter: ingress på/av + tittel-størrelse */}
+            <div className="flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+              <span className="text-gray-500 text-[9px] uppercase mr-1">{t('news_excerpt')}:</span>
+              <button
+                onClick={() => updateStyleSettings({ newsExcerptVisible: !(styleSettings.newsExcerptVisible !== false) })}
+                className={`px-2 py-1 rounded text-[9px] font-medium transition-all ${
+                  styleSettings.newsExcerptVisible !== false
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white/10 text-white/50'
+                }`}
+                title={styleSettings.newsExcerptVisible !== false ? t('on') : t('off')}
+              >
+                {styleSettings.newsExcerptVisible !== false ? t('on') : t('off')}
+              </button>
+
+              <span className="text-gray-500 text-[9px] uppercase ml-2 mr-1">{t('news_heading_size')}:</span>
+              {([
+                { id: 'sm' as NewsHeadingSize, label: 'S', title: t('size_small') },
+                { id: 'md' as NewsHeadingSize, label: 'M', title: t('size_medium') },
+                { id: 'lg' as NewsHeadingSize, label: 'L', title: t('size_large') },
+              ]).map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => updateStyleSettings({ newsHeadingSize: opt.id })}
+                  className={`w-7 h-7 rounded text-[10px] font-bold transition-all ${
+                    (styleSettings.newsHeadingSize || 'md') === opt.id
+                      ? 'bg-white/30 text-white'
+                      : 'bg-white/10 text-white/60 hover:bg-white/20'
+                  }`}
+                  title={opt.title}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
             <div className="w-px h-6 bg-white/20" />
             
             <div className="flex items-center gap-1 bg-white/5 rounded px-2 py-1">
